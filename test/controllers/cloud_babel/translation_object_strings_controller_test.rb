@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module CloudBabel
-  class Translation::ObjectStringsControllerTest < ActionDispatch::IntegrationTest
+  class TranslationObjectStringsControllerTest < ActionDispatch::IntegrationTest
     include Engine.routes.url_helpers
 
     setup do
@@ -19,11 +19,11 @@ module CloudBabel
     end
 
     test "should create translation_object_string" do
-      assert_difference('Translation::ObjectString.count') do
+      assert_difference('TranslationObjectString.count') do
         post translation_object_strings_url, params: { translation_object_string: {  } }
       end
 
-      assert_redirected_to translation_object_string_url(Translation::ObjectString.last)
+      assert_redirected_to translation_object_string_url(TranslationObjectString.last)
     end
 
     test "should show translation_object_string" do
@@ -42,7 +42,7 @@ module CloudBabel
     end
 
     test "should destroy translation_object_string" do
-      assert_difference('Translation::ObjectString.count', -1) do
+      assert_difference('TranslationObjectString.count', -1) do
         delete translation_object_string_url(@translation_object_string)
       end
 

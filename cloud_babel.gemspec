@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ["Luis Donis"]
   spec.email       = ["ldonis.emc2@gmail.com"]
   spec.homepage    = ""
-  spec.summary     = ""
-  spec.description = ""
+  spec.summary     = "Summary of CloudBabel."
+  spec.description = "Description of CloudBabel."
   spec.license     = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

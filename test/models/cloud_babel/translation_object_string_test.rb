@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module CloudBabel
-  class Translation::ObjectTest < ActiveSupport::TestCase
+  class TranslationObjectStringTest < ActiveSupport::TestCase
     # test "the truth" do
     #   assert true
     # end

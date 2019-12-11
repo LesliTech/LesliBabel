@@ -1,7 +1,6 @@
 CloudBabel::Engine.routes.draw do
-
-    root to: 'dashboards#default'
     resources :translations
-    resource :dashboard
-
+    resources :translation_objects
+    resources :translation_object_strings
+    root to: 'dashboards#default'
 end

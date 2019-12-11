@@ -32,4 +32,4 @@ import app from 'LesliCloud/vue/app'
 
 // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-app("CloudBabel", "[dashboard]", "/bell", [])
+app("CloudBabel", "[]", "/babel", [])

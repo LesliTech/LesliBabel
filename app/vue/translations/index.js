@@ -22,7 +22,23 @@ Building a better future, one line of code at a time.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-
 */
 
-@import 'leslicloud/templates/application';
+
+// · Import main app
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+import app from 'LesliCloud/vue/app'
+
+
+
+// · Import apps and components
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+import appList from './apps/list.vue'
+
+
+// · Cloud app
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+app("CloudBabel", "[index]", "/babel/translations", [{
+    path: '/',
+    component: appList
+}])
