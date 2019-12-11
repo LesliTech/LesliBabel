@@ -6,7 +6,10 @@ module CloudBabel
 
     # GET /translation_objects
     def index
-      @translation_objects = TranslationObject.all
+        respond_to do |format|
+            format.html { }
+            format.json { responseWithSuccessful(TranslationObject.all) }
+        end
     end
 
     # GET /translation_objects/1
@@ -25,18 +28,18 @@ module CloudBabel
     # POST /translation_objects
     def create
       @translation_object = TranslationObject.new(translation_object_params)
-
-      if @translation_object.save
-        redirect_to @translation_object, notice: 'Translation object was successfully created.'
+ 
+      if @translation_object.save!
+        responseWithSuccessful(@translation_object)
       else
-        render :new
+        responseWithError("Error creating translation object", @translation_object.errors.full_messages)
       end
     end
 
     # PATCH/PUT /translation_objects/1
     def update
       if @translation_object.update(translation_object_params)
-        redirect_to @translation_object, notice: 'Translation object was successfully updated.'
+        responseWithSuccessful(@translation_object)
       else
         render :edit
       end
@@ -56,7 +59,12 @@ module CloudBabel
 
       # Only allow a trusted parameter "white list" through.
       def translation_object_params
-        params.fetch(:translation_object, {})
+        params.require(:translation_object).permit(
+            :method,
+            :section,
+            :object_type,
+            :cloud_babel_translations_id
+        )
       end
   end
 end

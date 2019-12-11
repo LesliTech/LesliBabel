@@ -6,7 +6,10 @@ module CloudBabel
 
     # GET /translation_object_strings
     def index
-      @translation_object_strings = TranslationObjectString.all
+        respond_to do |format|
+            format.html { }
+            format.json { responseWithSuccessful(TranslationObjectString.all) }
+        end
     end
 
     # GET /translation_object_strings/1
@@ -27,16 +30,16 @@ module CloudBabel
       @translation_object_string = TranslationObjectString.new(translation_object_string_params)
 
       if @translation_object_string.save
-        redirect_to @translation_object_string, notice: 'Translation object string was successfully created.'
-      else
-        render :new
+        responseWithSuccessful(@translation_object_string)
+    else
+      responseWithError("Error creating translation object string", @translation_object_string.errors.full_messages)
       end
     end
 
     # PATCH/PUT /translation_object_strings/1
     def update
       if @translation_object_string.update(translation_object_string_params)
-        redirect_to @translation_object_string, notice: 'Translation object string was successfully updated.'
+        responseWithSuccessful(@translation_object_string)
       else
         render :edit
       end
@@ -56,7 +59,14 @@ module CloudBabel
 
       # Only allow a trusted parameter "white list" through.
       def translation_object_string_params
-        params.fetch(:translation_object_string, {})
+        params.require(:translation_object_string).permit(
+            :label,
+            :es,
+            :en,
+            :de,
+            :fr,
+            :cloud_babel_translation_objects_id
+        )
       end
   end
 end

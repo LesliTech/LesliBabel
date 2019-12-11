@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 39);
+/******/ 	return __webpack_require__(__webpack_require__.s = 44);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -39851,15 +39851,294 @@ module.exports = new Utils
 
 
 /***/ }),
-/* 39 */
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var LesliCloud_vue_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
+
+// EXTERNAL MODULE: ./app/vue/app.js + 93 modules
+var app = __webpack_require__(19);
+
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=template&id=2dee73cd&
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("section", { staticClass: "section" }, [
+    _c("div", { staticClass: "card" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-content" }, [
+        _c("form", { on: { submit: _vm.postTranslationObject } }, [
+          _c("div", { staticClass: "field is-horizontal" }, [
+            _c("div", { staticClass: "field-body" }, [
+              _c("div", { staticClass: "field" }, [
+                _c("p", { staticClass: "control is-expanded" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.translation_object.method,
+                        expression: "translation_object.method"
+                      }
+                    ],
+                    staticClass: "input",
+                    attrs: { type: "text", placeholder: "Method" },
+                    domProps: { value: _vm.translation_object.method },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.translation_object,
+                          "method",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "field" }, [
+                _c("p", { staticClass: "control is-expanded" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.translation_object.object_type,
+                        expression: "translation_object.object_type"
+                      }
+                    ],
+                    staticClass: "input",
+                    attrs: { type: "text", placeholder: "Method" },
+                    domProps: { value: _vm.translation_object.object_type },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.translation_object,
+                          "object_type",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "field" }, [
+                _c("p", { staticClass: "control is-expanded" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.translation_object.section,
+                        expression: "translation_object.section"
+                      }
+                    ],
+                    staticClass: "input",
+                    attrs: { type: "text", placeholder: "Section" },
+                    domProps: { value: _vm.translation_object.section },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.translation_object,
+                          "section",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
+                ])
+              ]),
+              _vm._v(" "),
+              _vm._m(1)
+            ])
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("div", { staticClass: "card" }, [
+      _vm._m(2),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "card-content" },
+        [
+          _c(
+            "b-field",
+            { attrs: { grouped: "", "group-multiline": "" } },
+            [
+              _c(
+                "b-select",
+                {
+                  attrs: { disabled: !_vm.isPaginated },
+                  model: {
+                    value: _vm.perPage,
+                    callback: function($$v) {
+                      _vm.perPage = $$v
+                    },
+                    expression: "perPage"
+                  }
+                },
+                [
+                  _c("option", { attrs: { value: "5" } }, [
+                    _vm._v("5 per page")
+                  ]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "10" } }, [
+                    _vm._v("10 per page")
+                  ]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "15" } }, [
+                    _vm._v("15 per page")
+                  ]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "20" } }, [
+                    _vm._v("20 per page")
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "control is-flex" },
+                [
+                  _c(
+                    "b-switch",
+                    {
+                      model: {
+                        value: _vm.isPaginated,
+                        callback: function($$v) {
+                          _vm.isPaginated = $$v
+                        },
+                        expression: "isPaginated"
+                      }
+                    },
+                    [_vm._v("Paginated")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "control is-flex" },
+                [
+                  _c(
+                    "b-switch",
+                    {
+                      attrs: { disabled: !_vm.isPaginated },
+                      model: {
+                        value: _vm.isPaginationSimple,
+                        callback: function($$v) {
+                          _vm.isPaginationSimple = $$v
+                        },
+                        expression: "isPaginationSimple"
+                      }
+                    },
+                    [_vm._v("Simple pagination")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("b-table", {
+            attrs: {
+              paginated: _vm.isPaginated,
+              "per-page": _vm.perPage,
+              "current-page": _vm.currentPage,
+              "pagination-simple": _vm.isPaginationSimple,
+              "pagination-position": _vm.paginationPosition,
+              data: _vm.translation_objects,
+              columns: _vm.columns,
+              hoverable: true
+            },
+            on: {
+              "update:currentPage": function($event) {
+                _vm.currentPage = $event
+              },
+              "update:current-page": function($event) {
+                _vm.currentPage = $event
+              },
+              click: _vm.clickTranslationObject
+            }
+          })
+        ],
+        1
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v("\n                Add new translation file\n            ")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "field" }, [
+      _c("div", { staticClass: "control" }, [
+        _c("button", { staticClass: "button is-primary" }, [
+          _vm._v(
+            "\n                                    Save\n                                "
+          )
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v("\n                All the files\n            ")
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=template&id=2dee73cd&
+
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib??ref--3!./node_modules/vue-loader/lib??vue-loader-options!./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=script&lang=js&
 /*
 Lesli
+
 Copyright (c) 2019, Lesli Technologies, S. A.
+
 All the information provided by this website is protected by laws of Guatemala related 
 to industrial property, intellectual property, copyright and relative international laws. 
 Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
@@ -39867,12 +40146,147 @@ rights of the code, texts, trade mark, design, pictures and any other informatio
 Without the written permission of Lesli Technologies, S. A., any replication, modification,
 transmission, publication is strictly forbidden.
 For more information read the license file including with this software.
+
 LesliCloud - Your Smart Business Assistant
+
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
+
 @author   LesliTech <hello@lesli.tech>
 @license  Propietary - all rights reserved.
 @version  0.1.0-alpha
+
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+// · 
+*/
+/* harmony default export */ var listvue_type_script_lang_js_ = ({
+  data: function data() {
+    return {
+      isPaginated: true,
+      isPaginationSimple: false,
+      paginationPosition: 'bottom',
+      currentPage: 1,
+      perPage: 5,
+      translation_object: {
+        method: '',
+        object_type: '',
+        section: '',
+        cloud_babel_translations_id: '2'
+      },
+      translation_objects: [],
+      columns: [{
+        field: 'id',
+        label: 'Id',
+        centered: true
+      }, {
+        field: 'method',
+        label: 'Method',
+        centered: true,
+        searchable: true
+      }, {
+        field: 'object_type',
+        label: 'Type',
+        searchable: true
+      }, {
+        field: 'section',
+        label: 'Section',
+        searchable: true
+      }]
+    };
+  },
+  mounted: function mounted() {
+    this.getTranslationObjects();
+  },
+  methods: {
+    getTranslationObjects: function getTranslationObjects() {
+      var _this = this;
+
+      this.http.get('/babel/translation_objects.json').then(function (result) {
+        if (!result.successful) {
+          return;
+        }
+
+        _this.translation_objects = result.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    postTranslationObject: function postTranslationObject(e) {
+      var _this2 = this;
+
+      if (e) {
+        e.preventDefault();
+      }
+
+      this.http.post('/babel/translation_objects', {
+        translation_object: this.translation_object
+      }).then(function (result) {
+        if (result.successful) {
+          _this2.$router.push('/');
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    clickTranslationObject: function clickTranslationObject(translation_object) {
+      this.goTo("/translation_object_strings/");
+    },
+    goTo: function goTo(url) {
+      this.$router.push("".concat(url));
+    }
+  }
+});
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=script&lang=js&
+ /* harmony default export */ var apps_listvue_type_script_lang_js_ = (listvue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(2);
+
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/apps/list.vue
+
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  apps_listvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "engines/CloudBabel/app/vue/translation_objects/apps/list.vue"
+/* harmony default export */ var list = (component.exports);
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/index.js
+/*
+Lesli
+
+Copyright (c) 2019, Lesli Technologies, S. A.
+
+All the information provided by this website is protected by laws of Guatemala related 
+to industrial property, intellectual property, copyright and relative international laws. 
+Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
+rights of the code, texts, trade mark, design, pictures and any other information.
+Without the written permission of Lesli Technologies, S. A., any replication, modification,
+transmission, publication is strictly forbidden.
+For more information read the license file including with this software.
+
+LesliCloud - Your Smart Business Assistant
+
+Powered by https://www.lesli.tech
+Building a better future, one line of code at a time.
+
+@author   LesliTech <hello@lesli.tech>
+@license  Propietary - all rights reserved.
+@version  0.1.0-alpha
+
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
 */
@@ -39880,10 +40294,14 @@ Building a better future, one line of code at a time.
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
  // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-// · Cloud app
+
+ // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
-Object(LesliCloud_vue_app__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])("CloudBabel", "[]", "/babel", []);
+Object(app["a" /* default */])("CloudBabel", "[index]", "/babel", [{
+  path: '/translation_objects',
+  component: list
+}]);
 
 /***/ })
 /******/ ]);

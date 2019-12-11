@@ -8,6 +8,6 @@ class CreateCloudBabelTranslationObjectStrings < ActiveRecord::Migration[6.0]
             t.string    :fr
             t.timestamps
         end
-        add_reference :cloud_babel_translation_objects, :cloud_babel_translation_object_strings, foreign_key: true, index: { name: "babel_translation_objects_translation_object_strings" }
+        add_reference :cloud_babel_translation_object_strings, :cloud_babel_translation_objects, foreign_key: true, index: { name: "babel_translation_objects_translation_object_strings" }
     end
 end

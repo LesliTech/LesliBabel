@@ -29,66 +29,62 @@ Building a better future, one line of code at a time.
 export default {
     data() {
         return {
-            isPaginated: true,
-            isPaginationSimple: false,
-            paginationPosition: 'bottom',
-            currentPage: 1,
-            perPage: 5,
-            modules: [
-                { 'id': 1, 'module_name': 'Test'}
-            ],
-            translation: {
-                module_name: '',
-                class_name: ''
+            translation_object_string: {
+                label: '',
+                es: '',
+                en:'',
+                de:'',
+                fr:'',
+                cloud_babel_translation_objects_id: '1'
             },
-            translations: [],
+            translation_object_strings: [],
             columns: [{
                 field: 'id',
-                label: 'ID',
-                centered: true
+                label: 'Id'
             },{
-                field: 'module_name',
-                label:'Module',
-                searchable: true,
-            }, {
-                field: 'class_name',
-                label: 'Class name',
-                searchable: true,
-            }]
+                field: 'label',
+                label: 'Entry'
+            },{
+                field: 'es',
+                label: 'Spanish'
+            },{
+                field: 'en',
+                label: 'English'
+            },{
+                field: 'de',
+                label: 'German'
+            },{
+                field: 'fr',
+                label: 'French'
+            }],
         }
     },
     mounted() {
-        this.getTranslations()
+        this.getTranslationObjectStrings()
     },
     methods: {
-        getTranslations() {
-            this.http.get('/babel/translations.json').then(result => {
+        getTranslationObjectStrings() {
+            this.http.get('/babel/translation_object_strings.json').then(result => {
                 if (!result.successful) {
                     return 
                 }
-                this.translations = result.data
+                this.translation_object_strings = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
-        postTranslation(e) {
+        postTranslationObjectString(e) {
             if (e) { e.preventDefault() }
-            this.http.post('/babel/translations', {
-                translation: this.translation
+            this.http.post('/babel/translation_object_strings', {
+                translation_object_string: this.translation_object_string
             }).then(result => {
                 if (result.successful) {
-                window.location.reload('/babel/translations')
+                window.location.reload('/')
                 }
             }).catch(error => {
                 console.log(error)
             })
         },
-        clickTranslation(translation){
-            this.goTo(`/translation_objects/`)
-        },
-        goTo(url){
-         this.$router.push(`${url}`);
-        }
     }
 }
 </script>
@@ -101,22 +97,32 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
-                <form @submit="postTranslation">
+                <form @submit="postTranslationObjectString">
                     <div class="field is-horizontal">
                         <div class="field-body">
                             <div class="field">
-                                <b-select  v-model="translation.module_name">
-                                    <option
-                                    v-for="option in modules"
-                                    :value="option.id"
-                                    :key="option.id">
-                                    {{option.module_name}}
-                                    </option>
-                                </b-select>
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" placeholder="Entry" v-model="translation_object_string.label">
+                                </p>
                             </div>
                             <div class="field">
                                 <p class="control is-expanded">
-                                    <input class="input" type="text" placeholder="Class name" v-model="translation.class_name">
+                                    <input class="input" type="text" placeholder="Spanish" v-model="translation_object_string.es">
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" placeholder="English" v-model="translation_object_string.en">
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" placeholder="German" v-model="translation_object_string.de">
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" placeholder="French" v-model="translation_object_string.fr">
                                 </p>
                             </div>
                             <div class="field">
@@ -139,30 +145,10 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
-                <b-field grouped group-multiline>
-                    <b-select v-model="perPage" :disabled="!isPaginated">
-                        <option value="5">5 per page</option>
-                        <option value="10">10 per page</option>
-                        <option value="15">15 per page</option>
-                        <option value="20">20 per page</option>
-                    </b-select>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginated">Paginated</b-switch>
-                    </div>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginationSimple" :disabled="!isPaginated">Simple pagination</b-switch>
-                    </div>
-                </b-field>
                 <b-table
-                    :paginated="isPaginated"
-                    :per-page="perPage"
-                    :current-page.sync="currentPage"
-                    :pagination-simple="isPaginationSimple"
-                    :pagination-position="paginationPosition"
-                    :data="translations"
+                    :data="translation_object_strings"
                     :columns="columns"
-                    :hoverable="true"
-                    @click="clickTranslation">
+                    :hoverable="true">
                 </b-table>
             </div>
         </div>

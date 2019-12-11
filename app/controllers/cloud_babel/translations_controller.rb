@@ -30,16 +30,16 @@ module CloudBabel
             @translation = Translation.new(translation_params)
 
             if @translation.save
-                redirect_to @translation, notice: 'Translation was successfully created.'
+                responseWithSuccessful(@translation)
             else
-                render :new
+                responseWithError("Error creating translation", @translation.errors.full_messages)
             end
         end
 
         # PATCH/PUT /translations/1
         def update
             if @translation.update(translation_params)
-                redirect_to @translation, notice: 'Translation was successfully updated.'
+                responseWithSuccessful(@translation)
             else
                 render :edit
             end
@@ -60,7 +60,10 @@ module CloudBabel
 
         # Only allow a trusted parameter "white list" through.
         def translation_params
-            params.fetch(:translation, {})
+            params.require(:translation).permit(
+                :module_name,
+                :class_name
+            )
         end
 
     end

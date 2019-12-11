@@ -34,60 +34,64 @@ export default {
             paginationPosition: 'bottom',
             currentPage: 1,
             perPage: 5,
-            modules: [
-                { 'id': 1, 'module_name': 'Test'}
-            ],
-            translation: {
-                module_name: '',
-                class_name: ''
+            translation_object: {
+                method: '',
+                object_type: '',
+                section:'',
+                cloud_babel_translations_id: '2'
             },
-            translations: [],
+            translation_objects: [],
             columns: [{
                 field: 'id',
-                label: 'ID',
+                label: 'Id',
                 centered: true
             },{
-                field: 'module_name',
-                label:'Module',
-                searchable: true,
-            }, {
-                field: 'class_name',
-                label: 'Class name',
-                searchable: true,
-            }]
+                field: 'method',
+                label: 'Method',
+                centered: true,
+                searchable: true
+            },{
+                field: 'object_type',
+                label: 'Type',
+                searchable: true
+            },{
+                field: 'section',
+                label: 'Section',
+                searchable: true
+            }],
         }
     },
     mounted() {
-        this.getTranslations()
+        this.getTranslationObjects()
     },
     methods: {
-        getTranslations() {
-            this.http.get('/babel/translations.json').then(result => {
+        getTranslationObjects() {
+            this.http.get('/babel/translation_objects.json').then(result => {
                 if (!result.successful) {
                     return 
                 }
-                this.translations = result.data
+                this.translation_objects = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
-        postTranslation(e) {
+        postTranslationObject(e) {
             if (e) { e.preventDefault() }
-            this.http.post('/babel/translations', {
-                translation: this.translation
+            this.http.post('/babel/translation_objects', {
+                translation_object: this.translation_object
             }).then(result => {
                 if (result.successful) {
-                window.location.reload('/babel/translations')
+                this.$router.push('/')
                 }
             }).catch(error => {
                 console.log(error)
             })
         },
-        clickTranslation(translation){
-            this.goTo(`/translation_objects/`)
+        clickTranslationObject(translation_object){
+            this.goTo(`/translation_object_strings/`)
         },
         goTo(url){
-         this.$router.push(`${url}`);
+        this.$router.push(`${url}`);
         }
     }
 }
@@ -101,22 +105,22 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
-                <form @submit="postTranslation">
+                <form @submit="postTranslationObject">
                     <div class="field is-horizontal">
                         <div class="field-body">
                             <div class="field">
-                                <b-select  v-model="translation.module_name">
-                                    <option
-                                    v-for="option in modules"
-                                    :value="option.id"
-                                    :key="option.id">
-                                    {{option.module_name}}
-                                    </option>
-                                </b-select>
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" placeholder="Method" v-model="translation_object.method">
+                                </p>
                             </div>
                             <div class="field">
                                 <p class="control is-expanded">
-                                    <input class="input" type="text" placeholder="Class name" v-model="translation.class_name">
+                                    <input class="input" type="text" placeholder="Method" v-model="translation_object.object_type">
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" placeholder="Section" v-model="translation_object.section">
                                 </p>
                             </div>
                             <div class="field">
@@ -159,10 +163,10 @@ export default {
                     :current-page.sync="currentPage"
                     :pagination-simple="isPaginationSimple"
                     :pagination-position="paginationPosition"
-                    :data="translations"
+                    :data="translation_objects"
                     :columns="columns"
                     :hoverable="true"
-                    @click="clickTranslation">
+                    @click="clickTranslationObject">
                 </b-table>
             </div>
         </div>

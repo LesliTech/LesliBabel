@@ -38,7 +38,7 @@ import appList from './apps/list.vue'
 
 // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-app("CloudBabel", "[index]", "/babel", [{
-    path: '/translations',
-    component: appList,
+app("CloudBabel", "[index]", "/babel/translation_object_strings", [{
+    path: '/',
+    component: appList
 }])
