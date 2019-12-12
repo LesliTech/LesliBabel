@@ -12,7 +12,7 @@ namespace :cloud_babel do
             next if controller.include? "action_mailbox"
             next if controller.include? "active_storage"
             
-            translation = CloudBabel::Translation.create({ module_name: 'core', class_name: controller })
+            translation = CloudBabel::Translation.create({ module_name: 'Core', class_name: controller })
 
             # controller objects
             ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'].each do |method|
