@@ -34,13 +34,15 @@ export default {
             paginationPosition: 'bottom',
             currentPage: 1,
             perPage: 5,
+            translation_object_id: null,
+            translation_id: null,
             translation_object_string: {
                 label: '',
                 es: '',
                 en:'',
                 de:'',
                 fr:'',
-                cloud_babel_translation_objects_id: '1'
+                cloud_babel_translation_objects_id: this.$route.params.translation_object_id
             },
             translation_object_strings: [],
             columns: [{
@@ -70,11 +72,13 @@ export default {
         }
     },
     mounted() {
+        this.translation_object_id = this.$route.params.translation_object_id
+        this.translation_id = this.$route.params.translation_id
         this.getTranslationObjectStrings()
     },
     methods: {
         getTranslationObjectStrings() {
-            this.http.get('/babel/translation_object_strings.json').then(result => {
+            this.http.get(`/babel/translations/${this.translation_id}/translation_objects/${this.translation_object_id}/translation_object_strings.json`).then(result => {
                 if (!result.successful) {
                     return 
                 }
@@ -85,11 +89,11 @@ export default {
         },
         postTranslationObjectString(e) {
             if (e) { e.preventDefault() }
-            this.http.post('/babel/translation_object_strings', {
+            this.http.post('/babel/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings', {
                 translation_object_string: this.translation_object_string
             }).then(result => {
                 if (result.successful) {
-                window.location.reload('/')
+                window.location.reload('/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings')
                 }
             }).catch(error => {
                 console.log(error)

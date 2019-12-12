@@ -40235,13 +40235,15 @@ Building a better future, one line of code at a time.
       paginationPosition: 'bottom',
       currentPage: 1,
       perPage: 5,
+      translation_object_id: null,
+      translation_id: null,
       translation_object_string: {
         label: '',
         es: '',
         en: '',
         de: '',
         fr: '',
-        cloud_babel_translation_objects_id: '1'
+        cloud_babel_translation_objects_id: this.$route.params.translation_object_id
       },
       translation_object_strings: [],
       columns: [{
@@ -40272,13 +40274,15 @@ Building a better future, one line of code at a time.
     };
   },
   mounted: function mounted() {
+    this.translation_object_id = this.$route.params.translation_object_id;
+    this.translation_id = this.$route.params.translation_id;
     this.getTranslationObjectStrings();
   },
   methods: {
     getTranslationObjectStrings: function getTranslationObjectStrings() {
       var _this = this;
 
-      this.http.get('/babel/translation_object_strings.json').then(function (result) {
+      this.http.get("/babel/translations/".concat(this.translation_id, "/translation_objects/").concat(this.translation_object_id, "/translation_object_strings.json")).then(function (result) {
         if (!result.successful) {
           return;
         }
@@ -40293,11 +40297,11 @@ Building a better future, one line of code at a time.
         e.preventDefault();
       }
 
-      this.http.post('/babel/translation_object_strings', {
+      this.http.post('/babel/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings', {
         translation_object_string: this.translation_object_string
       }).then(function (result) {
         if (result.successful) {
-          window.location.reload('/');
+          window.location.reload('/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings');
         }
       })["catch"](function (error) {
         console.log(error);
@@ -40367,8 +40371,8 @@ Building a better future, one line of code at a time.
  // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
-Object(app["a" /* default */])("CloudBabel", "[index]", "/babel/translation_object_strings", [{
-  path: '/',
+Object(app["a" /* default */])("CloudBabel", "[index]", "/babel", [{
+  path: '/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings',
   component: list
 }]);
 

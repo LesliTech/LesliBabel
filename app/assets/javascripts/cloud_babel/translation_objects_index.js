@@ -40181,7 +40181,7 @@ Building a better future, one line of code at a time.
         method: '',
         object_type: '',
         section: '',
-        cloud_babel_translations_id: '2'
+        cloud_babel_translations_id: this.$route.params.translation_id
       },
       translation_objects: [],
       columns: [{
@@ -40204,7 +40204,8 @@ Building a better future, one line of code at a time.
     };
   },
   mounted: function mounted() {
-    this.getTranslationObjects(), this.translation_id = this.cloud_babel_translations_id;
+    this.translation_id = this.$route.params.translation_id;
+    this.getTranslationObjects();
   },
   methods: {
     getTranslationObjects: function getTranslationObjects() {
@@ -40236,8 +40237,8 @@ Building a better future, one line of code at a time.
       });
     },
     clickTranslationObject: function clickTranslationObject(translation_object) {
-      this.$router.push("/translation_object_strings/");
-      window.location.reload('/babel/translation_objects');
+      this.$router.push("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object.id, "/translation_object_strings"));
+      window.location.reload("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object.id, "/translation_object_strings"));
     }
   }
 });
