@@ -34,6 +34,7 @@ export default {
             paginationPosition: 'bottom',
             currentPage: 1,
             perPage: 5,
+            translation_id: null,
             translation_object: {
                 method: '',
                 object_type: '',
@@ -61,11 +62,12 @@ export default {
         }
     },
     mounted() {
-        this.getTranslationObjects()
+        this.getTranslationObjects(),
+        this.translation_id = this.cloud_babel_translations_id
     },
     methods: {
         getTranslationObjects() {
-            this.http.get('/babel/translation_objects.json').then(result => {
+            this.http.get(`/babel/translations/${this.translation_id}/translation_objects.json`).then(result => {
                 if (!result.successful) {
                     return 
                 }
@@ -76,11 +78,11 @@ export default {
         },
         postTranslationObject(e) {
             if (e) { e.preventDefault() }
-            this.http.post('/babel/translation_objects', {
+            this.http.post('/babel/translations/:translation_id/translation_objects', {
                 translation_object: this.translation_object
             }).then(result => {
                 if (result.successful) {
-                window.location.reload('/translation_objects')
+                window.location.reload('/translations/:translation_id/translation_objects')
                 }
             }).catch(error => {
                 console.log(error)

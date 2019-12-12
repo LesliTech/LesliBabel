@@ -25,7 +25,6 @@ Building a better future, one line of code at a time.
 // · 
 */
 
-
 export default {
     data() {
         return {
@@ -44,6 +43,7 @@ export default {
                 { 'id': 7, 'module_name': 'Team'}
             ],
             translation: {
+                id: '',
                 module_name: '',
                 class_name: ''
             },
@@ -90,8 +90,8 @@ export default {
             })
         },
         clickTranslation(translation){
-            this.$router.push(`/translation_objects/`)
-            window.location.reload('/babel/translation_objects')
+            this.$router.push(`/translations/${translation.id}/translation_objects`)
+            window.location.reload(`/translations/${translation.id}/translation_objects`)
         },
     }
 }
