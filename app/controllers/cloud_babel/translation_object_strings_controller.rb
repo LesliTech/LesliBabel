@@ -6,9 +6,10 @@ module CloudBabel
 
     # GET /translation_object_strings
     def index
+        translation_object_strings = TranslationObjectString.where(cloud_babel_translation_objects_id: params[:translation_object_id])
         respond_to do |format|
             format.html { }
-            format.json { responseWithSuccessful(TranslationObjectString.all) }
+            format.json { responseWithSuccessful(translation_object_strings) }
         end
     end
 

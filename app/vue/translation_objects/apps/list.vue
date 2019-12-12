@@ -39,7 +39,7 @@ export default {
                 method: '',
                 object_type: '',
                 section:'',
-                cloud_babel_translations_id: '2'
+                cloud_babel_translations_id: this.$route.params.translation_id
             },
             translation_objects: [],
             columns: [{
@@ -62,8 +62,8 @@ export default {
         }
     },
     mounted() {
-        this.getTranslationObjects(),
-        this.translation_id = this.cloud_babel_translations_id
+        this.translation_id = this.$route.params.translation_id
+        this.getTranslationObjects()
     },
     methods: {
         getTranslationObjects() {
@@ -89,8 +89,9 @@ export default {
             })
         },
         clickTranslationObject(translation_object){
-            this.$router.push(`/translation_object_strings/`)
-            window.location.reload('/babel/translation_objects')
+            this.$router.push(`/translations/${this.translation_id}/translation_objects/${translation_object.id}/translation_object_strings`)
+            window.location.reload(`/translations/${this.translation_id}/translation_objects/${translation_object.id}/translation_object_strings`)
+
         }
     }
 }
