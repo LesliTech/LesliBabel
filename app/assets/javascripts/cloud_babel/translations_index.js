@@ -37385,7 +37385,7 @@ Building a better future, one line of code at a time.
 // ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
 /* harmony default export */ var plugins_http = ({
-  install: function install(Vue, _options) {
+  install: function install(Vue, options) {
     // Get authentication token from rails
     var meta = document.querySelector('meta[name="csrf-token"]');
     var token = '';
@@ -37484,11 +37484,24 @@ function date_defineProperty(obj, key, value) { if (key in obj) { Object.defineP
       }
 
       return date.toLocaleDateString(I18n.currentLocale(), options);
+    }; //receives a Date object and returns its string representation
+
+
+    var toString = function toString(date) {
+      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      date = date.toISOString().substr(0, 10);
+
+      if (format) {
+        date = toLocalFormat(date);
+      }
+
+      return date;
     };
 
     Vue.prototype.date = {
       today: today,
-      toLocalFormat: toLocalFormat
+      toLocalFormat: toLocalFormat,
+      toString: toString
     };
   }
 });
@@ -39877,74 +39890,75 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "card-content" }, [
         _c("form", { on: { submit: _vm.postTranslation } }, [
-          _c("div", { staticClass: "field is-horizontal" }, [
-            _c("div", { staticClass: "field-body" }, [
-              _c(
-                "div",
-                { staticClass: "field" },
-                [
-                  _c(
-                    "b-select",
-                    {
-                      model: {
-                        value: _vm.translation.module_name,
-                        callback: function($$v) {
-                          _vm.$set(_vm.translation, "module_name", $$v)
-                        },
-                        expression: "translation.module_name"
-                      }
-                    },
-                    _vm._l(_vm.modules, function(option) {
-                      return _c(
-                        "option",
-                        { key: option.id, domProps: { value: option.id } },
-                        [
-                          _vm._v(
-                            "\n                                " +
-                              _vm._s(option.module_name) +
-                              "\n                                "
-                          )
-                        ]
-                      )
-                    }),
-                    0
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("div", { staticClass: "field" }, [
-                _c("p", { staticClass: "control is-expanded" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.translation.class_name,
-                        expression: "translation.class_name"
-                      }
-                    ],
-                    staticClass: "input",
-                    attrs: { type: "text", placeholder: "Class name" },
-                    domProps: { value: _vm.translation.class_name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(
-                          _vm.translation,
-                          "class_name",
-                          $event.target.value
-                        )
-                      }
+          _c("div", { staticClass: "columns is-centered" }, [
+            _c(
+              "div",
+              { staticClass: "column is-1 " },
+              [
+                _c(
+                  "b-select",
+                  {
+                    model: {
+                      value: _vm.translation.module_name,
+                      callback: function($$v) {
+                        _vm.$set(_vm.translation, "module_name", $$v)
+                      },
+                      expression: "translation.module_name"
                     }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _vm._m(1)
-            ])
+                  },
+                  _vm._l(_vm.modules, function(option) {
+                    return _c(
+                      "option",
+                      {
+                        key: option.id,
+                        domProps: { value: option.module_name }
+                      },
+                      [
+                        _vm._v(
+                          "\n                                " +
+                            _vm._s(option.module_name) +
+                            "\n                                "
+                        )
+                      ]
+                    )
+                  }),
+                  0
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "column is-4" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.translation.class_name,
+                      expression: "translation.class_name"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Class name" },
+                  domProps: { value: _vm.translation.class_name },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.translation,
+                        "class_name",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _vm._m(1)
           ])
         ])
       ])
@@ -40082,7 +40096,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "field" }, [
+    return _c("div", { staticClass: "column is-1" }, [
       _c("div", { staticClass: "control" }, [
         _c("button", { staticClass: "button is-primary" }, [
           _vm._v(
@@ -40144,7 +40158,25 @@ Building a better future, one line of code at a time.
       perPage: 5,
       modules: [{
         'id': 1,
-        'module_name': 'Test'
+        'module_name': 'Lesli'
+      }, {
+        'id': 2,
+        'module_name': 'Help'
+      }, {
+        'id': 3,
+        'module_name': 'Lock'
+      }, {
+        'id': 4,
+        'module_name': 'Babel'
+      }, {
+        'id': 5,
+        'module_name': 'Driver'
+      }, {
+        'id': 6,
+        'module_name': 'Bell'
+      }, {
+        'id': 7,
+        'module_name': 'Team'
       }],
       translation: {
         module_name: '',
@@ -40199,10 +40231,8 @@ Building a better future, one line of code at a time.
       });
     },
     clickTranslation: function clickTranslation(translation) {
-      this.goTo("/translation_objects/");
-    },
-    goTo: function goTo(url) {
-      this.$router.push("".concat(url));
+      this.$router.push("/translation_objects/");
+      window.location.reload('/babel/translation_objects');
     }
   }
 });

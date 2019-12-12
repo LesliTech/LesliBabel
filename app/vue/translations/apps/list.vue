@@ -35,7 +35,13 @@ export default {
             currentPage: 1,
             perPage: 5,
             modules: [
-                { 'id': 1, 'module_name': 'Test'}
+                { 'id': 1, 'module_name': 'Lesli'},
+                { 'id': 2, 'module_name': 'Help'},
+                { 'id': 3, 'module_name': 'Lock'},
+                { 'id': 4, 'module_name': 'Babel'},
+                { 'id': 5, 'module_name': 'Driver'},
+                { 'id': 6, 'module_name': 'Bell'},
+                { 'id': 7, 'module_name': 'Team'}
             ],
             translation: {
                 module_name: '',
@@ -84,11 +90,9 @@ export default {
             })
         },
         clickTranslation(translation){
-            this.goTo(`/translation_objects/`)
+            this.$router.push(`/translation_objects/`)
+            window.location.reload('/babel/translation_objects')
         },
-        goTo(url){
-         this.$router.push(`${url}`);
-        }
     }
 }
 </script>
@@ -102,31 +106,29 @@ export default {
             </div>
             <div class="card-content">
                 <form @submit="postTranslation">
-                    <div class="field is-horizontal">
-                        <div class="field-body">
-                            <div class="field">
+                    <div class="columns is-centered"> 
+                        <div class="column is-1 ">
                                 <b-select  v-model="translation.module_name">
                                     <option
                                     v-for="option in modules"
-                                    :value="option.id"
+                                    :value="option.module_name"
                                     :key="option.id">
                                     {{option.module_name}}
                                     </option>
                                 </b-select>
                             </div>
-                            <div class="field">
+                        <div class="column is-4">
                                 <p class="control is-expanded">
                                     <input class="input" type="text" placeholder="Class name" v-model="translation.class_name">
                                 </p>
                             </div>
-                            <div class="field">
+                            <div class="column is-1">
                                 <div class="control">
                                     <button class="button is-primary">
                                         Save
                                     </button>
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </form>
             </div>

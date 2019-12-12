@@ -29,6 +29,11 @@ Building a better future, one line of code at a time.
 export default {
     data() {
         return {
+            isPaginated: true,
+            isPaginationSimple: false,
+            paginationPosition: 'bottom',
+            currentPage: 1,
+            perPage: 5,
             translation_object_string: {
                 label: '',
                 es: '',
@@ -40,22 +45,27 @@ export default {
             translation_object_strings: [],
             columns: [{
                 field: 'id',
-                label: 'Id'
+                label: 'ID',
+                centered: true
             },{
                 field: 'label',
-                label: 'Entry'
+                label: 'Entry',
+                searchable: true
             },{
                 field: 'es',
-                label: 'Spanish'
+                label: 'Spanish',
+                searchable: true
             },{
                 field: 'en',
-                label: 'English'
+                label: 'English',
+                searchable: true
             },{
                 field: 'de',
-                label: 'German'
+                label: 'German',
+                searchable: true
             },{
                 field: 'fr',
-                label: 'French'
+                label: 'French',searchable: true
             }],
         }
     },
@@ -145,7 +155,26 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
+                <b-field grouped group-multiline>
+                    <b-select v-model="perPage" :disabled="!isPaginated">
+                        <option value="5">5 per page</option>
+                        <option value="10">10 per page</option>
+                        <option value="15">15 per page</option>
+                        <option value="20">20 per page</option>
+                    </b-select>
+                    <div class="control is-flex">
+                        <b-switch v-model="isPaginated">Paginated</b-switch>
+                    </div>
+                    <div class="control is-flex">
+                        <b-switch v-model="isPaginationSimple" :disabled="!isPaginated">Simple pagination</b-switch>
+                    </div>
+                </b-field>
                 <b-table
+                    :paginated="isPaginated"
+                    :per-page="perPage"
+                    :current-page.sync="currentPage"
+                    :pagination-simple="isPaginationSimple"
+                    :pagination-position="paginationPosition"
                     :data="translation_object_strings"
                     :columns="columns"
                     :hoverable="true">

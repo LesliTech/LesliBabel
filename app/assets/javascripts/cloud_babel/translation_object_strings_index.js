@@ -37385,7 +37385,7 @@ Building a better future, one line of code at a time.
 // ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
 /* harmony default export */ var plugins_http = ({
-  install: function install(Vue, _options) {
+  install: function install(Vue, options) {
     // Get authentication token from rails
     var meta = document.querySelector('meta[name="csrf-token"]');
     var token = '';
@@ -37484,11 +37484,24 @@ function date_defineProperty(obj, key, value) { if (key in obj) { Object.defineP
       }
 
       return date.toLocaleDateString(I18n.currentLocale(), options);
+    }; //receives a Date object and returns its string representation
+
+
+    var toString = function toString(date) {
+      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      date = date.toISOString().substr(0, 10);
+
+      if (format) {
+        date = toLocalFormat(date);
+      }
+
+      return date;
     };
 
     Vue.prototype.date = {
       today: today,
-      toLocalFormat: toLocalFormat
+      toLocalFormat: toLocalFormat,
+      toString: toString
     };
   }
 });
@@ -40046,11 +40059,105 @@ var render = function() {
         "div",
         { staticClass: "card-content" },
         [
+          _c(
+            "b-field",
+            { attrs: { grouped: "", "group-multiline": "" } },
+            [
+              _c(
+                "b-select",
+                {
+                  attrs: { disabled: !_vm.isPaginated },
+                  model: {
+                    value: _vm.perPage,
+                    callback: function($$v) {
+                      _vm.perPage = $$v
+                    },
+                    expression: "perPage"
+                  }
+                },
+                [
+                  _c("option", { attrs: { value: "5" } }, [
+                    _vm._v("5 per page")
+                  ]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "10" } }, [
+                    _vm._v("10 per page")
+                  ]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "15" } }, [
+                    _vm._v("15 per page")
+                  ]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "20" } }, [
+                    _vm._v("20 per page")
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "control is-flex" },
+                [
+                  _c(
+                    "b-switch",
+                    {
+                      model: {
+                        value: _vm.isPaginated,
+                        callback: function($$v) {
+                          _vm.isPaginated = $$v
+                        },
+                        expression: "isPaginated"
+                      }
+                    },
+                    [_vm._v("Paginated")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "control is-flex" },
+                [
+                  _c(
+                    "b-switch",
+                    {
+                      attrs: { disabled: !_vm.isPaginated },
+                      model: {
+                        value: _vm.isPaginationSimple,
+                        callback: function($$v) {
+                          _vm.isPaginationSimple = $$v
+                        },
+                        expression: "isPaginationSimple"
+                      }
+                    },
+                    [_vm._v("Simple pagination")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
           _c("b-table", {
             attrs: {
+              paginated: _vm.isPaginated,
+              "per-page": _vm.perPage,
+              "current-page": _vm.currentPage,
+              "pagination-simple": _vm.isPaginationSimple,
+              "pagination-position": _vm.paginationPosition,
               data: _vm.translation_object_strings,
               columns: _vm.columns,
               hoverable: true
+            },
+            on: {
+              "update:currentPage": function($event) {
+                _vm.currentPage = $event
+              },
+              "update:current-page": function($event) {
+                _vm.currentPage = $event
+              }
             }
           })
         ],
@@ -40129,6 +40236,11 @@ Building a better future, one line of code at a time.
 /* harmony default export */ var listvue_type_script_lang_js_ = ({
   data: function data() {
     return {
+      isPaginated: true,
+      isPaginationSimple: false,
+      paginationPosition: 'bottom',
+      currentPage: 1,
+      perPage: 5,
       translation_object_string: {
         label: '',
         es: '',
@@ -40140,22 +40252,28 @@ Building a better future, one line of code at a time.
       translation_object_strings: [],
       columns: [{
         field: 'id',
-        label: 'Id'
+        label: 'ID',
+        centered: true
       }, {
         field: 'label',
-        label: 'Entry'
+        label: 'Entry',
+        searchable: true
       }, {
         field: 'es',
-        label: 'Spanish'
+        label: 'Spanish',
+        searchable: true
       }, {
         field: 'en',
-        label: 'English'
+        label: 'English',
+        searchable: true
       }, {
         field: 'de',
-        label: 'German'
+        label: 'German',
+        searchable: true
       }, {
         field: 'fr',
-        label: 'French'
+        label: 'French',
+        searchable: true
       }]
     };
   },

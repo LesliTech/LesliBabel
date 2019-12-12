@@ -43,12 +43,11 @@ export default {
             translation_objects: [],
             columns: [{
                 field: 'id',
-                label: 'Id',
+                label: 'ID',
                 centered: true
             },{
                 field: 'method',
                 label: 'Method',
-                centered: true,
                 searchable: true
             },{
                 field: 'object_type',
@@ -81,17 +80,15 @@ export default {
                 translation_object: this.translation_object
             }).then(result => {
                 if (result.successful) {
-                this.$router.push('/')
+                window.location.reload('/translation_objects')
                 }
             }).catch(error => {
                 console.log(error)
             })
         },
         clickTranslationObject(translation_object){
-            this.goTo(`/translation_object_strings/`)
-        },
-        goTo(url){
-        this.$router.push(`${url}`);
+            this.$router.push(`/translation_object_strings/`)
+            window.location.reload('/babel/translation_objects')
         }
     }
 }
@@ -106,29 +103,27 @@ export default {
             </div>
             <div class="card-content">
                 <form @submit="postTranslationObject">
-                    <div class="field is-horizontal">
-                        <div class="field-body">
-                            <div class="field">
-                                <p class="control is-expanded">
-                                    <input class="input" type="text" placeholder="Method" v-model="translation_object.method">
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="control is-expanded">
-                                    <input class="input" type="text" placeholder="Method" v-model="translation_object.object_type">
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="control is-expanded">
-                                    <input class="input" type="text" placeholder="Section" v-model="translation_object.section">
-                                </p>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <button class="button is-primary">
-                                        Save
-                                    </button>
-                                </div>
+                    <div class="columns is-centered"> 
+                        <div class="column is-3">
+                            <p class="control is-expanded">
+                                <input class="input" type="text" placeholder="Method" v-model="translation_object.method">
+                            </p>
+                        </div>
+                        <div class="column is-3">
+                            <p class="control is-expanded">
+                                <input class="input" type="text" placeholder="Type" v-model="translation_object.object_type">
+                            </p>
+                        </div>
+                        <div class="column is-3">
+                            <p class="control is-expanded">
+                                <input class="input" type="text" placeholder="Section" v-model="translation_object.section">
+                            </p>
+                        </div>
+                        <div class="column is-1">
+                            <div class="control">
+                                <button class="button is-primary">
+                                    Save
+                                </button>
                             </div>
                         </div>
                     </div>

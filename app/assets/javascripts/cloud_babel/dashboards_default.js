@@ -37385,7 +37385,7 @@ Building a better future, one line of code at a time.
 // ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
 /* harmony default export */ var plugins_http = ({
-  install: function install(Vue, _options) {
+  install: function install(Vue, options) {
     // Get authentication token from rails
     var meta = document.querySelector('meta[name="csrf-token"]');
     var token = '';
@@ -37484,11 +37484,24 @@ function date_defineProperty(obj, key, value) { if (key in obj) { Object.defineP
       }
 
       return date.toLocaleDateString(I18n.currentLocale(), options);
+    }; //receives a Date object and returns its string representation
+
+
+    var toString = function toString(date) {
+      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      date = date.toISOString().substr(0, 10);
+
+      if (format) {
+        date = toLocalFormat(date);
+      }
+
+      return date;
     };
 
     Vue.prototype.date = {
       today: today,
-      toLocalFormat: toLocalFormat
+      toLocalFormat: toLocalFormat,
+      toString: toString
     };
   }
 });
