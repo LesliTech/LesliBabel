@@ -15,6 +15,10 @@ module CloudBabel
 
     # GET /translation_object_strings/1
     def show
+        respond_to do |format|
+            format.html { }
+            format.json { responseWithSuccessful(@translation_object_string) }
+        end
     end
 
     # GET /translation_object_strings/new
@@ -66,6 +70,9 @@ module CloudBabel
             :en,
             :de,
             :fr,
+            :id, 
+            :created_at, 
+            :updated_at,
             :cloud_babel_translation_objects_id
         )
       end

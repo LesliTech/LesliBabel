@@ -34,6 +34,7 @@ import app from 'LesliCloud/vue/app'
 // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 import appList from './apps/list.vue'
+import appEdit from './apps/edit.vue'
 
 
 // · Cloud app
@@ -41,4 +42,8 @@ import appList from './apps/list.vue'
 app("CloudBabel", "[index]", "/babel", [{
     path: '/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings',
     component: appList
-}])
+    },{
+    path: '/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings/:id/edit',
+    component: appEdit
+    }
+])
