@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 44);
+/******/ 	return __webpack_require__(__webpack_require__.s = 45);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -39869,7 +39869,8 @@ module.exports = new Utils
 /* 41 */,
 /* 42 */,
 /* 43 */,
-/* 44 */
+/* 44 */,
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -39972,97 +39973,12 @@ var render = function() {
         "div",
         { staticClass: "card-content" },
         [
-          _c(
-            "b-field",
-            { attrs: { grouped: "", "group-multiline": "" } },
-            [
-              _c(
-                "b-select",
-                {
-                  attrs: { disabled: !_vm.isPaginated },
-                  model: {
-                    value: _vm.perPage,
-                    callback: function($$v) {
-                      _vm.perPage = $$v
-                    },
-                    expression: "perPage"
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "5" } }, [
-                    _vm._v("5 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "10" } }, [
-                    _vm._v("10 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "15" } }, [
-                    _vm._v("15 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "20" } }, [
-                    _vm._v("20 per page")
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "control is-flex" },
-                [
-                  _c(
-                    "b-switch",
-                    {
-                      model: {
-                        value: _vm.isPaginated,
-                        callback: function($$v) {
-                          _vm.isPaginated = $$v
-                        },
-                        expression: "isPaginated"
-                      }
-                    },
-                    [_vm._v("Paginated")]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "control is-flex" },
-                [
-                  _c(
-                    "b-switch",
-                    {
-                      attrs: { disabled: !_vm.isPaginated },
-                      model: {
-                        value: _vm.isPaginationSimple,
-                        callback: function($$v) {
-                          _vm.isPaginationSimple = $$v
-                        },
-                        expression: "isPaginationSimple"
-                      }
-                    },
-                    [_vm._v("Simple pagination")]
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
           _c("b-table", {
             attrs: {
               paginated: _vm.isPaginated,
               "per-page": _vm.perPage,
               "current-page": _vm.currentPage,
-              "pagination-simple": _vm.isPaginationSimple,
-              "pagination-position": _vm.paginationPosition,
-              data: _vm.translations,
-              columns: _vm.columns,
-              hoverable: true
+              data: _vm.translations
             },
             on: {
               "update:currentPage": function($event) {
@@ -40070,9 +39986,101 @@ var render = function() {
               },
               "update:current-page": function($event) {
                 _vm.currentPage = $event
-              },
-              click: _vm.clickTranslation
-            }
+              }
+            },
+            scopedSlots: _vm._u([
+              {
+                key: "default",
+                fn: function(props) {
+                  return [
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "id",
+                          label: "ID",
+                          width: "40",
+                          numeric: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.id) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "module_name",
+                          label: "Module",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.module_name) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "class_name",
+                          label: "Class name",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.class_name) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("b-table-column", { attrs: { label: "Watch" } }, [
+                      _c(
+                        "a",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.clickTranslation(props.row.id)
+                            }
+                          }
+                        },
+                        [_c("b-icon", { attrs: { icon: "eye" } })],
+                        1
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("b-table-column", { attrs: { label: "Delete" } }, [
+                      _c(
+                        "a",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.DeleteTranslation(props.row.id)
+                            }
+                          }
+                        },
+                        [_c("b-icon", { attrs: { icon: "trash" } })],
+                        1
+                      )
+                    ])
+                  ]
+                }
+              }
+            ])
           })
         ],
         1
@@ -40151,10 +40159,8 @@ Building a better future, one line of code at a time.
   data: function data() {
     return {
       isPaginated: true,
-      isPaginationSimple: false,
-      paginationPosition: 'bottom',
       currentPage: 1,
-      perPage: 5,
+      perPage: 15,
       modules: [{
         'id': 1,
         'module_name': 'Lesli'
@@ -40182,20 +40188,7 @@ Building a better future, one line of code at a time.
         module_name: '',
         class_name: ''
       },
-      translations: [],
-      columns: [{
-        field: 'id',
-        label: 'ID',
-        centered: true
-      }, {
-        field: 'module_name',
-        label: 'Module',
-        searchable: true
-      }, {
-        field: 'class_name',
-        label: 'Class name',
-        searchable: true
-      }]
+      translations: []
     };
   },
   mounted: function mounted() {
@@ -40230,9 +40223,24 @@ Building a better future, one line of code at a time.
         console.log(error);
       });
     },
-    clickTranslation: function clickTranslation(translation) {
-      this.$router.push("/translations/".concat(translation.id, "/translation_objects"));
-      window.location.reload("/translations/".concat(translation.id, "/translation_objects"));
+    clickTranslation: function clickTranslation(translation_id) {
+      this.$router.push("/translations/".concat(translation_id, "/translation_objects"));
+      window.location.reload("/translations/".concat(translation_id, "/translation_objects"));
+    },
+    DeleteTranslation: function DeleteTranslation(translation_id) {
+      var _this2 = this;
+
+      this.http["delete"]("/babel/translations/".concat(translation_id, "/")).then(function (result) {
+        if (result.successful) {
+          window.location.reload("/translations");
+
+          _this2.alert("Translation deleted", 'success');
+        } else {
+          _this2.alert(result.error, 'danger');
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }
 });

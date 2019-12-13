@@ -29,10 +29,8 @@ export default {
     data() {
         return {
             isPaginated: true,
-            isPaginationSimple: false,
-            paginationPosition: 'bottom',
             currentPage: 1,
-            perPage: 5,
+            perPage: 50,
             translation_object_id: null,
             translation_id: null,
             translation_object_string: {
@@ -111,6 +109,10 @@ export default {
                 <h4 class="card-header-title">
                     Add new translation object string file
                 </h4>
+                <router-link :to="`/translations/${this.translation_id}/translation_objects`" class="card-header-icon">
+                    <i class="fas fa-undo"></i>
+                    Return
+                </router-link>
             </div>
             <div class="card-content">
                 <form @submit="postTranslationObjectString">
@@ -161,26 +163,10 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
-                <b-field grouped group-multiline>
-                    <b-select v-model="perPage" :disabled="!isPaginated">
-                        <option value="5">5 per page</option>
-                        <option value="10">10 per page</option>
-                        <option value="15">15 per page</option>
-                        <option value="20">20 per page</option>
-                    </b-select>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginated">Paginated</b-switch>
-                    </div>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginationSimple" :disabled="!isPaginated">Simple pagination</b-switch>
-                    </div>
-                </b-field>
                 <b-table
                     :paginated="isPaginated"
                     :per-page="perPage"
                     :current-page.sync="currentPage"
-                    :pagination-simple="isPaginationSimple"
-                    :pagination-position="paginationPosition"
                     :data="translation_object_strings"
                     :columns="columns"
                     :hoverable="true"

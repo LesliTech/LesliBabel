@@ -48,8 +48,11 @@ module CloudBabel
 
     # DELETE /translation_objects/1
     def destroy
-      @translation_object.destroy
-      redirect_to translation_objects_url, notice: 'Translation object was successfully destroyed.'
+        if @translation_object.destroy
+            responseWithSuccessful
+        else
+            responseWithError(@translation_object.errors.full_messages.to_sentence)
+        end  
     end
 
     private

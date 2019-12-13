@@ -39880,7 +39880,35 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("section", { staticClass: "section" }, [
     _c("div", { staticClass: "card" }, [
-      _vm._m(0),
+      _c(
+        "div",
+        { staticClass: "card-header" },
+        [
+          _c("h4", { staticClass: "card-header-title" }, [
+            _vm._v(
+              "\n                Add new translation object string file\n            "
+            )
+          ]),
+          _vm._v(" "),
+          _c(
+            "router-link",
+            {
+              staticClass: "card-header-icon",
+              attrs: {
+                to:
+                  "/translations/" +
+                  this.translation_id +
+                  "/translation_objects"
+              }
+            },
+            [
+              _c("i", { staticClass: "fas fa-undo" }),
+              _vm._v("\n                Return\n            ")
+            ]
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c("div", { staticClass: "card-content" }, [
         _c("form", { on: { submit: _vm.postTranslationObjectString } }, [
@@ -40036,7 +40064,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(1)
+              _vm._m(0)
             ])
           ])
         ])
@@ -40046,100 +40074,17 @@ var render = function() {
     _c("br"),
     _vm._v(" "),
     _c("div", { staticClass: "card" }, [
-      _vm._m(2),
+      _vm._m(1),
       _vm._v(" "),
       _c(
         "div",
         { staticClass: "card-content" },
         [
-          _c(
-            "b-field",
-            { attrs: { grouped: "", "group-multiline": "" } },
-            [
-              _c(
-                "b-select",
-                {
-                  attrs: { disabled: !_vm.isPaginated },
-                  model: {
-                    value: _vm.perPage,
-                    callback: function($$v) {
-                      _vm.perPage = $$v
-                    },
-                    expression: "perPage"
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "5" } }, [
-                    _vm._v("5 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "10" } }, [
-                    _vm._v("10 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "15" } }, [
-                    _vm._v("15 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "20" } }, [
-                    _vm._v("20 per page")
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "control is-flex" },
-                [
-                  _c(
-                    "b-switch",
-                    {
-                      model: {
-                        value: _vm.isPaginated,
-                        callback: function($$v) {
-                          _vm.isPaginated = $$v
-                        },
-                        expression: "isPaginated"
-                      }
-                    },
-                    [_vm._v("Paginated")]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "control is-flex" },
-                [
-                  _c(
-                    "b-switch",
-                    {
-                      attrs: { disabled: !_vm.isPaginated },
-                      model: {
-                        value: _vm.isPaginationSimple,
-                        callback: function($$v) {
-                          _vm.isPaginationSimple = $$v
-                        },
-                        expression: "isPaginationSimple"
-                      }
-                    },
-                    [_vm._v("Simple pagination")]
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
           _c("b-table", {
             attrs: {
               paginated: _vm.isPaginated,
               "per-page": _vm.perPage,
               "current-page": _vm.currentPage,
-              "pagination-simple": _vm.isPaginationSimple,
-              "pagination-position": _vm.paginationPosition,
               data: _vm.translation_object_strings,
               columns: _vm.columns,
               hoverable: true
@@ -40161,18 +40106,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h4", { staticClass: "card-header-title" }, [
-        _vm._v(
-          "\n                Add new translation object string file\n            "
-        )
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -40233,10 +40166,8 @@ Building a better future, one line of code at a time.
   data: function data() {
     return {
       isPaginated: true,
-      isPaginationSimple: false,
-      paginationPosition: 'bottom',
       currentPage: 1,
-      perPage: 5,
+      perPage: 50,
       translation_object_id: null,
       translation_id: null,
       translation_object_string: {
@@ -40347,199 +40278,301 @@ var editvue_type_template_id_0ba75cdd_render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("section", { staticClass: "section" }, [
-    _c("div", { staticClass: "card" }, [
-      _vm._m(0),
+  return _c(
+    "section",
+    { staticClass: "section" },
+    [
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            active: _vm.modal.active,
+            "has-modal-card": "",
+            "trap-focus": "",
+            "aria-role": "dialog",
+            "aria-modal": ""
+          },
+          on: {
+            "update:active": function($event) {
+              return _vm.$set(_vm.modal, "active", $event)
+            }
+          }
+        },
+        [
+          _c("div", { staticClass: "card" }, [
+            _c("div", { staticClass: "card-header is-danger" }, [
+              _c("h2", { staticClass: "card-header-title" }, [
+                _vm._v("\n                    Delete\n                ")
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-content" }, [
+              _vm._v(
+                "\n                Are you sure to delete this translation?\n            "
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-footer has-text-right" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "card-footer-item button is-danger",
+                  on: { click: _vm.DeleteTranslationObjectStrings }
+                },
+                [_vm._v("\n                    Yes\n                ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "card-footer-item button is-secondary",
+                  on: {
+                    click: function($event) {
+                      _vm.modal.active = false
+                    }
+                  }
+                },
+                [_vm._v("\n                    Cancel\n                ")]
+              )
+            ])
+          ])
+        ]
+      ),
       _vm._v(" "),
-      _c("div", { staticClass: "card-content" }, [
-        _c("form", { on: { submit: _vm.PutTranslationObjectStrings } }, [
-          _c("div", { staticClass: "field is-horizontal" }, [
-            _c("div", { staticClass: "field-body" }, [
-              _c("div", { staticClass: "field" }, [
-                _c("p", { staticClass: "control is-expanded" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.translation_object_string.label,
-                        expression: "translation_object_string.label"
-                      }
-                    ],
-                    staticClass: "input",
-                    attrs: { type: "text", required: "", placeholder: "Entry" },
-                    domProps: { value: _vm.translation_object_string.label },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+      _c("div", { staticClass: "card" }, [
+        _c(
+          "div",
+          { staticClass: "card-header" },
+          [
+            _c("h4", { staticClass: "card-header-title" }, [
+              _vm._v(
+                "\n                Edit translation object string\n            "
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "card-header-icon",
+                on: {
+                  click: function($event) {
+                    _vm.modal.active = true
+                  }
+                }
+              },
+              [
+                _c("i", { staticClass: "fas fa-eraser" }),
+                _vm._v("\n                Delete\n            ")
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "router-link",
+              {
+                staticClass: "card-header-icon",
+                attrs: {
+                  to:
+                    "/translations/" +
+                    this.translation_id +
+                    "/translation_objects/" +
+                    this.translation_object_id +
+                    "/translation_object_strings/"
+                }
+              },
+              [
+                _c("i", { staticClass: "fas fa-undo" }),
+                _vm._v("\n                Return\n            ")
+              ]
+            )
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-content" }, [
+          _c("form", { on: { submit: _vm.PutTranslationObjectStrings } }, [
+            _c("div", { staticClass: "field is-horizontal" }, [
+              _c("div", { staticClass: "field-body" }, [
+                _c("div", { staticClass: "field" }, [
+                  _c("p", { staticClass: "control is-expanded" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.translation_object_string.label,
+                          expression: "translation_object_string.label"
                         }
-                        _vm.$set(
-                          _vm.translation_object_string,
-                          "label",
-                          $event.target.value
-                        )
-                      }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "field" }, [
-                _c("p", { staticClass: "control is-expanded" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.translation_object_string.es,
-                        expression: "translation_object_string.es"
-                      }
-                    ],
-                    staticClass: "input",
-                    attrs: {
-                      type: "text",
-                      required: "",
-                      placeholder: "Spanish"
-                    },
-                    domProps: { value: _vm.translation_object_string.es },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                      ],
+                      staticClass: "input",
+                      attrs: {
+                        type: "text",
+                        required: "",
+                        placeholder: "Entry"
+                      },
+                      domProps: { value: _vm.translation_object_string.label },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.translation_object_string,
+                            "label",
+                            $event.target.value
+                          )
                         }
-                        _vm.$set(
-                          _vm.translation_object_string,
-                          "es",
-                          $event.target.value
-                        )
                       }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "field" }, [
-                _c("p", { staticClass: "control is-expanded" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.translation_object_string.en,
-                        expression: "translation_object_string.en"
-                      }
-                    ],
-                    staticClass: "input",
-                    attrs: {
-                      type: "text",
-                      required: "",
-                      placeholder: "English"
-                    },
-                    domProps: { value: _vm.translation_object_string.en },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "field" }, [
+                  _c("p", { staticClass: "control is-expanded" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.translation_object_string.es,
+                          expression: "translation_object_string.es"
                         }
-                        _vm.$set(
-                          _vm.translation_object_string,
-                          "en",
-                          $event.target.value
-                        )
-                      }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "field" }, [
-                _c("p", { staticClass: "control is-expanded" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.translation_object_string.de,
-                        expression: "translation_object_string.de"
-                      }
-                    ],
-                    staticClass: "input",
-                    attrs: {
-                      type: "text",
-                      required: "",
-                      placeholder: "German"
-                    },
-                    domProps: { value: _vm.translation_object_string.de },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                      ],
+                      staticClass: "input",
+                      attrs: {
+                        type: "text",
+                        required: "",
+                        placeholder: "Spanish"
+                      },
+                      domProps: { value: _vm.translation_object_string.es },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.translation_object_string,
+                            "es",
+                            $event.target.value
+                          )
                         }
-                        _vm.$set(
-                          _vm.translation_object_string,
-                          "de",
-                          $event.target.value
-                        )
                       }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "field" }, [
-                _c("p", { staticClass: "control is-expanded" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.translation_object_string.fr,
-                        expression: "translation_object_string.fr"
-                      }
-                    ],
-                    staticClass: "input",
-                    attrs: {
-                      type: "text",
-                      required: "",
-                      placeholder: "French"
-                    },
-                    domProps: { value: _vm.translation_object_string.fr },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "field" }, [
+                  _c("p", { staticClass: "control is-expanded" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.translation_object_string.en,
+                          expression: "translation_object_string.en"
                         }
-                        _vm.$set(
-                          _vm.translation_object_string,
-                          "fr",
-                          $event.target.value
-                        )
+                      ],
+                      staticClass: "input",
+                      attrs: {
+                        type: "text",
+                        required: "",
+                        placeholder: "English"
+                      },
+                      domProps: { value: _vm.translation_object_string.en },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.translation_object_string,
+                            "en",
+                            $event.target.value
+                          )
+                        }
                       }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _vm._m(1)
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "field" }, [
+                  _c("p", { staticClass: "control is-expanded" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.translation_object_string.de,
+                          expression: "translation_object_string.de"
+                        }
+                      ],
+                      staticClass: "input",
+                      attrs: {
+                        type: "text",
+                        required: "",
+                        placeholder: "German"
+                      },
+                      domProps: { value: _vm.translation_object_string.de },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.translation_object_string,
+                            "de",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "field" }, [
+                  _c("p", { staticClass: "control is-expanded" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.translation_object_string.fr,
+                          expression: "translation_object_string.fr"
+                        }
+                      ],
+                      staticClass: "input",
+                      attrs: {
+                        type: "text",
+                        required: "",
+                        placeholder: "French"
+                      },
+                      domProps: { value: _vm.translation_object_string.fr },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.translation_object_string,
+                            "fr",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ])
+                ]),
+                _vm._v(" "),
+                _vm._m(0)
+              ])
             ])
           ])
         ])
       ])
-    ])
-  ])
+    ],
+    1
+  )
 }
 var editvue_type_template_id_0ba75cdd_staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h4", { staticClass: "card-header-title" }, [
-        _vm._v("\n                Edit translation object string\n            ")
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -40591,10 +40624,19 @@ Building a better future, one line of code at a time.
 /* harmony default export */ var editvue_type_script_lang_js_ = ({
   data: function data() {
     return {
+      props: {
+        isEditable: {
+          type: Boolean,
+          "default": true
+        }
+      },
       translation_object_string_id: null,
       translation_object_id: null,
       translation_id: null,
-      translation_object_string: {}
+      translation_object_string: {},
+      modal: {
+        active: false
+      }
     };
   },
   mounted: function mounted() {
@@ -40629,6 +40671,21 @@ Building a better future, one line of code at a time.
           _this2.alert("Translation object string updated successfuly");
 
           _this2.$router.push("/translations/".concat(_this2.translation_id, "/translation_objects/").concat(_this2.translation_object_id, "/translation_object_strings"));
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    DeleteTranslationObjectStrings: function DeleteTranslationObjectStrings() {
+      var _this3 = this;
+
+      this.http["delete"]("/babel/translations/".concat(this.translation_id, "/translation_objects/").concat(this.translation_object_id, "/translation_object_strings/").concat(this.translation_object_string_id)).then(function (result) {
+        if (result.successful) {
+          _this3.$router.push("/translations/".concat(_this3.translation_id, "/translation_objects/").concat(_this3.translation_object_id, "/translation_object_strings"));
+
+          _this3.alert("Translation deleted", 'success');
+        } else {
+          _this3.alert(result.error, 'danger');
         }
       })["catch"](function (error) {
         console.log(error);

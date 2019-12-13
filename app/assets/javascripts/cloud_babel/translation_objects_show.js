@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 41);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -39865,16 +39865,312 @@ module.exports = new Utils
 
 /***/ }),
 /* 39 */,
-/* 40 */,
-/* 41 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var LesliCloud_vue_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
+
+// EXTERNAL MODULE: ./app/vue/app.js + 93 modules
+var app = __webpack_require__(19);
+
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=template&id=2dee73cd&
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("section", { staticClass: "section" }, [
+    _c("div", { staticClass: "card" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-content" }, [
+        _c("form", { on: { submit: _vm.postTranslationObject } }, [
+          _c("div", { staticClass: "columns is-centered" }, [
+            _c("div", { staticClass: "column is-3" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.translation_object.method,
+                      expression: "translation_object.method"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Method" },
+                  domProps: { value: _vm.translation_object.method },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.translation_object,
+                        "method",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column is-3" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.translation_object.object_type,
+                      expression: "translation_object.object_type"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Type" },
+                  domProps: { value: _vm.translation_object.object_type },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.translation_object,
+                        "object_type",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column is-3" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.translation_object.section,
+                      expression: "translation_object.section"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Section" },
+                  domProps: { value: _vm.translation_object.section },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.translation_object,
+                        "section",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _vm._m(1)
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("div", { staticClass: "card" }, [
+      _vm._m(2),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "card-content" },
+        [
+          _c("b-table", {
+            attrs: {
+              paginated: _vm.isPaginated,
+              "per-page": _vm.perPage,
+              "current-page": _vm.currentPage,
+              data: _vm.translation_objects
+            },
+            on: {
+              "update:currentPage": function($event) {
+                _vm.currentPage = $event
+              },
+              "update:current-page": function($event) {
+                _vm.currentPage = $event
+              }
+            },
+            scopedSlots: _vm._u([
+              {
+                key: "default",
+                fn: function(props) {
+                  return [
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "id",
+                          label: "ID",
+                          width: "40",
+                          numeric: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.id) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "method",
+                          label: "Method",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.method) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "object_type",
+                          label: "Type",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.object_type) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "section",
+                          label: "Section",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.section) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("b-table-column", { attrs: { label: "Watch" } }, [
+                      _c(
+                        "a",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.clickTranslationObject(props.row.id)
+                            }
+                          }
+                        },
+                        [_c("b-icon", { attrs: { icon: "eye" } })],
+                        1
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("b-table-column", { attrs: { label: "Delete" } }, [
+                      _c(
+                        "a",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.DeleteTranslationObject(props.row.id)
+                            }
+                          }
+                        },
+                        [_c("b-icon", { attrs: { icon: "trash" } })],
+                        1
+                      )
+                    ])
+                  ]
+                }
+              }
+            ])
+          })
+        ],
+        1
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v("\n                Add new translation file\n            ")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "column is-1" }, [
+      _c("div", { staticClass: "control" }, [
+        _c("button", { staticClass: "button is-primary" }, [
+          _vm._v(
+            "\n                                Save\n                            "
+          )
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v("\n                All the files\n            ")
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=template&id=2dee73cd&
+
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib??ref--3!./node_modules/vue-loader/lib??vue-loader-options!./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=script&lang=js&
 /*
 Lesli
+
 Copyright (c) 2019, Lesli Technologies, S. A.
+
 All the information provided by this website is protected by laws of Guatemala related 
 to industrial property, intellectual property, copyright and relative international laws. 
 Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
@@ -39882,12 +40178,143 @@ rights of the code, texts, trade mark, design, pictures and any other informatio
 Without the written permission of Lesli Technologies, S. A., any replication, modification,
 transmission, publication is strictly forbidden.
 For more information read the license file including with this software.
+
 LesliCloud - Your Smart Business Assistant
+
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
+
 @author   LesliTech <hello@lesli.tech>
 @license  Propietary - all rights reserved.
 @version  0.1.0-alpha
+
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+// · 
+*/
+/* harmony default export */ var listvue_type_script_lang_js_ = ({
+  data: function data() {
+    return {
+      modal: {
+        active: false
+      },
+      isPaginated: true,
+      currentPage: 1,
+      perPage: 15,
+      translation_id: null,
+      translation_object: {
+        method: '',
+        object_type: '',
+        section: '',
+        cloud_babel_translations_id: this.$route.params.translation_id
+      },
+      translation_objects: []
+    };
+  },
+  mounted: function mounted() {
+    this.translation_id = this.$route.params.translation_id;
+    this.getTranslationObjects();
+  },
+  methods: {
+    getTranslationObjects: function getTranslationObjects() {
+      var _this = this;
+
+      this.http.get("/babel/translations/".concat(this.translation_id, "/translation_objects.json")).then(function (result) {
+        if (!result.successful) {
+          return;
+        }
+
+        _this.translation_objects = result.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    postTranslationObject: function postTranslationObject(e) {
+      if (e) {
+        e.preventDefault();
+      }
+
+      this.http.post('/babel/translations/:translation_id/translation_objects', {
+        translation_object: this.translation_object
+      }).then(function (result) {
+        if (result.successful) {
+          window.location.reload('/translations/:translation_id/translation_objects');
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    clickTranslationObject: function clickTranslationObject(translation_object_id) {
+      this.$router.push("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
+      window.location.reload("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
+    },
+    DeleteTranslationObject: function DeleteTranslationObject(translation_object_id) {
+      var _this2 = this;
+
+      this.http["delete"]("/babel/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id)).then(function (result) {
+        if (result.successful) {
+          window.location.reload("/translations/".concat(_this2.translation_id, "/translation_objects"));
+
+          _this2.alert("Translation deleted", 'success');
+        } else {
+          _this2.alert(result.error, 'danger');
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    }
+  }
+});
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/apps/list.vue?vue&type=script&lang=js&
+ /* harmony default export */ var apps_listvue_type_script_lang_js_ = (listvue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(2);
+
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/apps/list.vue
+
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  apps_listvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "engines/CloudBabel/app/vue/translation_objects/apps/list.vue"
+/* harmony default export */ var list = (component.exports);
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translation_objects/index.js
+/*
+Lesli
+
+Copyright (c) 2019, Lesli Technologies, S. A.
+
+All the information provided by this website is protected by laws of Guatemala related 
+to industrial property, intellectual property, copyright and relative international laws. 
+Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
+rights of the code, texts, trade mark, design, pictures and any other information.
+Without the written permission of Lesli Technologies, S. A., any replication, modification,
+transmission, publication is strictly forbidden.
+For more information read the license file including with this software.
+
+LesliCloud - Your Smart Business Assistant
+
+Powered by https://www.lesli.tech
+Building a better future, one line of code at a time.
+
+@author   LesliTech <hello@lesli.tech>
+@license  Propietary - all rights reserved.
+@version  0.1.0-alpha
+
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
 */
@@ -39895,10 +40322,24 @@ Building a better future, one line of code at a time.
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
  // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-// · Cloud app
+
+ // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
-Object(LesliCloud_vue_app__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])("CloudBabel", "[]", "/babel", []);
+Object(app["a" /* default */])("CloudBabel", "[index]", "/babel", [{
+  path: '/translations/:translation_id/translation_objects',
+  component: list
+}]);
+
+/***/ }),
+/* 41 */,
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(40);
+
 
 /***/ })
 /******/ ]);

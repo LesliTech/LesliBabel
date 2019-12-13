@@ -29,10 +29,8 @@ export default {
     data() {
         return {
             isPaginated: true,
-            isPaginationSimple: false,
-            paginationPosition: 'bottom',
             currentPage: 1,
-            perPage: 5,
+            perPage: 15,
             modules: [
                 { 'id': 1, 'module_name': 'Lesli'},
                 { 'id': 2, 'module_name': 'Help'},
@@ -48,19 +46,6 @@ export default {
                 class_name: ''
             },
             translations: [],
-            columns: [{
-                field: 'id',
-                label: 'ID',
-                centered: true
-            },{
-                field: 'module_name',
-                label:'Module',
-                searchable: true,
-            }, {
-                field: 'class_name',
-                label: 'Class name',
-                searchable: true,
-            }]
         }
     },
     mounted() {
@@ -89,10 +74,22 @@ export default {
                 console.log(error)
             })
         },
-        clickTranslation(translation){
-            this.$router.push(`/translations/${translation.id}/translation_objects`)
-            window.location.reload(`/translations/${translation.id}/translation_objects`)
+        clickTranslation(translation_id){
+            this.$router.push(`/translations/${translation_id}/translation_objects`)
+            window.location.reload(`/translations/${translation_id}/translation_objects`)
         },
+        DeleteTranslation(translation_id){
+            this.http.delete(`/babel/translations/${translation_id}/`).then(result => {
+                if(result.successful){
+                    window.location.reload(`/translations`)
+                    this.alert("Translation deleted", 'success' )
+                } else {
+                    this.alert(result.error,'danger')
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+        }
     }
 }
 </script>
@@ -141,30 +138,34 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
-                <b-field grouped group-multiline>
-                    <b-select v-model="perPage" :disabled="!isPaginated">
-                        <option value="5">5 per page</option>
-                        <option value="10">10 per page</option>
-                        <option value="15">15 per page</option>
-                        <option value="20">20 per page</option>
-                    </b-select>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginated">Paginated</b-switch>
-                    </div>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginationSimple" :disabled="!isPaginated">Simple pagination</b-switch>
-                    </div>
-                </b-field>
                 <b-table
                     :paginated="isPaginated"
                     :per-page="perPage"
                     :current-page.sync="currentPage"
-                    :pagination-simple="isPaginationSimple"
-                    :pagination-position="paginationPosition"
-                    :data="translations"
-                    :columns="columns"
-                    :hoverable="true"
-                    @click="clickTranslation">
+                    :data="translations">
+                    <template v-slot="props">
+                        <b-table-column field="id" label="ID" width="40"  numeric>
+                            {{ props.row.id }}
+                        </b-table-column>
+                        <b-table-column field="module_name" label="Module" searchable >
+                            {{ props.row.module_name }}
+                        </b-table-column>
+                        <b-table-column field="class_name" label="Class name"  searchable>
+                            {{ props.row.class_name }}
+                        </b-table-column>
+                        <b-table-column label="Watch" >
+                            <a @click="clickTranslation(props.row.id)"
+                            >
+                            <b-icon icon="eye"/>
+                            </a>
+                        </b-table-column>
+                        <b-table-column label="Delete" >
+                            <a @click="DeleteTranslation(props.row.id)"
+                            >
+                            <b-icon icon="trash"/>
+                            </a>
+                        </b-table-column>
+                    </template>
                 </b-table>
             </div>
         </div>

@@ -29,11 +29,12 @@ Building a better future, one line of code at a time.
 export default {
     data() {
         return {
+            modal:{
+                active:false
+            },
             isPaginated: true,
-            isPaginationSimple: false,
-            paginationPosition: 'bottom',
             currentPage: 1,
-            perPage: 5,
+            perPage: 15,
             translation_id: null,
             translation_object: {
                 method: '',
@@ -42,23 +43,6 @@ export default {
                 cloud_babel_translations_id: this.$route.params.translation_id
             },
             translation_objects: [],
-            columns: [{
-                field: 'id',
-                label: 'ID',
-                centered: true
-            },{
-                field: 'method',
-                label: 'Method',
-                searchable: true
-            },{
-                field: 'object_type',
-                label: 'Type',
-                searchable: true
-            },{
-                field: 'section',
-                label: 'Section',
-                searchable: true
-            }],
         }
     },
     mounted() {
@@ -88,10 +72,21 @@ export default {
                 console.log(error)
             })
         },
-        clickTranslationObject(translation_object){
-            this.$router.push(`/translations/${this.translation_id}/translation_objects/${translation_object.id}/translation_object_strings`)
-            window.location.reload(`/translations/${this.translation_id}/translation_objects/${translation_object.id}/translation_object_strings`)
-
+        clickTranslationObject(translation_object_id){
+            this.$router.push(`/translations/${this.translation_id}/translation_objects/${translation_object_id}/translation_object_strings`)
+            window.location.reload(`/translations/${this.translation_id}/translation_objects/${translation_object_id}/translation_object_strings`)
+        },
+        DeleteTranslationObject(translation_object_id){
+            this.http.delete(`/babel/translations/${this.translation_id}/translation_objects/${translation_object_id}`).then(result => {
+                if(result.successful){
+                    window.location.reload(`/translations/${this.translation_id}/translation_objects`)
+                    this.alert("Translation deleted", 'success' )
+                } else {
+                    this.alert(result.error,'danger')
+                }
+            }).catch(error => {
+                console.log(error)
+            })
         }
     }
 }
@@ -141,31 +136,40 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
-                <b-field grouped group-multiline>
-                    <b-select v-model="perPage" :disabled="!isPaginated">
-                        <option value="5">5 per page</option>
-                        <option value="10">10 per page</option>
-                        <option value="15">15 per page</option>
-                        <option value="20">20 per page</option>
-                    </b-select>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginated">Paginated</b-switch>
-                    </div>
-                    <div class="control is-flex">
-                        <b-switch v-model="isPaginationSimple" :disabled="!isPaginated">Simple pagination</b-switch>
-                    </div>
-                </b-field>
                 <b-table
                     :paginated="isPaginated"
                     :per-page="perPage"
                     :current-page.sync="currentPage"
-                    :pagination-simple="isPaginationSimple"
-                    :pagination-position="paginationPosition"
                     :data="translation_objects"
-                    :columns="columns"
-                    :hoverable="true"
-                    @click="clickTranslationObject">
+                    >
+                    <template v-slot="props">
+                        <b-table-column field="id" label="ID" width="40"  numeric>
+                            {{ props.row.id }}
+                        </b-table-column>
+                        <b-table-column field="method" label="Method" searchable >
+                            {{ props.row.method }}
+                        </b-table-column>
+                        <b-table-column field="object_type" label="Type"  searchable>
+                            {{ props.row.object_type }}
+                        </b-table-column>
+                        <b-table-column field="section" label="Section"  searchable >
+                            {{ props.row.section }}
+                        </b-table-column>
+                        <b-table-column label="Watch" >
+                            <a @click="clickTranslationObject(props.row.id)"
+                            >
+                            <b-icon icon="eye"/>
+                            </a>
+                        </b-table-column>
+                        <b-table-column label="Delete" >
+                            <a @click="DeleteTranslationObject(props.row.id)"
+                            >
+                            <b-icon icon="trash"/>
+                            </a>
+                        </b-table-column>
+                    </template>
                 </b-table>
+                
             </div>
         </div>
     </section>

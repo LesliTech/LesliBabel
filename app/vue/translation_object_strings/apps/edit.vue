@@ -29,10 +29,19 @@ Building a better future, one line of code at a time.
 export default {
     data(){
         return{
+            props: {
+                isEditable: {
+                    type: Boolean,
+                    default: true
+                }
+            },
             translation_object_string_id: null,
             translation_object_id: null,
             translation_id: null,
-            translation_object_string: {}
+            translation_object_string: {},
+            modal:{
+                active: false
+            }
         }
     },
     mounted(){
@@ -64,16 +73,62 @@ export default {
                 console.log(error)
             })
         },
+        DeleteTranslationObjectStrings(){
+            this.http.delete(`/babel/translations/${this.translation_id}/translation_objects/${this.translation_object_id}/translation_object_strings/${this.translation_object_string_id}`).then(result => {
+                if(result.successful){
+                    this.$router.push(`/translations/${this.translation_id}/translation_objects/${this.translation_object_id}/translation_object_strings`)
+                    this.alert("Translation deleted", 'success' )
+                } else {
+                    this.alert(result.error,'danger')
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+        }
    }
 }
 </script>
 <template>
     <section class="section">
+        <b-modal
+            :active.sync="modal.active"
+            has-modal-card
+            trap-focus
+            aria-role="dialog"
+            aria-modal
+            >
+              <div class="card">
+                <div class="card-header is-danger">
+                    <h2 class="card-header-title">
+                        Delete
+                    </h2>
+                </div>
+                <div class="card-content">
+                    Are you sure to delete this translation?
+                </div>
+                <div class="card-footer has-text-right">
+                    <button class="card-footer-item button is-danger" @click="DeleteTranslationObjectStrings">
+                        Yes
+                    </button>
+                    <button class="card-footer-item button is-secondary" @click="modal.active=false">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </b-modal>
         <div class="card">
             <div class="card-header">
                 <h4 class="card-header-title">
                     Edit translation object string
                 </h4>
+                <a class="card-header-icon" @click="modal.active = true">
+                    <i class="fas fa-eraser"></i>
+                    Delete
+                </a>
+                <router-link :to="`/translations/${this.translation_id}/translation_objects/${this.translation_object_id}/translation_object_strings/`" class="card-header-icon">
+                    <i class="fas fa-undo"></i>
+                    Return
+                </router-link>
             </div>
             <div class="card-content">
                 <form @submit="PutTranslationObjectStrings">

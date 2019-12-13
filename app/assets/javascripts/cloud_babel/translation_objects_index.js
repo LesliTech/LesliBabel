@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 43);
+/******/ 	return __webpack_require__(__webpack_require__.s = 40);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -39865,10 +39865,7 @@ module.exports = new Utils
 
 /***/ }),
 /* 39 */,
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -39994,97 +39991,12 @@ var render = function() {
         "div",
         { staticClass: "card-content" },
         [
-          _c(
-            "b-field",
-            { attrs: { grouped: "", "group-multiline": "" } },
-            [
-              _c(
-                "b-select",
-                {
-                  attrs: { disabled: !_vm.isPaginated },
-                  model: {
-                    value: _vm.perPage,
-                    callback: function($$v) {
-                      _vm.perPage = $$v
-                    },
-                    expression: "perPage"
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "5" } }, [
-                    _vm._v("5 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "10" } }, [
-                    _vm._v("10 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "15" } }, [
-                    _vm._v("15 per page")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "20" } }, [
-                    _vm._v("20 per page")
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "control is-flex" },
-                [
-                  _c(
-                    "b-switch",
-                    {
-                      model: {
-                        value: _vm.isPaginated,
-                        callback: function($$v) {
-                          _vm.isPaginated = $$v
-                        },
-                        expression: "isPaginated"
-                      }
-                    },
-                    [_vm._v("Paginated")]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "control is-flex" },
-                [
-                  _c(
-                    "b-switch",
-                    {
-                      attrs: { disabled: !_vm.isPaginated },
-                      model: {
-                        value: _vm.isPaginationSimple,
-                        callback: function($$v) {
-                          _vm.isPaginationSimple = $$v
-                        },
-                        expression: "isPaginationSimple"
-                      }
-                    },
-                    [_vm._v("Simple pagination")]
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
           _c("b-table", {
             attrs: {
               paginated: _vm.isPaginated,
               "per-page": _vm.perPage,
               "current-page": _vm.currentPage,
-              "pagination-simple": _vm.isPaginationSimple,
-              "pagination-position": _vm.paginationPosition,
-              data: _vm.translation_objects,
-              columns: _vm.columns,
-              hoverable: true
+              data: _vm.translation_objects
             },
             on: {
               "update:currentPage": function($event) {
@@ -40092,9 +40004,119 @@ var render = function() {
               },
               "update:current-page": function($event) {
                 _vm.currentPage = $event
-              },
-              click: _vm.clickTranslationObject
-            }
+              }
+            },
+            scopedSlots: _vm._u([
+              {
+                key: "default",
+                fn: function(props) {
+                  return [
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "id",
+                          label: "ID",
+                          width: "40",
+                          numeric: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.id) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "method",
+                          label: "Method",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.method) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "object_type",
+                          label: "Type",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.object_type) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      {
+                        attrs: {
+                          field: "section",
+                          label: "Section",
+                          searchable: ""
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.section) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("b-table-column", { attrs: { label: "Watch" } }, [
+                      _c(
+                        "a",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.clickTranslationObject(props.row.id)
+                            }
+                          }
+                        },
+                        [_c("b-icon", { attrs: { icon: "eye" } })],
+                        1
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("b-table-column", { attrs: { label: "Delete" } }, [
+                      _c(
+                        "a",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.DeleteTranslationObject(props.row.id)
+                            }
+                          }
+                        },
+                        [_c("b-icon", { attrs: { icon: "trash" } })],
+                        1
+                      )
+                    ])
+                  ]
+                }
+              }
+            ])
           })
         ],
         1
@@ -40172,11 +40194,12 @@ Building a better future, one line of code at a time.
 /* harmony default export */ var listvue_type_script_lang_js_ = ({
   data: function data() {
     return {
+      modal: {
+        active: false
+      },
       isPaginated: true,
-      isPaginationSimple: false,
-      paginationPosition: 'bottom',
       currentPage: 1,
-      perPage: 5,
+      perPage: 15,
       translation_id: null,
       translation_object: {
         method: '',
@@ -40184,24 +40207,7 @@ Building a better future, one line of code at a time.
         section: '',
         cloud_babel_translations_id: this.$route.params.translation_id
       },
-      translation_objects: [],
-      columns: [{
-        field: 'id',
-        label: 'ID',
-        centered: true
-      }, {
-        field: 'method',
-        label: 'Method',
-        searchable: true
-      }, {
-        field: 'object_type',
-        label: 'Type',
-        searchable: true
-      }, {
-        field: 'section',
-        label: 'Section',
-        searchable: true
-      }]
+      translation_objects: []
     };
   },
   mounted: function mounted() {
@@ -40237,9 +40243,24 @@ Building a better future, one line of code at a time.
         console.log(error);
       });
     },
-    clickTranslationObject: function clickTranslationObject(translation_object) {
-      this.$router.push("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object.id, "/translation_object_strings"));
-      window.location.reload("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object.id, "/translation_object_strings"));
+    clickTranslationObject: function clickTranslationObject(translation_object_id) {
+      this.$router.push("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
+      window.location.reload("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
+    },
+    DeleteTranslationObject: function DeleteTranslationObject(translation_object_id) {
+      var _this2 = this;
+
+      this.http["delete"]("/babel/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id)).then(function (result) {
+        if (result.successful) {
+          window.location.reload("/translations/".concat(_this2.translation_id, "/translation_objects"));
+
+          _this2.alert("Translation deleted", 'success');
+        } else {
+          _this2.alert(result.error, 'danger');
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }
 });
