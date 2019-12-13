@@ -25,7 +25,6 @@ Building a better future, one line of code at a time.
 // · 
 */
 
-
 export default {
     data() {
         return {
@@ -99,6 +98,9 @@ export default {
                 console.log(error)
             })
         },
+        clickTranslationObjectString(translation_object_string){
+            this.$router.push(`/translations/${this.translation_id}/translation_objects/${this.translation_object_id}/translation_object_strings/${translation_object_string.id}/edit`)
+        }
     }
 }
 </script>
@@ -107,7 +109,7 @@ export default {
         <div class="card">
             <div class="card-header">
                 <h4 class="card-header-title">
-                    Add new translation file
+                    Add new translation object string file
                 </h4>
             </div>
             <div class="card-content">
@@ -181,7 +183,8 @@ export default {
                     :pagination-position="paginationPosition"
                     :data="translation_object_strings"
                     :columns="columns"
-                    :hoverable="true">
+                    :hoverable="true"
+                    @click="clickTranslationObjectString">
                 </b-table>
             </div>
         </div>
