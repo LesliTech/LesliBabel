@@ -39886,7 +39886,7 @@ var render = function() {
         [
           _c("h4", { staticClass: "card-header-title" }, [
             _vm._v(
-              "\n                Add new translation object string file\n            "
+              "\n                Add new translation object string at file\n            "
             )
           ]),
           _vm._v(" "),
@@ -40226,6 +40226,8 @@ Building a better future, one line of code at a time.
       });
     },
     postTranslationObjectString: function postTranslationObjectString(e) {
+      var _this2 = this;
+
       if (e) {
         e.preventDefault();
       }
@@ -40234,7 +40236,9 @@ Building a better future, one line of code at a time.
         translation_object_string: this.translation_object_string
       }).then(function (result) {
         if (result.successful) {
-          window.location.reload('/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings');
+          _this2.alert("Translation object string created", 'success');
+
+          _this2.getTranslationObjectStrings();
         }
       })["catch"](function (error) {
         console.log(error);
@@ -40683,7 +40687,7 @@ Building a better future, one line of code at a time.
         if (result.successful) {
           _this3.$router.push("/translations/".concat(_this3.translation_id, "/translation_objects/").concat(_this3.translation_object_id, "/translation_object_strings"));
 
-          _this3.alert("Translation deleted", 'success');
+          _this3.alert("Translation object string ".concat(translation_object_string_id, " deleted"), 'success');
         } else {
           _this3.alert(result.error, 'danger');
         }

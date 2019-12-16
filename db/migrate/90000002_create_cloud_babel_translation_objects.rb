@@ -6,6 +6,6 @@ class CreateCloudBabelTranslationObjects < ActiveRecord::Migration[6.0]
             t.string    :section 
             t.timestamps
         end
-        add_reference :cloud_babel_translation_objects, :cloud_babel_translations, foreign_key: true, index: { name: "babel_translations_translation_objects" }, on_delete: :cascade
+        add_reference :cloud_babel_translation_objects, :cloud_babel_translations, foreign_key: true, index: { name: "babel_translations_translation_objects" }
     end
 end

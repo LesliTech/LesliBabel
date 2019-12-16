@@ -66,7 +66,8 @@ export default {
                 translation_object: this.translation_object
             }).then(result => {
                 if (result.successful) {
-                window.location.reload('/translations/:translation_id/translation_objects')
+                    this.alert("Translation object created", 'success' )
+                    this.getTranslationObjects()
                 }
             }).catch(error => {
                 console.log(error)
@@ -79,8 +80,8 @@ export default {
         DeleteTranslationObject(translation_object_id){
             this.http.delete(`/babel/translations/${this.translation_id}/translation_objects/${translation_object_id}`).then(result => {
                 if(result.successful){
-                    window.location.reload(`/translations/${this.translation_id}/translation_objects`)
-                    this.alert("Translation deleted", 'success' )
+                    this.alert(`Translation object ${translation_object_id} deleted `, 'danger' )
+                    this.getTranslationObjects()
                 } else {
                     this.alert(result.error,'danger')
                 }
@@ -96,7 +97,7 @@ export default {
         <div class="card">
             <div class="card-header">
                 <h4 class="card-header-title">
-                    Add new translation file
+                    Add new translation object at file
                 </h4>
             </div>
             <div class="card-content">

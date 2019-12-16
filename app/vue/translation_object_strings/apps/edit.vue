@@ -77,7 +77,7 @@ export default {
             this.http.delete(`/babel/translations/${this.translation_id}/translation_objects/${this.translation_object_id}/translation_object_strings/${this.translation_object_string_id}`).then(result => {
                 if(result.successful){
                     this.$router.push(`/translations/${this.translation_id}/translation_objects/${this.translation_object_id}/translation_object_strings`)
-                    this.alert("Translation deleted", 'success' )
+                    this.alert(`Translation object string ${translation_object_string_id} deleted`, 'success' )
                 } else {
                     this.alert(result.error,'danger')
                 }

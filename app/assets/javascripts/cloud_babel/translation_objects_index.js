@@ -40131,7 +40131,9 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header" }, [
       _c("h4", { staticClass: "card-header-title" }, [
-        _vm._v("\n                Add new translation file\n            ")
+        _vm._v(
+          "\n                Add new translation object at file\n            "
+        )
       ])
     ])
   },
@@ -40229,6 +40231,8 @@ Building a better future, one line of code at a time.
       });
     },
     postTranslationObject: function postTranslationObject(e) {
+      var _this2 = this;
+
       if (e) {
         e.preventDefault();
       }
@@ -40237,7 +40241,9 @@ Building a better future, one line of code at a time.
         translation_object: this.translation_object
       }).then(function (result) {
         if (result.successful) {
-          window.location.reload('/translations/:translation_id/translation_objects');
+          _this2.alert("Translation object created", 'success');
+
+          _this2.getTranslationObjects();
         }
       })["catch"](function (error) {
         console.log(error);
@@ -40248,15 +40254,15 @@ Building a better future, one line of code at a time.
       window.location.reload("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
     },
     DeleteTranslationObject: function DeleteTranslationObject(translation_object_id) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.http["delete"]("/babel/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id)).then(function (result) {
         if (result.successful) {
-          window.location.reload("/translations/".concat(_this2.translation_id, "/translation_objects"));
+          _this3.alert("Translation object ".concat(translation_object_id, " deleted "), 'danger');
 
-          _this2.alert("Translation deleted", 'success');
+          _this3.getTranslationObjects();
         } else {
-          _this2.alert(result.error, 'danger');
+          _this3.alert(result.error, 'danger');
         }
       })["catch"](function (error) {
         console.log(error);

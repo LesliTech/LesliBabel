@@ -39975,6 +39975,7 @@ var render = function() {
         [
           _c("b-table", {
             attrs: {
+              "filter-included-fields": ["module_name"],
               paginated: _vm.isPaginated,
               "per-page": _vm.perPage,
               "current-page": _vm.currentPage,
@@ -40095,7 +40096,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header" }, [
       _c("h4", { staticClass: "card-header-title" }, [
-        _vm._v("\n                Add new translation file\n            ")
+        _vm._v("\n                Add new translation at file\n            ")
       ])
     ])
   },
@@ -40161,6 +40162,12 @@ Building a better future, one line of code at a time.
       isPaginated: true,
       currentPage: 1,
       perPage: 15,
+      translations: [],
+      translation: {
+        id: '',
+        module_name: '',
+        class_name: ''
+      },
       modules: [{
         'id': 1,
         'module_name': 'Lesli'
@@ -40182,13 +40189,7 @@ Building a better future, one line of code at a time.
       }, {
         'id': 7,
         'module_name': 'Team'
-      }],
-      translation: {
-        id: '',
-        module_name: '',
-        class_name: ''
-      },
-      translations: []
+      }]
     };
   },
   mounted: function mounted() {
@@ -40209,6 +40210,8 @@ Building a better future, one line of code at a time.
       });
     },
     postTranslation: function postTranslation(e) {
+      var _this2 = this;
+
       if (e) {
         e.preventDefault();
       }
@@ -40217,7 +40220,9 @@ Building a better future, one line of code at a time.
         translation: this.translation
       }).then(function (result) {
         if (result.successful) {
-          window.location.reload('/babel/translations');
+          _this2.alert("Translation created", 'success');
+
+          _this2.getTranslations();
         }
       })["catch"](function (error) {
         console.log(error);
@@ -40228,15 +40233,15 @@ Building a better future, one line of code at a time.
       window.location.reload("/translations/".concat(translation_id, "/translation_objects"));
     },
     DeleteTranslation: function DeleteTranslation(translation_id) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.http["delete"]("/babel/translations/".concat(translation_id, "/")).then(function (result) {
         if (result.successful) {
-          window.location.reload("/translations");
+          _this3.getTranslations();
 
-          _this2.alert("Translation deleted", 'success');
+          _this3.alert("Translation ".concat(translation_id, " deleted "), 'danger');
         } else {
-          _this2.alert(result.error, 'danger');
+          _this3.alert(result.error, 'danger');
         }
       })["catch"](function (error) {
         console.log(error);

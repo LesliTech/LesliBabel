@@ -64,6 +64,7 @@ module CloudBabel
         # Only allow a trusted parameter "white list" through.
         def translation_params
             params.require(:translation).permit(
+                :id,
                 :module_name,
                 :class_name
             )
