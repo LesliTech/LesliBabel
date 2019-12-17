@@ -39880,35 +39880,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("section", { staticClass: "section" }, [
     _c("div", { staticClass: "card" }, [
-      _c(
-        "div",
-        { staticClass: "card-header" },
-        [
-          _c("h4", { staticClass: "card-header-title" }, [
-            _vm._v(
-              "\n                Add new translation object string file\n            "
-            )
-          ]),
-          _vm._v(" "),
-          _c(
-            "router-link",
-            {
-              staticClass: "card-header-icon",
-              attrs: {
-                to:
-                  "/translations/" +
-                  this.translation_id +
-                  "/translation_objects"
-              }
-            },
-            [
-              _c("i", { staticClass: "fas fa-undo" }),
-              _vm._v("\n                Return\n            ")
-            ]
-          )
-        ],
-        1
-      ),
+      _vm._m(0),
       _vm._v(" "),
       _c("div", { staticClass: "card-content" }, [
         _c("form", { on: { submit: _vm.postTranslationObjectString } }, [
@@ -40064,7 +40036,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(0)
+              _vm._m(1)
             ])
           ])
         ])
@@ -40074,7 +40046,7 @@ var render = function() {
     _c("br"),
     _vm._v(" "),
     _c("div", { staticClass: "card" }, [
-      _vm._m(1),
+      _vm._m(2),
       _vm._v(" "),
       _c(
         "div",
@@ -40106,6 +40078,18 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v(
+          "\n                Add new translation object string at file\n            "
+        )
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -40226,6 +40210,8 @@ Building a better future, one line of code at a time.
       });
     },
     postTranslationObjectString: function postTranslationObjectString(e) {
+      var _this2 = this;
+
       if (e) {
         e.preventDefault();
       }
@@ -40234,7 +40220,9 @@ Building a better future, one line of code at a time.
         translation_object_string: this.translation_object_string
       }).then(function (result) {
         if (result.successful) {
-          window.location.reload('/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings');
+          _this2.alert("Translation object string created", 'success');
+
+          _this2.getTranslationObjectStrings();
         }
       })["catch"](function (error) {
         console.log(error);
@@ -40683,7 +40671,7 @@ Building a better future, one line of code at a time.
         if (result.successful) {
           _this3.$router.push("/translations/".concat(_this3.translation_id, "/translation_objects/").concat(_this3.translation_object_id, "/translation_object_strings"));
 
-          _this3.alert("Translation deleted", 'success');
+          _this3.alert("Translation object string ".concat(translation_object_string_id, " deleted"), 'success');
         } else {
           _this3.alert(result.error, 'danger');
         }

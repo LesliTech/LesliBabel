@@ -90,7 +90,8 @@ export default {
                 translation_object_string: this.translation_object_string
             }).then(result => {
                 if (result.successful) {
-                window.location.reload('/translations/:translation_id/translation_objects/:translation_object_id/translation_object_strings')
+                    this.alert("Translation object string created", 'success' )
+                    this.getTranslationObjectStrings()
                 }
             }).catch(error => {
                 console.log(error)
@@ -107,12 +108,8 @@ export default {
         <div class="card">
             <div class="card-header">
                 <h4 class="card-header-title">
-                    Add new translation object string file
+                    Add new translation object string at file
                 </h4>
-                <router-link :to="`/translations/${this.translation_id}/translation_objects`" class="card-header-icon">
-                    <i class="fas fa-undo"></i>
-                    Return
-                </router-link>
             </div>
             <div class="card-content">
                 <form @submit="postTranslationObjectString">
