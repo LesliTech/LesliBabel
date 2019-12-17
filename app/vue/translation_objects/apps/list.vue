@@ -35,6 +35,11 @@ export default {
             isPaginated: true,
             currentPage: 1,
             perPage: 15,
+            filters: {
+                method: '',
+                object_type: '',
+                section:''
+            },
             translation_id: null,
             translation_object: {
                 method: '',
@@ -48,6 +53,17 @@ export default {
     mounted() {
         this.translation_id = this.$route.params.translation_id
         this.getTranslationObjects()
+    },
+    computed: {
+        filteredTranslationObjects: function() {
+            var filtered_translation_objects = this.translation_objects.filter((translation_object) => {
+                var filtered = translation_object.method.includes(this.filters.method) &&
+                translation_object.object_type.includes(this.filters.object_type) &&
+                translation_object.section.includes(this.filters.section)
+                return filtered
+            })
+            return filtered_translation_objects
+        }
     },
     methods: {
         getTranslationObjects() {
@@ -74,8 +90,7 @@ export default {
             })
         },
         clickTranslationObject(translation_object_id){
-            this.$router.push(`/translations/${this.translation_id}/translation_objects/${translation_object_id}/translation_object_strings`)
-            window.location.reload(`/translations/${this.translation_id}/translation_objects/${translation_object_id}/translation_object_strings`)
+            this.url.go(`/babel/translations/${this.translation_id}/translation_objects/${translation_object_id}/translation_object_strings`)
         },
         DeleteTranslationObject(translation_object_id){
             this.http.delete(`/babel/translations/${this.translation_id}/translation_objects/${translation_object_id}`).then(result => {
@@ -137,23 +152,40 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
+                <div class="columns is-centered"> 
+                    <div class="column is-3">
+                        <p class="control is-expanded">
+                            <input v-model=filters.method class="input" type="text" placeholder="Search by meethod">
+                        </p>
+                    </div>
+                    <div class="column is-3">
+                        <p class="control is-expanded">
+                            <input v-model=filters.object_type class="input" type="text" placeholder="Search by type">
+                        </p>
+                    </div>
+                    <div class="column is-3">
+                        <p class="control is-expanded">
+                            <input v-model=filters.section class="input" type="text" placeholder="Search by section">
+                        </p>
+                    </div>
+                </div>
                 <b-table
                     :paginated="isPaginated"
                     :per-page="perPage"
                     :current-page.sync="currentPage"
-                    :data="translation_objects"
+                    :data=filteredTranslationObjects
                     >
                     <template v-slot="props">
                         <b-table-column field="id" label="ID" width="40"  numeric>
                             {{ props.row.id }}
                         </b-table-column>
-                        <b-table-column field="method" label="Method" searchable >
+                        <b-table-column field="method" label="Method">
                             {{ props.row.method }}
                         </b-table-column>
-                        <b-table-column field="object_type" label="Type"  searchable>
+                        <b-table-column field="object_type" label="Type">
                             {{ props.row.object_type }}
                         </b-table-column>
-                        <b-table-column field="section" label="Section"  searchable >
+                        <b-table-column field="section" label="Section">
                             {{ props.row.section }}
                         </b-table-column>
                         <b-table-column label="Watch" >

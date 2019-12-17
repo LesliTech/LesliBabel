@@ -39880,35 +39880,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("section", { staticClass: "section" }, [
     _c("div", { staticClass: "card" }, [
-      _c(
-        "div",
-        { staticClass: "card-header" },
-        [
-          _c("h4", { staticClass: "card-header-title" }, [
-            _vm._v(
-              "\n                Add new translation object string at file\n            "
-            )
-          ]),
-          _vm._v(" "),
-          _c(
-            "router-link",
-            {
-              staticClass: "card-header-icon",
-              attrs: {
-                to:
-                  "/translations/" +
-                  this.translation_id +
-                  "/translation_objects"
-              }
-            },
-            [
-              _c("i", { staticClass: "fas fa-undo" }),
-              _vm._v("\n                Return\n            ")
-            ]
-          )
-        ],
-        1
-      ),
+      _vm._m(0),
       _vm._v(" "),
       _c("div", { staticClass: "card-content" }, [
         _c("form", { on: { submit: _vm.postTranslationObjectString } }, [
@@ -40064,7 +40036,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(0)
+              _vm._m(1)
             ])
           ])
         ])
@@ -40074,7 +40046,7 @@ var render = function() {
     _c("br"),
     _vm._v(" "),
     _c("div", { staticClass: "card" }, [
-      _vm._m(1),
+      _vm._m(2),
       _vm._v(" "),
       _c(
         "div",
@@ -40106,6 +40078,18 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v(
+          "\n                Add new translation object string at file\n            "
+        )
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

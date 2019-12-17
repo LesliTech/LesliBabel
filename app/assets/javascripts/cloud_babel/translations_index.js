@@ -39973,13 +39973,66 @@ var render = function() {
         "div",
         { staticClass: "card-content" },
         [
+          _c("div", { staticClass: "columns is-centered" }, [
+            _c("div", { staticClass: "column is-4" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.filters.module_name,
+                      expression: "filters.module_name"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Search by module name" },
+                  domProps: { value: _vm.filters.module_name },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.filters, "module_name", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column is-4" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.filters.class_name,
+                      expression: "filters.class_name"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Search by class name" },
+                  domProps: { value: _vm.filters.class_name },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.filters, "class_name", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ])
+          ]),
+          _vm._v(" "),
           _c("b-table", {
             attrs: {
-              "filter-included-fields": ["module_name"],
               paginated: _vm.isPaginated,
               "per-page": _vm.perPage,
               "current-page": _vm.currentPage,
-              data: _vm.translations
+              data: _vm.filteredTranslations
             },
             on: {
               "update:currentPage": function($event) {
@@ -40015,13 +40068,7 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "b-table-column",
-                      {
-                        attrs: {
-                          field: "module_name",
-                          label: "Module",
-                          searchable: ""
-                        }
-                      },
+                      { attrs: { field: "module_name", label: "Module" } },
                       [
                         _vm._v(
                           "\n                        " +
@@ -40033,13 +40080,7 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "b-table-column",
-                      {
-                        attrs: {
-                          field: "class_name",
-                          label: "Class name",
-                          searchable: ""
-                        }
-                      },
+                      { attrs: { field: "class_name", label: "Class name" } },
                       [
                         _vm._v(
                           "\n                        " +
@@ -40108,7 +40149,7 @@ var staticRenderFns = [
       _c("div", { staticClass: "control" }, [
         _c("button", { staticClass: "button is-primary" }, [
           _vm._v(
-            "\n                                    Save\n                                "
+            "\n                                Save\n                            "
           )
         ])
       ])
@@ -40162,6 +40203,11 @@ Building a better future, one line of code at a time.
       isPaginated: true,
       currentPage: 1,
       perPage: 15,
+      filters: {
+        id: '',
+        module_name: '',
+        class_name: ''
+      },
       translations: [],
       translation: {
         id: '',
@@ -40195,22 +40241,33 @@ Building a better future, one line of code at a time.
   mounted: function mounted() {
     this.getTranslations();
   },
+  computed: {
+    filteredTranslations: function filteredTranslations() {
+      var _this = this;
+
+      var filtered_translations = this.translations.filter(function (translation) {
+        var filtered = translation.module_name.includes(_this.filters.module_name) && translation.class_name.includes(_this.filters.class_name);
+        return filtered;
+      });
+      return filtered_translations;
+    }
+  },
   methods: {
     getTranslations: function getTranslations() {
-      var _this = this;
+      var _this2 = this;
 
       this.http.get('/babel/translations.json').then(function (result) {
         if (!result.successful) {
           return;
         }
 
-        _this.translations = result.data;
+        _this2.translations = result.data;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     postTranslation: function postTranslation(e) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (e) {
         e.preventDefault();
@@ -40220,28 +40277,27 @@ Building a better future, one line of code at a time.
         translation: this.translation
       }).then(function (result) {
         if (result.successful) {
-          _this2.alert("Translation created", 'success');
+          _this3.alert("Translation created", 'success');
 
-          _this2.getTranslations();
+          _this3.getTranslations();
         }
       })["catch"](function (error) {
         console.log(error);
       });
     },
     clickTranslation: function clickTranslation(translation_id) {
-      this.$router.push("/translations/".concat(translation_id, "/translation_objects"));
-      window.location.reload("/translations/".concat(translation_id, "/translation_objects"));
+      this.url.go("/babel/translations/".concat(translation_id, "/translation_objects"));
     },
     DeleteTranslation: function DeleteTranslation(translation_id) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.http["delete"]("/babel/translations/".concat(translation_id, "/")).then(function (result) {
         if (result.successful) {
-          _this3.getTranslations();
+          _this4.getTranslations();
 
-          _this3.alert("Translation ".concat(translation_id, " deleted "), 'danger');
+          _this4.alert("Translation ".concat(translation_id, " deleted "), 'danger');
         } else {
-          _this3.alert(result.error, 'danger');
+          _this4.alert(result.error, 'danger');
         }
       })["catch"](function (error) {
         console.log(error);

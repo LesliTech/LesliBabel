@@ -110,10 +110,6 @@ export default {
                 <h4 class="card-header-title">
                     Add new translation object string at file
                 </h4>
-                <router-link :to="`/translations/${this.translation_id}/translation_objects`" class="card-header-icon">
-                    <i class="fas fa-undo"></i>
-                    Return
-                </router-link>
             </div>
             <div class="card-content">
                 <form @submit="postTranslationObjectString">

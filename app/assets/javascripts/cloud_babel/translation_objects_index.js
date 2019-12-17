@@ -39991,12 +39991,92 @@ var render = function() {
         "div",
         { staticClass: "card-content" },
         [
+          _c("div", { staticClass: "columns is-centered" }, [
+            _c("div", { staticClass: "column is-3" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.filters.method,
+                      expression: "filters.method"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Search by meethod" },
+                  domProps: { value: _vm.filters.method },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.filters, "method", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column is-3" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.filters.object_type,
+                      expression: "filters.object_type"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Search by type" },
+                  domProps: { value: _vm.filters.object_type },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.filters, "object_type", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column is-3" }, [
+              _c("p", { staticClass: "control is-expanded" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.filters.section,
+                      expression: "filters.section"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: { type: "text", placeholder: "Search by section" },
+                  domProps: { value: _vm.filters.section },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.filters, "section", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ])
+          ]),
+          _vm._v(" "),
           _c("b-table", {
             attrs: {
               paginated: _vm.isPaginated,
               "per-page": _vm.perPage,
               "current-page": _vm.currentPage,
-              data: _vm.translation_objects
+              data: _vm.filteredTranslationObjects
             },
             on: {
               "update:currentPage": function($event) {
@@ -40032,13 +40112,7 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "b-table-column",
-                      {
-                        attrs: {
-                          field: "method",
-                          label: "Method",
-                          searchable: ""
-                        }
-                      },
+                      { attrs: { field: "method", label: "Method" } },
                       [
                         _vm._v(
                           "\n                        " +
@@ -40050,13 +40124,7 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "b-table-column",
-                      {
-                        attrs: {
-                          field: "object_type",
-                          label: "Type",
-                          searchable: ""
-                        }
-                      },
+                      { attrs: { field: "object_type", label: "Type" } },
                       [
                         _vm._v(
                           "\n                        " +
@@ -40068,13 +40136,7 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "b-table-column",
-                      {
-                        attrs: {
-                          field: "section",
-                          label: "Section",
-                          searchable: ""
-                        }
-                      },
+                      { attrs: { field: "section", label: "Section" } },
                       [
                         _vm._v(
                           "\n                        " +
@@ -40202,6 +40264,11 @@ Building a better future, one line of code at a time.
       isPaginated: true,
       currentPage: 1,
       perPage: 15,
+      filters: {
+        method: '',
+        object_type: '',
+        section: ''
+      },
       translation_id: null,
       translation_object: {
         method: '',
@@ -40216,22 +40283,33 @@ Building a better future, one line of code at a time.
     this.translation_id = this.$route.params.translation_id;
     this.getTranslationObjects();
   },
+  computed: {
+    filteredTranslationObjects: function filteredTranslationObjects() {
+      var _this = this;
+
+      var filtered_translation_objects = this.translation_objects.filter(function (translation_object) {
+        var filtered = translation_object.method.includes(_this.filters.method) && translation_object.object_type.includes(_this.filters.object_type) && translation_object.section.includes(_this.filters.section);
+        return filtered;
+      });
+      return filtered_translation_objects;
+    }
+  },
   methods: {
     getTranslationObjects: function getTranslationObjects() {
-      var _this = this;
+      var _this2 = this;
 
       this.http.get("/babel/translations/".concat(this.translation_id, "/translation_objects.json")).then(function (result) {
         if (!result.successful) {
           return;
         }
 
-        _this.translation_objects = result.data;
+        _this2.translation_objects = result.data;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     postTranslationObject: function postTranslationObject(e) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (e) {
         e.preventDefault();
@@ -40241,28 +40319,27 @@ Building a better future, one line of code at a time.
         translation_object: this.translation_object
       }).then(function (result) {
         if (result.successful) {
-          _this2.alert("Translation object created", 'success');
+          _this3.alert("Translation object created", 'success');
 
-          _this2.getTranslationObjects();
+          _this3.getTranslationObjects();
         }
       })["catch"](function (error) {
         console.log(error);
       });
     },
     clickTranslationObject: function clickTranslationObject(translation_object_id) {
-      this.$router.push("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
-      window.location.reload("/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
+      this.url.go("/babel/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id, "/translation_object_strings"));
     },
     DeleteTranslationObject: function DeleteTranslationObject(translation_object_id) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.http["delete"]("/babel/translations/".concat(this.translation_id, "/translation_objects/").concat(translation_object_id)).then(function (result) {
         if (result.successful) {
-          _this3.alert("Translation object ".concat(translation_object_id, " deleted "), 'danger');
+          _this4.alert("Translation object ".concat(translation_object_id, " deleted "), 'danger');
 
-          _this3.getTranslationObjects();
+          _this4.getTranslationObjects();
         } else {
-          _this3.alert(result.error, 'danger');
+          _this4.alert(result.error, 'danger');
         }
       })["catch"](function (error) {
         console.log(error);

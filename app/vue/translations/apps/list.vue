@@ -31,6 +31,11 @@ export default {
             isPaginated: true,
             currentPage: 1,
             perPage: 15,
+            filters: {
+                id: '',
+                module_name: '',
+                class_name: ''
+            },
             translations: [],
             translation: {
                 id: '',
@@ -51,6 +56,16 @@ export default {
     mounted() {
         this.getTranslations()
     },
+    computed: {
+        filteredTranslations: function(){
+            var filtered_translations = this.translations.filter((translation) => {
+                var filtered = translation.module_name.includes(this.filters.module_name) && 
+                translation.class_name.includes(this.filters.class_name)
+                return filtered
+            })
+            return filtered_translations
+        }
+        },
     methods: {
         getTranslations() {
             this.http.get('/babel/translations.json').then(result => {
@@ -76,8 +91,7 @@ export default {
             })
         },
         clickTranslation(translation_id){
-            this.$router.push(`/translations/${translation_id}/translation_objects`)
-            window.location.reload(`/translations/${translation_id}/translation_objects`)
+            this.url.go(`/babel/translations/${translation_id}/translation_objects`)
         },
         DeleteTranslation(translation_id){
             this.http.delete(`/babel/translations/${translation_id}/`).then(result => {
@@ -119,14 +133,14 @@ export default {
                                 <p class="control is-expanded">
                                     <input class="input" type="text" placeholder="Class name" v-model="translation.class_name">
                                 </p>
+                        </div>
+                        <div class="column is-1">
+                            <div class="control">
+                                <button class="button is-primary">
+                                    Save
+                                </button>
                             </div>
-                            <div class="column is-1">
-                                <div class="control">
-                                    <button class="button is-primary">
-                                        Save
-                                    </button>
-                                </div>
-                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -139,20 +153,31 @@ export default {
                 </h4>
             </div>
             <div class="card-content">
-                <b-table
-                    :filter-included-fields="['module_name']"
+                <div class="columns is-centered"> 
+                    <div class="column is-4">
+                            <p class="control is-expanded">
+                                <input v-model=filters.module_name class="input" type="text" placeholder="Search by module name">
+                            </p>
+                    </div>
+                    <div class="column is-4">
+                            <p class="control is-expanded">
+                                <input v-model=filters.class_name class="input" type="text" placeholder="Search by class name">
+                            </p>
+                    </div>
+                </div>
+               <b-table
                     :paginated="isPaginated"
                     :per-page="perPage"
                     :current-page.sync="currentPage"
-                    :data="translations">
+                    :data=filteredTranslations>
                     <template v-slot="props">
                         <b-table-column field="id" label="ID" width="40"  numeric>
                             {{ props.row.id }}
                         </b-table-column>
-                        <b-table-column field="module_name" label="Module" searchable>
+                        <b-table-column field="module_name" label="Module" >
                             {{ props.row.module_name }}
                         </b-table-column>
-                        <b-table-column field="class_name" label="Class name"  searchable>
+                        <b-table-column field="class_name" label="Class name"  >
                             {{ props.row.class_name }}
                         </b-table-column>
                         <b-table-column label="Watch" >
