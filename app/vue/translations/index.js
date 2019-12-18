@@ -34,11 +34,12 @@ import app from 'LesliCloud/vue/app'
 // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 import appList from './apps/list.vue'
+import appTranslation from './apps/translation.vue'
 
 
 // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-app("CloudBabel", "[index]", "/babel", [{
-    path: '/translations',
-    component: appList,
+app("CloudBabel", "[index]", "/babel/translations", [{
+    path: '/',
+    component: appTranslation,
 }])

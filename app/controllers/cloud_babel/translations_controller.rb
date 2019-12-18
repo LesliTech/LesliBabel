@@ -2,7 +2,7 @@ require_dependency "cloud_babel/application_controller"
 
 module CloudBabel
     class TranslationsController < ApplicationController
-        before_action :set_translation, only: [:show, :edit, :update, :destroy]
+        before_action :set_translation, only: [:edit, :update, :destroy]
 
         # GET /translations
         def index
@@ -14,6 +14,10 @@ module CloudBabel
 
         # GET /translations/1
         def show
+            respond_to do |format|
+                format.html { }
+                format.json { responseWithSuccessful(Translation.where(module_name: params[:id])) }
+            end
         end
 
         # GET /translations/new

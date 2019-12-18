@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 43);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -38402,6 +38402,7 @@ Building a better future, one line of code at a time.
     };
   },
   mounted: function mounted() {
+    //this.getNotifications()
     this.mountListeners();
   },
   methods: {
@@ -40752,8 +40753,7 @@ Object(app["a" /* default */])("CloudBabel", "[index]", "/babel", [{
 /***/ }),
 /* 40 */,
 /* 41 */,
-/* 42 */,
-/* 43 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

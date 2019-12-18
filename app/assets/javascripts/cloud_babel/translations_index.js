@@ -38402,6 +38402,7 @@ Building a better future, one line of code at a time.
     };
   },
   mounted: function mounted() {
+    //this.getNotifications()
     this.mountListeners();
   },
   methods: {
@@ -40333,6 +40334,544 @@ var component = Object(componentNormalizer["a" /* default */])(
 if (false) { var api; }
 component.options.__file = "engines/CloudBabel/app/vue/translations/apps/list.vue"
 /* harmony default export */ var list = (component.exports);
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./engines/CloudBabel/app/vue/translations/apps/translation.vue?vue&type=template&id=6afe1ec8&
+var translationvue_type_template_id_6afe1ec8_render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("section", { staticClass: "section" }, [
+    _c("div", { staticClass: "card" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-content" }, [
+        _c("div", { staticClass: "field is-grouped" }, [
+          _c(
+            "div",
+            { staticClass: "control" },
+            [
+              _c(
+                "b-select",
+                {
+                  attrs: {
+                    placeholder: "Select module",
+                    icon: "globe",
+                    "icon-pack": "fas"
+                  },
+                  model: {
+                    value: _vm.selection.module,
+                    callback: function($$v) {
+                      _vm.$set(_vm.selection, "module", $$v)
+                    },
+                    expression: "selection.module"
+                  }
+                },
+                _vm._l(_vm.modules, function(module) {
+                  return _c(
+                    "option",
+                    { key: module.id, domProps: { value: module } },
+                    [_vm._v(_vm._s(module.name))]
+                  )
+                }),
+                0
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "control" },
+            [
+              _c(
+                "b-select",
+                {
+                  attrs: {
+                    placeholder: "Select class",
+                    icon: "globe",
+                    "icon-pack": "fas"
+                  },
+                  model: {
+                    value: _vm.selection.translation,
+                    callback: function($$v) {
+                      _vm.$set(_vm.selection, "translation", $$v)
+                    },
+                    expression: "selection.translation"
+                  }
+                },
+                _vm._l(_vm.translations, function(translation) {
+                  return _c(
+                    "option",
+                    { key: translation.id, domProps: { value: translation } },
+                    [_vm._v(_vm._s(translation.class_name))]
+                  )
+                }),
+                0
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "control" },
+            [
+              _c(
+                "b-select",
+                {
+                  attrs: {
+                    placeholder: "Select object",
+                    icon: "globe",
+                    "icon-pack": "fas"
+                  },
+                  model: {
+                    value: _vm.selection.object,
+                    callback: function($$v) {
+                      _vm.$set(_vm.selection, "object", $$v)
+                    },
+                    expression: "selection.object"
+                  }
+                },
+                _vm._l(_vm.translationObjects, function(object) {
+                  return _c(
+                    "option",
+                    { key: object.id, domProps: { value: object } },
+                    [_vm._v(_vm._s(object.object_type))]
+                  )
+                }),
+                0
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "control" },
+            [
+              _c(
+                "b-select",
+                {
+                  attrs: {
+                    placeholder: "Select group",
+                    icon: "globe",
+                    "icon-pack": "fas"
+                  },
+                  model: {
+                    value: _vm.selection.group,
+                    callback: function($$v) {
+                      _vm.$set(_vm.selection, "group", $$v)
+                    },
+                    expression: "selection.group"
+                  }
+                },
+                _vm._l(_vm.translationObjectGroups, function(group) {
+                  return _c(
+                    "option",
+                    { key: group.id, domProps: { value: group } },
+                    [
+                      _vm._v(
+                        _vm._s(group.method) + " - " + _vm._s(group.section)
+                      )
+                    ]
+                  )
+                }),
+                0
+              )
+            ],
+            1
+          )
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("div", { staticClass: "card" }, [
+      _vm._m(1),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "card-content" },
+        [
+          _c("b-table", {
+            attrs: { data: _vm.translationObjectGroupLabels },
+            scopedSlots: _vm._u([
+              {
+                key: "default",
+                fn: function(props) {
+                  return [
+                    _c(
+                      "b-table-column",
+                      { attrs: { field: "label", label: "Label" } },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.label) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      { attrs: { field: "context", label: "Context" } },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(props.row.context) +
+                            "\n                    "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      { attrs: { field: "en", label: "en" } },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: props.row.en,
+                              expression: "props.row.en"
+                            }
+                          ],
+                          attrs: { type: "text" },
+                          domProps: { value: props.row.en },
+                          on: {
+                            input: [
+                              function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(props.row, "en", $event.target.value)
+                              },
+                              function($event) {
+                                return _vm.patchTranslationObjectGroupLabels(
+                                  props.row
+                                )
+                              }
+                            ]
+                          }
+                        })
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      { attrs: { field: "es", label: "es" } },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: props.row.es,
+                              expression: "props.row.es"
+                            }
+                          ],
+                          attrs: { type: "text" },
+                          domProps: { value: props.row.es },
+                          on: {
+                            input: [
+                              function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(props.row, "es", $event.target.value)
+                              },
+                              function($event) {
+                                return _vm.patchTranslationObjectGroupLabels(
+                                  props.row
+                                )
+                              }
+                            ]
+                          }
+                        })
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-table-column",
+                      { attrs: { field: "de", label: "de" } },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: props.row.de,
+                              expression: "props.row.de"
+                            }
+                          ],
+                          attrs: { type: "text" },
+                          domProps: { value: props.row.de },
+                          on: {
+                            input: [
+                              function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(props.row, "de", $event.target.value)
+                              },
+                              function($event) {
+                                return _vm.patchTranslationObjectGroupLabels(
+                                  props.row
+                                )
+                              }
+                            ]
+                          }
+                        })
+                      ]
+                    )
+                  ]
+                }
+              }
+            ])
+          })
+        ],
+        1
+      )
+    ])
+  ])
+}
+var translationvue_type_template_id_6afe1ec8_staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v("\n                Selection\n            ")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h4", { staticClass: "card-header-title" }, [
+        _vm._v("\n                All the labels\n            ")
+      ])
+    ])
+  }
+]
+translationvue_type_template_id_6afe1ec8_render._withStripped = true
+
+
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translations/apps/translation.vue?vue&type=template&id=6afe1ec8&
+
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib??ref--3!./node_modules/vue-loader/lib??vue-loader-options!./engines/CloudBabel/app/vue/translations/apps/translation.vue?vue&type=script&lang=js&
+/*
+Lesli
+
+Copyright (c) 2019, Lesli Technologies, S. A.
+
+All the information provided by this website is protected by laws of Guatemala related 
+to industrial property, intellectual property, copyright and relative international laws. 
+Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
+rights of the code, texts, trade mark, design, pictures and any other information.
+Without the written permission of Lesli Technologies, S. A., any replication, modification,
+transmission, publication is strictly forbidden.
+For more information read the license file including with this software.
+
+LesliCloud - Your Smart Business Assistant
+
+Powered by https://www.lesli.tech
+Building a better future, one line of code at a time.
+
+@author   LesliTech <hello@lesli.tech>
+@license  Propietary - all rights reserved.
+@version  0.1.0-alpha
+
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+// · 
+*/
+/* harmony default export */ var translationvue_type_script_lang_js_ = ({
+  data: function data() {
+    return {
+      modules: [{
+        'id': 'core',
+        'name': 'Core'
+      }, {
+        'id': 1,
+        'name': 'Lesli'
+      }, {
+        'id': 2,
+        'name': 'Help'
+      }, {
+        'id': 3,
+        'name': 'Lock'
+      }, {
+        'id': 4,
+        'name': 'Babel'
+      }, {
+        'id': 5,
+        'name': 'Driver'
+      }, {
+        'id': 6,
+        'name': 'Bell'
+      }, {
+        'id': 7,
+        'name': 'Team'
+      }],
+      columns: [{
+        field: 'label',
+        label: 'Label'
+      }],
+      translations: [],
+      translationObjects: [],
+      translationObjectGroups: [],
+      translationObjectGroupLabels: [],
+      selection: {
+        translation: null,
+        object: null,
+        group: null,
+        module: null
+      },
+      timeout: null
+    };
+  },
+  mounted: function mounted() {
+    this.selection = {
+      "translation": {
+        "id": 65,
+        "module_name": "core",
+        "class_name": "websites",
+        "created_at": "2019-12-18T14:23:16.046Z",
+        "updated_at": "2019-12-18T14:23:16.046Z"
+      },
+      "object": {
+        "id": 123,
+        "object_type": "views",
+        "created_at": "2019-12-18T14:23:16.051Z",
+        "updated_at": "2019-12-18T14:23:16.051Z",
+        "cloud_babel_translations_id": 65
+      },
+      "group": {
+        "id": 1001,
+        "method": "index",
+        "section": "messages",
+        "created_at": "2019-12-18T14:23:16.055Z",
+        "updated_at": "2019-12-18T14:23:16.055Z",
+        "cloud_babel_translation_objects_id": 123
+      },
+      "module": {
+        "id": "core",
+        "name": "Core"
+      }
+    };
+  },
+  methods: {
+    getTranslations: function getTranslations() {
+      var _this = this;
+
+      this.http.get("/babel/translations/".concat(this.selection.module.id, ".json")).then(function (result) {
+        if (!result.successful) return;
+        _this.translations = result.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getTranslationObjects: function getTranslationObjects() {
+      var _this2 = this;
+
+      this.http.get("/babel/translations/".concat(this.selection.translation.id, "/translation_objects.json")).then(function (result) {
+        if (!result.successful) return;
+        _this2.translationObjects = result.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getTranslationObjectGroups: function getTranslationObjectGroups() {
+      var _this3 = this;
+
+      this.http.get("/babel/translations/".concat(this.selection.translation.id, "/translation_objects/").concat(this.selection.object.id, "/translation_object_groups.json")).then(function (result) {
+        if (!result.successful) return;
+        _this3.translationObjectGroups = result.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getTranslationObjectGroupLabels: function getTranslationObjectGroupLabels() {
+      var _this4 = this;
+
+      this.http.get("/babel/translations/".concat(this.selection.translation.id, "/translation_objects/").concat(this.selection.object.id, "/translation_object_groups/").concat(this.selection.group.id, "/translation_object_group_labels.json")).then(function (result) {
+        if (!result.successful) return;
+        _this4.translationObjectGroupLabels = result.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    buildLabelPath: function buildLabelPath(label) {
+      return [this.selection.translation.module_name, this.selection.translation.class_name, this.selection.object.object_type, this.selection.group.method, this.selection.group.section, label].join('.');
+    },
+    patchTranslationObjectGroupLabels: function patchTranslationObjectGroupLabels(label) {
+      var _this5 = this;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(function () {
+        _this5.http.put("/babel/translation_object_group_labels/".concat(label.id), {
+          context: label.context,
+          label: label.label,
+          en: label.en,
+          es: label.es,
+          de: label.de
+        }).then(function (result) {
+          console.log(result);
+
+          _this5.alert("Translation updated successfully", 'success');
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }, 1500);
+    },
+    test: function test(d) {
+      console.log(d);
+    }
+  },
+  watch: {
+    'selection.module': function selectionModule() {
+      this.getTranslations();
+    },
+    'selection.translation': function selectionTranslation() {
+      this.getTranslationObjects();
+    },
+    'selection.object': function selectionObject() {
+      this.getTranslationObjectGroups();
+    },
+    'selection.group': function selectionGroup() {
+      this.getTranslationObjectGroupLabels();
+    }
+  }
+});
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translations/apps/translation.vue?vue&type=script&lang=js&
+ /* harmony default export */ var apps_translationvue_type_script_lang_js_ = (translationvue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translations/apps/translation.vue
+
+
+
+
+
+/* normalize component */
+
+var translation_component = Object(componentNormalizer["a" /* default */])(
+  apps_translationvue_type_script_lang_js_,
+  translationvue_type_template_id_6afe1ec8_render,
+  translationvue_type_template_id_6afe1ec8_staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var translation_api; }
+translation_component.options.__file = "engines/CloudBabel/app/vue/translations/apps/translation.vue"
+/* harmony default export */ var translation = (translation_component.exports);
 // CONCATENATED MODULE: ./engines/CloudBabel/app/vue/translations/index.js
 /*
 Lesli
@@ -40364,12 +40903,13 @@ Building a better future, one line of code at a time.
  // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
+
  // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 
-Object(app["a" /* default */])("CloudBabel", "[index]", "/babel", [{
-  path: '/translations',
-  component: list
+Object(app["a" /* default */])("CloudBabel", "[index]", "/babel/translations", [{
+  path: '/',
+  component: translation
 }]);
 
 /***/ })
