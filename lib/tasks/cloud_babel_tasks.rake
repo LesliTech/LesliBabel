@@ -1,6 +1,7 @@
-# desc "Explaining what the task does"
+
 namespace :cloud_babel do
-    task scan: :environment do
+
+    task scan: [:environment] do  
 
         controllers = Rails.application.routes.routes.map do |route|
             route.defaults[:controller]
@@ -11,7 +12,6 @@ namespace :cloud_babel do
             next if controller.include? "rails"
             next if controller.include? "action_mailbox"
             next if controller.include? "active_storage"
-            next unless controller.include? "websites" 
             
             translation = CloudBabel::Translation.create({ module_name: 'core', class_name: controller })
 
@@ -46,11 +46,11 @@ namespace :cloud_babel do
 
             end
 
-        end        
+        end
 
     end
 
-    task build2: :environment do
+    task build: :environment do
 
         temp = { }
 
@@ -62,9 +62,6 @@ namespace :cloud_babel do
 
 
         CloudBabel::TranslationObjectGroupLabel.all.each do |label|
-            #p label.label
-            #p label.group.object.translation.class_name
-            #p label.group.object.translation.module_name
 
             available_langs.each do |lang|
 
@@ -121,70 +118,6 @@ namespace :cloud_babel do
             translation_file.write({ "#{lang}": translation[:translations]}.to_yaml)
 
             translation_file.close
-
-        end
-
-    end
-
-    task build: :environment do
-
-        CloudBabel::Translation.all.each do |translation|
-
-            translation.translation_objects.each do |translation_object|
-
-                path_directory = Rails.root.join("config", "locales", translation_object.object_type, translation.class_name)
-
-                translation_by_lang = { }
-
-                available_langs = ['en']
-
-                available_langs.each do |lang|
-
-                    translation_by_lang[lang.to_sym] = {
-                        file_path: path_directory.join("#{translation.class_name}.#{lang}.yml"),
-                        translations: { 
-                            "#{lang}": {
-                                core: {
-                                    "#{translation.class_name}": { }
-                                }
-                            }
-                        }
-                    }
-
-                end
-                
-                translation_object.translation_object_groups.each do |translation_object_group|
-
-                    translation_object_group.translation_object_group_labels.each do |translation_object_group_label|
-
-                        available_langs.each do |lang|
-
-
-                        end
-
-                    end
-
-                end
-
-                p translation_by_lang
-
-                translation_by_lang.each do |translation|
-
-                    translation = translation[1]
-
-                    # creates folder and subfolders
-                    FileUtils.makedirs(File.dirname(translation[:file_path]))
-
-                    # creates translation file for every available language
-                    translation_file = File.new(translation[:file_path], "w+")
-
-                    translation_file.write(translation[:translations].to_yaml)
-
-                    translation_file.close
-
-                end
-
-            end
 
         end
 
