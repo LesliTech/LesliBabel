@@ -15,13 +15,15 @@ namespace :cloud_babel do
             next if controller.include? "rails"
             next if controller.include? "action_mailbox"
             next if controller.include? "active_storage"
+            next if controller.include? "users"
+            next if controller.include? "account"
 
             # Add object to the translation workflow
             translation = CloudBabel::Translation.find_or_create_by({ module_name: 'core', class_name: controller })
 
-            #scan_models translation, load_demo_data
+            scan_models translation, load_demo_data
 
-            #scan_controllers translation, load_demo_data 
+            scan_controllers translation, load_demo_data 
 
             scan_views translation, load_demo_data 
 
@@ -31,15 +33,17 @@ namespace :cloud_babel do
 
     end
 
-    desc ""
+
+    desc "Build translation files"
     task build: :environment do
 
-        temp = { }
+        files = { }
 
         available_langs = ['en', 'es', 'de']
 
         available_langs.each do |lang|
-            temp[lang] = { file_path: "", translations: {} }
+            files[lang] = { file_path: "", translations: {} }
+            files[lang] = { }
         end
 
         CloudBabel::TranslationObjectGroupLabel.all.each do |label|
@@ -48,57 +52,69 @@ namespace :cloud_babel do
 
                 module_name = label.group.object.translation.module_name
 
-                unless temp[lang][:translations].has_key? module_name
-                    temp[lang][:translations][module_name] = { }
-                end
-
                 class_name = label.group.object.translation.class_name
-
-                unless temp[lang][:translations][module_name].has_key? class_name
-                    temp[lang][:translations][module_name][class_name] = { }
-                end
 
                 object_type = label.group.object.object_type
 
-                unless temp[lang][:translations][module_name][class_name].has_key? object_type
-                    temp[lang][:translations][module_name][class_name][object_type] = { }
-                end
-
                 method = label.group.method
-
-                unless temp[lang][:translations][module_name][class_name][object_type].has_key? method
-                    temp[lang][:translations][module_name][class_name][object_type][method] = { }
-                end
 
                 section = label.group.section
 
-                unless temp[lang][:translations][module_name][class_name][object_type][method].has_key? section
-                    temp[lang][:translations][module_name][class_name][object_type][method][section] = { }
+                file_path = Rails.root.join("config", "locales", object_type, class_name, "#{class_name.gsub('/','_')}.#{lang}.yml")
+
+                file_id = file_path.to_s.to_sym
+
+                files[lang][file_id] = { }
+
+                unless files[lang][file_id].has_key? module_name
+                    files[lang][file_id][module_name] = { }
                 end
 
-                temp[lang][:translations][module_name][class_name][object_type][method][section][label.label] = label[lang]
+                unless files[lang][file_id][module_name].has_key? class_name
+                    files[lang][file_id][module_name][class_name] = { }
+                end
 
+                unless files[lang][file_id][module_name][class_name].has_key? object_type
+                    files[lang][file_id][module_name][class_name][object_type] = { }
+                end
 
-                temp[lang][:file_path] = Rails.root.join("config", "locales", object_type, class_name, "#{class_name}.#{lang}.yml")
+                unless files[lang][file_id][module_name][class_name][object_type].has_key? method
+                    files[lang][file_id][module_name][class_name][object_type][method] = { }
+                end
+
+                unless files[lang][file_id][module_name][class_name][object_type][method].has_key? section
+                    files[lang][file_id][module_name][class_name][object_type][method][section] = { }
+                end
+
+                files[lang][file_id][module_name][class_name][object_type][method][section][label.label] = label[lang]
 
             end
 
         end
 
-        temp.each do |translation|
+        files.each do |file_by_language|
 
-            lang = translation[0]
-            translation = translation[1]
+            lang = file_by_language[0]
+            file_by_class = file_by_language[1]
 
-            # creates folder and subfolders
-            FileUtils.makedirs(File.dirname(translation[:file_path]))
+            file_by_class.each do |file|
 
-            # creates translation file for every available language
-            translation_file = File.new(translation[:file_path], "w+")
+                file_path = file[0].to_s
+                translations = file[1]
 
-            translation_file.write({ "#{lang}": translation[:translations]}.to_yaml)
+                # creates folder and subfolders
+                FileUtils.makedirs(File.dirname(file_path))
 
-            translation_file.close
+                # creates translation file for every available language
+                translation_file = File.new(file_path, "w+")
+
+                translation_file.write({ "#{lang}": translations}.to_yaml)
+
+                translation_file.close
+
+                p "file added: #{ file_path }"
+
+            end
 
         end
 
