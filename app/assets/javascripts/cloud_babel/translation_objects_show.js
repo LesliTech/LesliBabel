@@ -38402,7 +38402,6 @@ Building a better future, one line of code at a time.
     };
   },
   mounted: function mounted() {
-    //this.getNotifications()
     this.mountListeners();
   },
   methods: {

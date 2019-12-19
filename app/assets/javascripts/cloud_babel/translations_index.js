@@ -38402,7 +38402,6 @@ Building a better future, one line of code at a time.
     };
   },
   mounted: function mounted() {
-    //this.getNotifications()
     this.mountListeners();
   },
   methods: {
@@ -40487,7 +40486,59 @@ var translationvue_type_template_id_6afe1ec8_render = function() {
     _c("br"),
     _vm._v(" "),
     _c("div", { staticClass: "card" }, [
-      _vm._m(1),
+      _c("div", { staticClass: "card-header" }, [
+        _c("h4", { staticClass: "card-header-title" }, [
+          _vm._v("\n                All the labels\n            ")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-header-icon" }, [
+          _c(
+            "form",
+            {
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.postTranslationObjectGroupLabels()
+                }
+              }
+            },
+            [
+              _c(
+                "div",
+                { staticClass: "control has-icons-left has-icons-right" },
+                [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.label,
+                        expression: "label"
+                      }
+                    ],
+                    staticClass: "input is-hovered",
+                    attrs: {
+                      type: "text",
+                      placeholder: "Add label to translation workflow"
+                    },
+                    domProps: { value: _vm.label },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.label = $event.target.value
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm._m(1)
+                ]
+              )
+            ]
+          )
+        ])
+      ]),
       _vm._v(" "),
       _c(
         "div",
@@ -40651,10 +40702,8 @@ var translationvue_type_template_id_6afe1ec8_staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h4", { staticClass: "card-header-title" }, [
-        _vm._v("\n                All the labels\n            ")
-      ])
+    return _c("span", { staticClass: "icon is-small is-left" }, [
+      _c("i", { staticClass: "fas fa-language" })
     ])
   }
 ]
@@ -40725,6 +40774,7 @@ Building a better future, one line of code at a time.
       translationObjects: [],
       translationObjectGroups: [],
       translationObjectGroupLabels: [],
+      label: '',
       selection: {
         translation: null,
         object: null,
@@ -40808,12 +40858,36 @@ Building a better future, one line of code at a time.
     buildLabelPath: function buildLabelPath(label) {
       return [this.selection.translation.module_name, this.selection.translation.class_name, this.selection.object.object_type, this.selection.group.method, this.selection.group.section, label].join('.');
     },
-    patchTranslationObjectGroupLabels: function patchTranslationObjectGroupLabels(label) {
+    postTranslationObjectGroupLabels: function postTranslationObjectGroupLabels(e) {
       var _this5 = this;
+
+      if (e) {
+        e.preventDefault();
+      }
+
+      this.http.post('/babel/translation_object_group_labels', {
+        context: '',
+        label: this.label,
+        en: '',
+        es: '',
+        de: '',
+        cloud_babel_translation_object_groups_id: this.selection.group.id
+      }).then(function (result) {
+        _this5.alert("Label successfully added", "success");
+
+        _this5.getTranslationObjectGroupLabels();
+
+        _this5.label = '';
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    patchTranslationObjectGroupLabels: function patchTranslationObjectGroupLabels(label) {
+      var _this6 = this;
 
       clearTimeout(this.timeout);
       this.timeout = setTimeout(function () {
-        _this5.http.put("/babel/translation_object_group_labels/".concat(label.id), {
+        _this6.http.put("/babel/translation_object_group_labels/".concat(label.id), {
           context: label.context,
           label: label.label,
           en: label.en,
@@ -40822,7 +40896,7 @@ Building a better future, one line of code at a time.
         }).then(function (result) {
           console.log(result);
 
-          _this5.alert("Translation updated successfully", 'success');
+          _this6.alert("Translation updated successfully", 'success');
         })["catch"](function (error) {
           console.log(error);
         });

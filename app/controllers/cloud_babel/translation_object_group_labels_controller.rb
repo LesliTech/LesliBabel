@@ -65,7 +65,7 @@ module CloudBabel
 
         # Only allow a trusted parameter "white list" through.
         def translation_object_group_label_params
-            params.require(:translation_object_group_label).permit(:context, :label, :en, :es, :de)
+            params.require(:translation_object_group_label).permit(:context, :label, :en, :es, :de, :cloud_babel_translation_object_groups_id)
         end
 
     end

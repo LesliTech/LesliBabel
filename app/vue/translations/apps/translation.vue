@@ -46,6 +46,7 @@ export default {
             translationObjects: [],
             translationObjectGroups: [],
             translationObjectGroupLabels: [],
+            label: '',
             selection: {
                 translation: null,
                 object: null,
@@ -105,6 +106,27 @@ export default {
                 this.selection.group.section,
                 label
             ].join('.')
+        },
+
+        postTranslationObjectGroupLabels(e) {
+
+            if (e) { e.preventDefault(); }
+            
+            this.http.post('/babel/translation_object_group_labels', {
+                context: '',
+                label: this.label,
+                en: '',
+                es: '',
+                de: '',
+                cloud_babel_translation_object_groups_id: this.selection.group.id
+            }).then(result => {
+                this.alert("Label successfully added", "success")
+                this.getTranslationObjectGroupLabels()
+                this.label = ''
+            }).catch(error => {
+                console.log(error)
+            })
+
         },
 
         patchTranslationObjectGroupLabels(label) {
@@ -204,6 +226,16 @@ export default {
                 <h4 class="card-header-title">
                     All the labels
                 </h4>
+                <div class="card-header-icon">
+                    <form @submit.prevent="postTranslationObjectGroupLabels()">
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-language"></i>
+                            </span>
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="card-content">
                 <b-table 
