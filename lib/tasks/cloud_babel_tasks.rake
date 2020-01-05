@@ -63,7 +63,6 @@ namespace :cloud_babel do
         available_langs = ['en', 'es', 'de']
 
         available_langs.each do |lang|
-            files[lang] = { file_path: "", translations: {} }
             files[lang] = { }
         end
 
@@ -74,6 +73,7 @@ namespace :cloud_babel do
                 module_name = label.group.object.translation.module_name
 
                 module_name_sym = module_name.downcase.sub('cloud', 'cloud_')
+                module_name_sym = module_name.downcase.sub('cloud', '')
 
                 class_name = label.group.object.translation.class_name
 
@@ -91,9 +91,11 @@ namespace :cloud_babel do
 
                 file_id = file_path.to_s.to_sym
 
-                files[lang][file_id] = { }
+                unless files[lang].has_key? file_id
+                    files[lang][file_id] = { }
+                end
 
-                unless files[lang][file_id].has_key? module_name
+                unless files[lang][file_id].has_key? module_name_sym
                     files[lang][file_id][module_name_sym] = { }
                 end
 
