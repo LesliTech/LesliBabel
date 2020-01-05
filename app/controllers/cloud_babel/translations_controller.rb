@@ -16,7 +16,11 @@ module CloudBabel
         def show
             respond_to do |format|
                 format.html { }
-                format.json { responseWithSuccessful(Translation.where(module_name: params[:id])) }
+                format.json { 
+                    module_name = params[:id].upcase_first
+                    module_name = "Cloud#{module_name}" if module_name != "Core"
+                    responseWithSuccessful(Translation.where(module_name: module_name))
+                }
             end
         end
 

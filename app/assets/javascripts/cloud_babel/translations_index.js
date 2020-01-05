@@ -38215,7 +38215,10 @@ var navigationvue_type_template_id_70d7a082_render = function() {
           _vm.id
             ? _c(
                 "a",
-                { staticClass: "navbar-item", on: { click: _vm.showActions } },
+                {
+                  staticClass: "navbar-item",
+                  on: { click: _vm.showActivities }
+                },
                 [_vm._v("Activities")]
               )
             : _vm._e()
@@ -38252,6 +38255,9 @@ navigationvue_type_template_id_70d7a082_render._withStripped = true
     },
     showSubscriptions: function showSubscriptions() {
       this.bus.publish("show:/module/app/subscriptions");
+    },
+    showActivities: function showActivities() {
+      this.bus.publish("show:/module/app/activities");
     }
   },
   watch: {
@@ -40745,26 +40751,77 @@ Building a better future, one line of code at a time.
         'id': 'core',
         'name': 'Core'
       }, {
-        'id': 1,
-        'name': 'Lesli'
+        'id': 'team',
+        'name': 'Team'
       }, {
-        'id': 2,
-        'name': 'Help'
+        'id': 'happy',
+        'name': 'Happy'
       }, {
-        'id': 3,
-        'name': 'Lock'
+        'id': 'seller',
+        'name': 'Seller'
       }, {
-        'id': 4,
-        'name': 'Babel'
+        'id': 'leaf',
+        'name': 'Leaf'
       }, {
-        'id': 5,
+        'id': 'drop',
+        'name': 'Drop'
+      }, {
+        'id': 'mailer',
+        'name': 'Mailer'
+      }, {
+        'id': 'driver',
         'name': 'Driver'
       }, {
-        'id': 6,
+        'id': 'chaos',
+        'name': 'Chaos'
+      }, {
+        'id': 'clock',
+        'name': 'Clock'
+      }, {
+        'id': 'pizza',
+        'name': 'Pizza'
+      }, {
+        'id': 'notes',
+        'name': 'Notes'
+      }, {
+        'id': 'lesli',
+        'name': 'Lesli'
+      }, {
+        'id': 'social',
+        'name': 'Social'
+      }, {
+        'id': 'bell',
         'name': 'Bell'
       }, {
-        'id': 7,
-        'name': 'Team'
+        'id': 'books',
+        'name': 'Books'
+      }, {
+        'id': 'wallet',
+        'name': 'Wallet'
+      }, {
+        'id': 'things',
+        'name': 'Things'
+      }, {
+        'id': 'kb',
+        'name': 'Kb'
+      }, {
+        'id': 'help',
+        'name': 'Help'
+      }, {
+        'id': 'portal',
+        'name': 'Portal'
+      }, {
+        'id': 'bug',
+        'name': 'Bug'
+      }, {
+        'id': 'panel',
+        'name': 'Panel'
+      }, {
+        'id': 'lock',
+        'name': 'Lock'
+      }, {
+        'id': 'babel',
+        'name': 'Babel'
       }],
       columns: [{
         field: 'label',
@@ -40787,26 +40844,26 @@ Building a better future, one line of code at a time.
   mounted: function mounted() {
     this.selection = {
       "translation": {
-        "id": 65,
+        "id": 6,
         "module_name": "core",
         "class_name": "websites",
-        "created_at": "2019-12-18T14:23:16.046Z",
-        "updated_at": "2019-12-18T14:23:16.046Z"
+        "created_at": "2020-01-05T02:49:24.828Z",
+        "updated_at": "2020-01-05T02:49:24.828Z"
       },
       "object": {
-        "id": 123,
+        "id": 18,
         "object_type": "views",
-        "created_at": "2019-12-18T14:23:16.051Z",
-        "updated_at": "2019-12-18T14:23:16.051Z",
-        "cloud_babel_translations_id": 65
+        "created_at": "2020-01-05T02:49:24.961Z",
+        "updated_at": "2020-01-05T02:49:24.961Z",
+        "cloud_babel_translations_id": 6
       },
       "group": {
-        "id": 1001,
+        "id": 128,
         "method": "index",
         "section": "messages",
-        "created_at": "2019-12-18T14:23:16.055Z",
-        "updated_at": "2019-12-18T14:23:16.055Z",
-        "cloud_babel_translation_objects_id": 123
+        "created_at": "2020-01-05T02:49:24.967Z",
+        "updated_at": "2020-01-05T02:49:24.967Z",
+        "cloud_babel_translation_objects_id": 18
       },
       "module": {
         "id": "core",
@@ -40894,29 +40951,28 @@ Building a better future, one line of code at a time.
           es: label.es,
           de: label.de
         }).then(function (result) {
-          console.log(result);
-
           _this6.alert("Translation updated successfully", 'success');
         })["catch"](function (error) {
           console.log(error);
         });
       }, 1500);
-    },
-    test: function test(d) {
-      console.log(d);
     }
   },
   watch: {
     'selection.module': function selectionModule() {
+      this.translationObjectGroupLabels = [];
       this.getTranslations();
     },
     'selection.translation': function selectionTranslation() {
+      this.translationObjectGroupLabels = [];
       this.getTranslationObjects();
     },
     'selection.object': function selectionObject() {
+      this.translationObjectGroupLabels = [];
       this.getTranslationObjectGroups();
     },
     'selection.group': function selectionGroup() {
+      this.translationObjectGroupLabels = [];
       this.getTranslationObjectGroupLabels();
     }
   }

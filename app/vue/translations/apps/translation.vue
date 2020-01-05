@@ -30,13 +30,30 @@ export default {
         return {
             modules: [
                 { 'id': 'core', 'name': 'Core'},
-                { 'id': 1, 'name': 'Lesli'},
-                { 'id': 2, 'name': 'Help'},
-                { 'id': 3, 'name': 'Lock'},
-                { 'id': 4, 'name': 'Babel'},
-                { 'id': 5, 'name': 'Driver'},
-                { 'id': 6, 'name': 'Bell'},
-                { 'id': 7, 'name': 'Team'}
+                { 'id': 'team', 'name': 'Team'},
+                { 'id': 'happy', 'name': 'Happy'},
+                { 'id': 'seller', 'name': 'Seller'},
+                { 'id': 'leaf', 'name': 'Leaf'},
+                { 'id': 'drop', 'name': 'Drop'},
+                { 'id': 'mailer', 'name': 'Mailer'},
+                { 'id': 'driver', 'name': 'Driver'},
+                { 'id': 'chaos', 'name': 'Chaos'},
+                { 'id': 'clock', 'name': 'Clock'},
+                { 'id': 'pizza', 'name': 'Pizza'},
+                { 'id': 'notes', 'name': 'Notes'},
+                { 'id': 'lesli', 'name': 'Lesli'},
+                { 'id': 'social', 'name': 'Social'},
+                { 'id': 'bell', 'name': 'Bell'},
+                { 'id': 'books', 'name': 'Books'},
+                { 'id': 'wallet', 'name': 'Wallet'},
+                { 'id': 'things', 'name': 'Things'},
+                { 'id': 'kb', 'name': 'Kb'},
+                { 'id': 'help', 'name': 'Help'},
+                { 'id': 'portal', 'name': 'Portal'},
+                { 'id': 'bug', 'name': 'Bug'},
+                { 'id': 'panel', 'name': 'Panel'},
+                { 'id': 'lock', 'name': 'Lock'},
+                { 'id': 'babel', 'name': 'Babel'}
             ],
             columns: [{
                 field: 'label',
@@ -57,7 +74,7 @@ export default {
         }
     },
     mounted() {
-        this.selection = { "translation": { "id": 65, "module_name": "core", "class_name": "websites", "created_at": "2019-12-18T14:23:16.046Z", "updated_at": "2019-12-18T14:23:16.046Z" }, "object": { "id": 123, "object_type": "views", "created_at": "2019-12-18T14:23:16.051Z", "updated_at": "2019-12-18T14:23:16.051Z", "cloud_babel_translations_id": 65 }, "group": { "id": 1001, "method": "index", "section": "messages", "created_at": "2019-12-18T14:23:16.055Z", "updated_at": "2019-12-18T14:23:16.055Z", "cloud_babel_translation_objects_id": 123 }, "module": { "id": "core", "name": "Core" } } 
+        this.selection = { "translation": { "id": 6, "module_name": "core", "class_name": "websites", "created_at": "2020-01-05T02:49:24.828Z", "updated_at": "2020-01-05T02:49:24.828Z" }, "object": { "id": 18, "object_type": "views", "created_at": "2020-01-05T02:49:24.961Z", "updated_at": "2020-01-05T02:49:24.961Z", "cloud_babel_translations_id": 6 }, "group": { "id": 128, "method": "index", "section": "messages", "created_at": "2020-01-05T02:49:24.967Z", "updated_at": "2020-01-05T02:49:24.967Z", "cloud_babel_translation_objects_id": 18 }, "module": { "id": "core", "name": "Core" } } 
     },
     methods: {
 
@@ -139,30 +156,29 @@ export default {
                     es: label.es,
                     de: label.de
                 }).then(result => {
-                    console.log(result)
                     this.alert("Translation updated successfully", 'success' )
                 }).catch(error => {
                     console.log(error)
                 })
             }, 1500)
-        },
-
-        test(d) {
-            console.log(d)
         }
 
     },
     watch: {
         'selection.module': function() {
+            this.translationObjectGroupLabels= []
             this.getTranslations()
         },
         'selection.translation': function() {
+            this.translationObjectGroupLabels= []
             this.getTranslationObjects()
         },
         'selection.object': function() {
+            this.translationObjectGroupLabels= []
             this.getTranslationObjectGroups()
         },
         'selection.group': function() {
+            this.translationObjectGroupLabels= []
             this.getTranslationObjectGroupLabels()
         }
     }
