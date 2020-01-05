@@ -8,12 +8,15 @@ module CloudBabel
         def index
             respond_to do |format|
                 format.html { }
-                format.json {  responseWithSuccessful(
-                    Translation.find(params[:translation_id])
+                format.json {  
+                    responseWithSuccessful(
+                        Translation
+                        .find(params[:translation_id])
                         .objects.find(params[:translation_object_id])
                         .groups.find(params[:translation_object_group_id])
                         .labels
-                )}
+                    )
+                }
             end
         end
 
@@ -32,17 +35,18 @@ module CloudBabel
 
         # POST /translation_object_group_labels
         def create
-            @translation_object_group_label = TranslationObjectGroupLabel.new(translation_object_group_label_params)
-
-            if @translation_object_group_label.save
-                redirect_to @translation_object_group_label, notice: 'Translation object group label was successfully created.'
+            translation_object_group_label = TranslationObjectGroupLabel.new(translation_object_group_label_params)
+            translation_object_group_label.user = current_user
+            if translation_object_group_label.save
+                responseWithSuccessful(translation_object_group_label)
             else
-                render :new
+                responseWithError(translation_object_group_label.errors.full_messages)
             end
         end
 
         # PATCH/PUT /translation_object_group_labels/1
         def update
+            @translation_object_group_label.user = current_user
             if @translation_object_group_label.update(translation_object_group_label_params)
                 responseWithSuccessful(@translation_object_group_label)
             else

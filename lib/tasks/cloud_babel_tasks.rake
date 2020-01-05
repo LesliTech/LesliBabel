@@ -162,7 +162,7 @@ namespace :cloud_babel do
         # Model actions and sections
         ['create', 'update', 'destroy'].each do |method|
 
-            ['messages'].each do |section|
+            ['alerts', 'messages'].each do |section|
 
                 translation_object_group = CloudBabel::TranslationObjectGroup.find_or_create_by({
                     method: method,
@@ -198,7 +198,7 @@ namespace :cloud_babel do
         # Controller actions and sections
         ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'].each do |method|
 
-            ['actions', 'messages'].each do |section|
+            ['alerts', 'messages'].each do |section|
 
                 translation_object_group = CloudBabel::TranslationObjectGroup.find_or_create_by({
                     method: method,
@@ -234,7 +234,7 @@ namespace :cloud_babel do
         # View actions and sections
         ['index', 'show', 'new', 'edit', 'delete'].each do |method|
 
-            ['messages'].each do |section|
+            ['alerts', 'messages'].each do |section|
 
                 translation_object_group = CloudBabel::TranslationObjectGroup.find_or_create_by({
                     method: method,
