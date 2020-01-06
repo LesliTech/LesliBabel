@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Translation Object Group Sections</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @translation_object_group_sections.each do |translation_object_group_section| %>
+      <tr>
+        <td><%= link_to 'Show', translation_object_group_section %></td>
+        <td><%= link_to 'Edit', edit_translation_object_group_section_path(translation_object_group_section) %></td>
+        <td><%= link_to 'Destroy', translation_object_group_section, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Translation Object Group Section', new_translation_object_group_section_path %>

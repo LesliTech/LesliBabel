@@ -62,20 +62,20 @@ export default {
             translations: [],
             translationObjects: [],
             translationObjectGroups: [],
-            translationObjectGroupLabels: [],
+            translationObjectGroupSections: [],
+            translationObjectGroupSectionLabels: [],
             label: '',
             selection: {
+                module: null,
                 translation: null,
                 object: null,
                 group: null,
-                module: null
+                section: null,
             },
             timeout: null
         }
     },
-    mounted() {
-        this.selection = { "translation": { "id": 6, "module_name": "core", "class_name": "websites", "created_at": "2020-01-05T02:49:24.828Z", "updated_at": "2020-01-05T02:49:24.828Z" }, "object": { "id": 18, "object_type": "views", "created_at": "2020-01-05T02:49:24.961Z", "updated_at": "2020-01-05T02:49:24.961Z", "cloud_babel_translations_id": 6 }, "group": { "id": 128, "method": "index", "section": "messages", "created_at": "2020-01-05T02:49:24.967Z", "updated_at": "2020-01-05T02:49:24.967Z", "cloud_babel_translation_objects_id": 18 }, "module": { "id": "core", "name": "Core" } } 
-    },
+
     methods: {
 
         getTranslations() {
@@ -105,40 +105,38 @@ export default {
             })
         },
 
-        getTranslationObjectGroupLabels() {
-            this.http.get(`/babel/translations/${this.selection.translation.id}/translation_objects/${this.selection.object.id}/translation_object_groups/${this.selection.group.id}/translation_object_group_labels.json`).then(result => {
+        getTranslationObjectGroupSections() {
+            this.http.get(`/babel/translations/${this.selection.translation.id}/translation_objects/${this.selection.object.id}/translation_object_groups/${this.selection.group.id}/translation_object_group_sections.json`).then(result => {
                 if (!result.successful) return 
-                this.translationObjectGroupLabels = result.data
+                this.translationObjectGroupSections = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        buildLabelPath(label) {
-            return [
-                this.selection.translation.module_name,
-                this.selection.translation.class_name,
-                this.selection.object.object_type,
-                this.selection.group.method,
-                this.selection.group.section,
-                label
-            ].join('.')
+        getTranslationObjectGroupSectionLabels() {
+            this.http.get(`/babel/translations/${this.selection.translation.id}/translation_objects/${this.selection.object.id}/translation_object_groups/${this.selection.group.id}/translation_object_group_sections/${this.selection.section.id}/translation_object_group_section_labels.json`).then(result => {
+                if (!result.successful) return 
+                this.translationObjectGroupSectionLabels = result.data
+            }).catch(error => {
+                console.log(error)
+            })
         },
 
-        postTranslationObjectGroupLabels(e) {
+        postTranslationObjectGroupSectionLabels(e) {
 
-            if (e) { e.preventDefault(); }
+            if (e) { e.preventDefault() }
             
-            this.http.post('/babel/translation_object_group_labels', {
+            this.http.post('/babel/translation_object_group_section_labels', {
                 context: '',
                 label: this.label,
                 en: '',
                 es: '',
                 de: '',
-                cloud_babel_translation_object_groups_id: this.selection.group.id
+                cloud_babel_translation_object_group_sections_id: this.selection.section.id
             }).then(result => {
                 this.alert("Label successfully added", "success")
-                this.getTranslationObjectGroupLabels()
+                this.getTranslationObjectGroupSectionLabels()
                 this.label = ''
             }).catch(error => {
                 console.log(error)
@@ -146,10 +144,10 @@ export default {
 
         },
 
-        patchTranslationObjectGroupLabels(label) {
+        patchTranslationObjectGroupSectionLabels(label) {
             clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
-                this.http.put(`/babel/translation_object_group_labels/${label.id}`, {
+                this.http.put(`/babel/translation_object_group_section_labels/${label.id}`, {
                     context: label.context,
                     label: label.label,
                     en: label.en,
@@ -166,20 +164,24 @@ export default {
     },
     watch: {
         'selection.module': function() {
-            this.translationObjectGroupLabels= []
+            this.translationObjectGroupSectionLabels= []
             this.getTranslations()
         },
         'selection.translation': function() {
-            this.translationObjectGroupLabels= []
+            this.translationObjectGroupSectionLabels= []
             this.getTranslationObjects()
         },
         'selection.object': function() {
-            this.translationObjectGroupLabels= []
+            this.translationObjectGroupSectionLabels= []
             this.getTranslationObjectGroups()
         },
         'selection.group': function() {
-            this.translationObjectGroupLabels= []
-            this.getTranslationObjectGroupLabels()
+            this.translationObjectGroupSectionLabels= []
+            this.getTranslationObjectGroupSections()
+        },
+        'selection.section': function() {
+            this.translationObjectGroupSectionLabels= []
+            this.getTranslationObjectGroupSectionLabels()
         }
     }
 }
@@ -230,7 +232,17 @@ export default {
                             icon="globe"
                             icon-pack="fas"
                             v-model="selection.group">
-                            <option v-for="group in translationObjectGroups" :key="group.id" :value="group">{{ group.method }} - {{ group.section }}</option>
+                            <option v-for="group in translationObjectGroups" :key="group.id" :value="group">{{ group.method }}</option>
+                        </b-select>
+                    </div>
+
+                    <div class="control">
+                        <b-select
+                            placeholder="Select section"
+                            icon="globe"
+                            icon-pack="fas"
+                            v-model="selection.section">
+                            <option v-for="section in translationObjectGroupSections" :key="section.id" :value="section">{{ section.name }}</option>
                         </b-select>
                     </div>
                 </div>
@@ -243,7 +255,7 @@ export default {
                     All the labels
                 </h4>
                 <div class="card-header-icon">
-                    <form @submit.prevent="postTranslationObjectGroupLabels()">
+                    <form @submit.prevent="postTranslationObjectGroupSectionLabels()">
                         <div class="control has-icons-left has-icons-right">
                             <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
                             <span class="icon is-small is-left">
@@ -255,7 +267,7 @@ export default {
             </div>
             <div class="card-content">
                 <b-table 
-                    :data="translationObjectGroupLabels">
+                    :data="translationObjectGroupSectionLabels">
                     <template v-slot="props">
                         <b-table-column field="label" label="Label">
                             {{ props.row.label }}
@@ -264,13 +276,13 @@ export default {
                             {{ props.row.context }}
                         </b-table-column>
                         <b-table-column field="en" label="en"  >
-                            <input type="text" v-on:input="patchTranslationObjectGroupLabels(props.row)" v-model="props.row.en" />
+                            <input type="text" v-on:input="patchTranslationObjectGroupSectionLabels(props.row)" v-model="props.row.en" />
                         </b-table-column>
                         <b-table-column field="es" label="es"  >
-                            <input type="text" v-on:input="patchTranslationObjectGroupLabels(props.row)" v-model="props.row.es" />
+                            <input type="text" v-on:input="patchTranslationObjectGroupSectionLabels(props.row)" v-model="props.row.es" />
                         </b-table-column>
                         <b-table-column field="de" label="de"  >
-                            <input type="text" v-on:input="patchTranslationObjectGroupLabels(props.row)" v-model="props.row.de" />
+                            <input type="text" v-on:input="patchTranslationObjectGroupSectionLabels(props.row)" v-model="props.row.de" />
                         </b-table-column>
                     </template>
                 </b-table>

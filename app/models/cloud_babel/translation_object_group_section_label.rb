@@ -1,0 +1,6 @@
+module CloudBabel
+    class TranslationObjectGroupSectionLabel < ApplicationRecord
+        belongs_to :section, class_name: 'TranslationObjectGroupSection', foreign_key: 'cloud_babel_translation_object_group_sections_id'
+        belongs_to :user, class_name: '::User', foreign_key: 'users_id'
+    end
+end

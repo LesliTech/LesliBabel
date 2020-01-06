@@ -1,0 +1,292 @@
+---
+:de:
+  babel:
+    translation_object_group_section_labels:
+      controllers:
+        index:
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1962
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3923
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: alerts
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.774512000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.774512000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1962
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3924
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: messages
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.785245000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.785245000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+        show:
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1963
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3925
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: alerts
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.805389000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.805389000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1963
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3926
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: messages
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.824726000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.824726000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+        new:
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1964
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3927
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: alerts
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.851072000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.851072000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1964
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3928
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: messages
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.863155000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.863155000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+        edit:
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1965
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3929
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: alerts
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.880335000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.880335000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1965
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3930
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: messages
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.891095000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.891095000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+        create:
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1966
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3931
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: alerts
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.929185000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.929185000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1966
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3932
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: messages
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.943073000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.943073000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+        update:
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1967
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3933
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: alerts
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.976541000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.976541000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1967
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3934
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: messages
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:34.993372000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:34.993372000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+        destroy:
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1968
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3935
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: alerts
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:35.010005000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:35.010005000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo
+          ? !ruby/object:CloudBabel::TranslationObjectGroupSection
+            concise_attributes:
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: cloud_babel_translation_object_groups_id
+              value_before_type_cast: 1968
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: id
+              value_before_type_cast: 3936
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: name
+              value_before_type_cast: messages
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: created_at
+              value_before_type_cast: 2020-01-06 20:59:35.023138000 Z
+            - !ruby/object:ActiveModel::Attribute::FromDatabase
+              name: updated_at
+              value_before_type_cast: 2020-01-06 20:59:35.023138000 Z
+            new_record: false
+            active_record_yaml_version: 2
+          : label_demo: Label demo

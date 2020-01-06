@@ -10,8 +10,8 @@ module CloudBabel
                 format.html { }
                 format.json {  responseWithSuccessful(
                     Translation.find(params[:translation_id])
-                        .objects.find(params[:translation_object_id])
-                        .groups
+                    .objects.find(params[:translation_object_id])
+                    .groups
                 )}
             end
         end
