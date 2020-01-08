@@ -10,6 +10,22 @@ module CloudBabel
             respond_to do |format|
                 format.html { }
                 format.json {  
+
+                    translation = Translation.find(params[:translation_id])
+
+                    responseWithSuccessful(translation.labels.where("cloud_babel_translation_object_group_sections_id is null")) if params[:translation_object_id].blank?
+
+                    unless params[:translation_object_id].blank?
+                        responseWithSuccessful(
+                            translation
+                            .objects.find(params[:translation_object_id])
+                            .groups.find(params[:translation_object_group_id])
+                            .sections.find(params[:translation_object_group_section_id])
+                            .labels
+                        )
+                    end
+
+=begin                    
                     responseWithSuccessful(
                         Translation
                         .find(params[:translation_id])
@@ -18,6 +34,7 @@ module CloudBabel
                         .sections.find(params[:translation_object_group_section_id])
                         .labels
                     )
+=end
                 }
             end
         end
@@ -71,7 +88,8 @@ module CloudBabel
 
         # Only allow a trusted parameter "white list" through.
         def translation_object_group_section_label_params
-            params.require(:translation_object_group_section_label).permit(:context, :label, :en, :es, :de, :cloud_babel_translation_object_group_sections_id)
+            
+            params.require(:translation_object_group_section_label).permit(:context, :label, :en, :es, :de, :cloud_babel_translations_id, :cloud_babel_translation_object_group_sections_id)
         end
     end
 end

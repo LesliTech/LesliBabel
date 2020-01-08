@@ -11,6 +11,7 @@ class CreateCloudBabelTranslationObjectGroupSectionLabels < ActiveRecord::Migrat
             t.timestamps
         end
         add_reference :cloud_babel_translation_object_group_section_labels, :users, foreign_key: true, index: { name: "babel_translation_object_group_section_labels_users" }
+        add_reference :cloud_babel_translation_object_group_section_labels, :cloud_babel_translations, foreign_key: true, index: { name: "babel_translation_object_group_section_labels_translations" }
         add_reference :cloud_babel_translation_object_group_section_labels, :cloud_babel_translation_object_group_sections, foreign_key: true, index: { name: "babel_translation_object_group_section_labels_sections" }
     end
 end

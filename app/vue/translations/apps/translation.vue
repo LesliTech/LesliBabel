@@ -123,17 +123,33 @@ export default {
             })
         },
 
+        getTranslationLabels() {
+            this.http.get(`/babel/translations/${this.selection.translation.id}/labels.json`).then(result => {
+                if (!result.successful) return 
+                this.translationObjectGroupSectionLabels = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+
         postTranslationObjectGroupSectionLabels(e) {
 
             if (e) { e.preventDefault() }
             
+            let selection_section_id = null 
+
+            if (this.selection.section && this.selection.section.id) {
+                selection_section_id = this.selection.section.id
+            }
+
             this.http.post('/babel/translation_object_group_section_labels', {
                 context: '',
                 label: this.label,
                 en: '',
                 es: '',
                 de: '',
-                cloud_babel_translation_object_group_sections_id: this.selection.section.id
+                cloud_babel_translations_id: this.selection.translation.id,
+                cloud_babel_translation_object_group_sections_id: selection_section_id
             }).then(result => {
                 this.alert("Label successfully added", "success")
                 this.getTranslationObjectGroupSectionLabels()
@@ -194,6 +210,7 @@ export default {
                     Selection
                 </h4>
             </div>
+
             <div class="card-content">
                 <div class="field is-grouped">
                     <div class="control">
@@ -215,36 +232,41 @@ export default {
                             <option v-for="translation in translations" :key="translation.id" :value="translation">{{ translation.class_name }}</option>
                         </b-select>
                     </div>
+                    
+                    <template v-if="selection.translation && selection.translation.class_name != 'shared'">
 
-                    <div class="control">
-                        <b-select
-                            placeholder="Select object"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.object">
-                            <option v-for="object in translationObjects" :key="object.id" :value="object">{{ object.object_type }}</option>
-                        </b-select>
-                    </div>
+                        <div class="control">
+                            <b-select
+                                placeholder="Select object"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.object">
+                                <option v-for="object in translationObjects" :key="object.id" :value="object">{{ object.object_type }}</option>
+                            </b-select>
+                        </div>
 
-                    <div class="control">
-                        <b-select
-                            placeholder="Select group"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.group">
-                            <option v-for="group in translationObjectGroups" :key="group.id" :value="group">{{ group.method }}</option>
-                        </b-select>
-                    </div>
+                        <div class="control">
+                            <b-select
+                                placeholder="Select group"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.group">
+                                <option v-for="group in translationObjectGroups" :key="group.id" :value="group">{{ group.method }}</option>
+                            </b-select>
+                        </div>
 
-                    <div class="control">
-                        <b-select
-                            placeholder="Select section"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.section">
-                            <option v-for="section in translationObjectGroupSections" :key="section.id" :value="section">{{ section.name }}</option>
-                        </b-select>
-                    </div>
+                        <div class="control">
+                            <b-select
+                                placeholder="Select section"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.section">
+                                <option v-for="section in translationObjectGroupSections" :key="section.id" :value="section">{{ section.name }}</option>
+                            </b-select>
+                        </div>
+
+                    </template>
+
                 </div>
             </div>
         </div>
