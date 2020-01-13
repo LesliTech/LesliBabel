@@ -4,7 +4,7 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do  
 
-        load_demo_data = false
+        load_demo_data = true
 
         translation_list = []
 
@@ -12,6 +12,7 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, Rails.application.routes.routes, "Core")
 
         # build engines controller list
+=begin
         translation_list = get_controllers_from_routes(translation_list, CloudTeam::Engine.routes.routes, CloudTeam) if defined?(CloudTeam)
         translation_list = get_controllers_from_routes(translation_list, CloudDriver::Engine.routes.routes, CloudDriver) if defined?(CloudDriver)
         translation_list = get_controllers_from_routes(translation_list, CloudLesli::Engine.routes.routes, CloudLesli) if defined?(CloudLesli)
@@ -21,17 +22,19 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, CloudPanel::Engine.routes.routes, CloudPanel) if defined?(CloudPanel)
         translation_list = get_controllers_from_routes(translation_list, CloudLock::Engine.routes.routes, CloudLock) if defined?(CloudLock)
         translation_list = get_controllers_from_routes(translation_list, CloudBabel::Engine.routes.routes, CloudBabel) if defined?(CloudBabel)
-
+=end
         translation_list.each do |t|
             
             # Add object to the translation workflow
-            translation = CloudBabel::Translation.find_or_create_by({ module_name: t[:module_name], class_name: t[:class_name] })
+            #translation = Translation::Module.find_or_create_by({ module_name: t[:module_name], object_name: t[:object_name] })
+            translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module_name] })
+            translation_object = CloudBabel::Translation::Object.find_or_create_by({ name: t[:object_name], object_type: 'object', module: translation_module })
 
-            build_standard_labels_for translation, 'views', ['index', 'show', 'new', 'edit', 'delete'], load_demo_data
-            build_standard_labels_for translation, 'models', ['create', 'update', 'destroy'], load_demo_data
-            build_standard_labels_for translation, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
+            build_standard_labels_for translation_object, 'views', ['index', 'show', 'new', 'edit', 'delete'], load_demo_data
+            #build_standard_labels_for translation, 'models', ['create', 'update', 'destroy'], load_demo_data
+            #build_standard_labels_for translation, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
             
-            p "object found: #{t[:module_name]}/#{t[:class_name]}"
+            p "object found: #{t[:module_name]}/#{t[:object_name]}"
 
         end
 
@@ -51,11 +54,11 @@ namespace :cloud_babel do
             engine_sym_name = engine.downcase.sub('cloud', 'cloud_')
             controller = controller.sub(engine_sym_name + '/', '')
 
-            controller_list.push({ module_name: engine, class_name: controller })
+            controller_list.push({ module_name: engine, object_name: controller })
         end
 
         # shared engine translations 
-        controller_list.push({ module_name: engine, class_name: 'shared' })
+        controller_list.push({ module_name: engine, object_name: 'shared' })
 
         return controller_list
 
@@ -63,35 +66,39 @@ namespace :cloud_babel do
 
     def build_standard_labels_for translation, object_type, actions, load_demo_data
 
-        # Model object for current translation
-        translation_object = CloudBabel::TranslationObject.find_or_create_by({
-            object_type: object_type,
-            translation: translation
+        # Model object for current translation (module)
+        translation_object = CloudBabel::Translation::Object.find_or_create_by({
+            name: object_type,
+            object_type: 'object_type',
+            parent: translation
         })
 
-        actions.each do |method|
+        actions.each do |action_name|
 
-            translation_object_group = CloudBabel::TranslationObjectGroup.find_or_create_by({
-                method: method,
-                object: translation_object
+            translation_object_action = CloudBabel::Translation::Object.find_or_create_by({
+                name: action_name,
+                object_type: 'action',
+                parent: translation_object
             })
 
-            ['alerts', 'messages'].each do |section|
+            ['alerts', 'messages'].each do |section_name|
 
-                translation_object_group_section = CloudBabel::TranslationObjectGroupSection.find_or_create_by({
-                    name: section,
-                    group: translation_object_group
+                translation_object_action_section = CloudBabel::Translation::Object.find_or_create_by({
+                    name: section_name,
+                    object_type: 'section',
+                    parent: translation_object_action
                 })
 
                 if load_demo_data
-                    CloudBabel::TranslationObjectGroupSectionLabel.find_or_create_by({
+                    user = ::User.find(1)
+                    CloudBabel::Translation::String.find_or_create_by({
                         label: "label_demo",
                         es: "Etiqueta de demo",
                         en: "Label demo",
                         de: "Label demo",
                         fr: "",
-                        users_id: 1,
-                        section: translation_object_group_section
+                        user: user,
+                        object: translation_object_action_section
                     })
                 end
 

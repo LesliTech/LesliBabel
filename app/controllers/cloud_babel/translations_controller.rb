@@ -2,31 +2,20 @@ require_dependency "cloud_babel/application_controller"
 
 module CloudBabel
     class TranslationsController < ApplicationController
-        before_action :set_translation, only: [:edit, :update, :destroy]
+        before_action :set_translation, only: []
 
         # GET /translations
         def index
-            respond_to do |format|
-                format.html { }
-                format.json { responseWithSuccessful(Translation.all) }
-            end
+            @translations = Translation.all
         end
 
         # GET /translations/1
         def show
-            respond_to do |format|
-                format.html { }
-                format.json { 
-                    module_name = params[:id].upcase_first
-                    module_name = "Cloud#{module_name}" if module_name != "Core"
-                    responseWithSuccessful(Translation.where(module_name: module_name))
-                }
-            end
         end
 
         # GET /translations/new
         def new
-            @translation = Translation.new
+        @translation = Translation.new
         end
 
         # GET /translations/1/edit
@@ -35,48 +24,40 @@ module CloudBabel
 
         # POST /translations
         def create
-            @translation = Translation.new(translation_params)
+        @translation = Translation.new(translation_params)
 
-            if @translation.save
-                responseWithSuccessful(@translation)
-            else
-                responseWithError("Error creating translation", @translation.errors.full_messages)
-            end
+        if @translation.save
+        redirect_to @translation, notice: 'Translation was successfully created.'
+        else
+        render :new
+        end
         end
 
         # PATCH/PUT /translations/1
         def update
-            if @translation.update(translation_params)
-                responseWithSuccessful(@translation)
-            else
-                render :edit
-            end
+        if @translation.update(translation_params)
+        redirect_to @translation, notice: 'Translation was successfully updated.'
+        else
+        render :edit
+        end
         end
 
         # DELETE /translations/1
         def destroy
-            if @translation.destroy
-                responseWithSuccessful
-            else
-                responseWithError(@translation.errors.full_messages.to_sentence)
-            end
+        @translation.destroy
+        redirect_to translations_url, notice: 'Translation was successfully destroyed.'
         end
 
         private
 
         # Use callbacks to share common setup or constraints between actions.
         def set_translation
-            @translation = Translation.find(params[:id])
+        @translation = Translation.find(params[:id])
         end
 
         # Only allow a trusted parameter "white list" through.
         def translation_params
-            params.require(:translation).permit(
-                :id,
-                :module_name,
-                :class_name
-            )
+        params.fetch(:translation, {})
         end
-
     end
 end

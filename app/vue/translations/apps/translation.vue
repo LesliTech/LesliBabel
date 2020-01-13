@@ -28,176 +28,134 @@ Building a better future, one line of code at a time.
 export default {
     data() {
         return {
-            modules: [
-                { 'id': 'core', 'name': 'Core'},
-                { 'id': 'team', 'name': 'Team'},
-                { 'id': 'happy', 'name': 'Happy'},
-                { 'id': 'seller', 'name': 'Seller'},
-                { 'id': 'leaf', 'name': 'Leaf'},
-                { 'id': 'drop', 'name': 'Drop'},
-                { 'id': 'mailer', 'name': 'Mailer'},
-                { 'id': 'driver', 'name': 'Driver'},
-                { 'id': 'chaos', 'name': 'Chaos'},
-                { 'id': 'clock', 'name': 'Clock'},
-                { 'id': 'pizza', 'name': 'Pizza'},
-                { 'id': 'notes', 'name': 'Notes'},
-                { 'id': 'lesli', 'name': 'Lesli'},
-                { 'id': 'social', 'name': 'Social'},
-                { 'id': 'bell', 'name': 'Bell'},
-                { 'id': 'books', 'name': 'Books'},
-                { 'id': 'wallet', 'name': 'Wallet'},
-                { 'id': 'things', 'name': 'Things'},
-                { 'id': 'kb', 'name': 'Kb'},
-                { 'id': 'help', 'name': 'Help'},
-                { 'id': 'portal', 'name': 'Portal'},
-                { 'id': 'bug', 'name': 'Bug'},
-                { 'id': 'panel', 'name': 'Panel'},
-                { 'id': 'lock', 'name': 'Lock'},
-                { 'id': 'babel', 'name': 'Babel'}
-            ],
-            columns: [{
-                field: 'label',
-                label: 'Label'
-            }],
-            translations: [],
-            translationObjects: [],
-            translationObjectGroups: [],
-            translationObjectGroupSections: [],
-            translationObjectGroupSectionLabels: [],
-            label: '',
-            selection: {
-                module: null,
-                translation: null,
-                object: null,
-                group: null,
-                section: null,
-            },
-            timeout: null
+            modules: [],
+            moduleObjects: [],
+            moduleObjectTypes: [],
+            moduleObjectTypeActions: [],
+            moduleObjectTypeActionSections: [],
+            moduleObjectTypeActionSectionStrings: [],
+            selection: { module: null, object: null, obtype: null, action: null, section: null, },
+            timeout: null,
+            label: ''
         }
     },
-
+    mounted() {
+        this.getModules()
+    },
     methods: {
 
-        getTranslations() {
-            this.http.get(`/babel/translations/${this.selection.module.id}.json`).then(result => {
+        getModules() {
+            this.http.get('/babel/translation/modules.json').then(result => {
                 if (!result.successful) return 
-                this.translations = result.data
+                this.modules = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        getTranslationObjects() {
-            this.http.get(`/babel/translations/${this.selection.translation.id}/translation_objects.json`).then(result => {
+        getModuleObjects() {
+            this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects.json`).then(result => {
                 if (!result.successful) return 
-                this.translationObjects = result.data
+                this.moduleObjects = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        getTranslationObjectGroups() {
-            this.http.get(`/babel/translations/${this.selection.translation.id}/translation_objects/${this.selection.object.id}/translation_object_groups.json`).then(result => {
+        getModuleObjectTypes() {
+            this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${this.selection.object.id}.json`).then(result => {
                 if (!result.successful) return 
-                this.translationObjectGroups = result.data
+                this.moduleObjectTypes = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        getTranslationObjectGroupSections() {
-            this.http.get(`/babel/translations/${this.selection.translation.id}/translation_objects/${this.selection.object.id}/translation_object_groups/${this.selection.group.id}/translation_object_group_sections.json`).then(result => {
+        getModuleObjectTypeActions() {
+            this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${this.selection.obtype.id}.json`).then(result => {
                 if (!result.successful) return 
-                this.translationObjectGroupSections = result.data
+                this.moduleObjectTypeActions = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        getTranslationObjectGroupSectionLabels() {
-            this.http.get(`/babel/translations/${this.selection.translation.id}/translation_objects/${this.selection.object.id}/translation_object_groups/${this.selection.group.id}/translation_object_group_sections/${this.selection.section.id}/translation_object_group_section_labels.json`).then(result => {
+        getModuleObjectTypeActionSections() {
+            this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${this.selection.action.id}.json`).then(result => {
                 if (!result.successful) return 
-                this.translationObjectGroupSectionLabels = result.data
+                this.moduleObjectTypeActionSections = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        getTranslationLabels() {
-            this.http.get(`/babel/translations/${this.selection.translation.id}/labels.json`).then(result => {
+        getModuleObjectTypeActionSectionStrings() {
+            this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${this.selection.section.id}/strings.json`).then(result => {
                 if (!result.successful) return 
-                this.translationObjectGroupSectionLabels = result.data
+                this.moduleObjectTypeActionSectionStrings = result.data
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        postTranslationObjectGroupSectionLabels(e) {
-
-            if (e) { e.preventDefault() }
-            
-            let selection_section_id = null 
-
-            if (this.selection.section && this.selection.section.id) {
-                selection_section_id = this.selection.section.id
-            }
-
-            this.http.post('/babel/translation_object_group_section_labels', {
-                context: '',
-                label: this.label,
-                en: '',
-                es: '',
-                de: '',
-                cloud_babel_translations_id: this.selection.translation.id,
-                cloud_babel_translation_object_group_sections_id: selection_section_id
-            }).then(result => {
-                this.alert("Label successfully added", "success")
-                this.getTranslationObjectGroupSectionLabels()
-                this.label = ''
-            }).catch(error => {
-                console.log(error)
-            })
-
-        },
-
-        patchTranslationObjectGroupSectionLabels(label) {
+        patchTranslationString(string) {
             clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
-                this.http.put(`/babel/translation_object_group_section_labels/${label.id}`, {
-                    context: label.context,
-                    label: label.label,
-                    en: label.en,
-                    es: label.es,
-                    de: label.de
+                this.http.patch(`/babel/translation/strings/${string.id}.json`, {
+                    translation_string: {
+                        context: string.context,
+                        status: string.status,
+                        label: string.label,
+                        en: string.en,
+                        es: string.es,
+                        de: string.de
+                    }
                 }).then(result => {
-                    this.alert("Translation updated successfully", 'success' )
+                    this.alert("Translation updated successfully", "success" )
+                    console.log(result)
                 }).catch(error => {
                     console.log(error)
                 })
             }, 1500)
+        },
+
+        postTranslationString(e) {
+            if (e) { e.preventDefault() }
+            
+            this.http.post('/babel/translation/strings.json', {
+                translation_string: {
+                    context: '',
+                    label: this.label,
+                    en: '',
+                    es: '',
+                    de: '',
+                    cloud_babel_translation_objects_id: this.selection.section.id
+                }
+            }).then(result => {
+                this.alert("Label successfully added", "success")
+                this.getModuleObjectTypeActionSectionStrings()
+                this.label = ''
+            }).catch(error => {
+                console.log(error)
+            })
         }
 
     },
     watch: {
         'selection.module': function() {
-            this.translationObjectGroupSectionLabels= []
-            this.getTranslations()
-        },
-        'selection.translation': function() {
-            this.translationObjectGroupSectionLabels= []
-            this.getTranslationObjects()
+            this.getModuleObjects()
         },
         'selection.object': function() {
-            this.translationObjectGroupSectionLabels= []
-            this.getTranslationObjectGroups()
+            this.getModuleObjectTypes()
         },
-        'selection.group': function() {
-            this.translationObjectGroupSectionLabels= []
-            this.getTranslationObjectGroupSections()
+        'selection.obtype': function() {
+            this.getModuleObjectTypeActions()
+        },
+        'selection.action': function() {
+            this.getModuleObjectTypeActionSections()
         },
         'selection.section': function() {
-            this.translationObjectGroupSectionLabels= []
-            this.getTranslationObjectGroupSectionLabels()
+            this.getModuleObjectTypeActionSectionStrings()
         }
     }
 }
@@ -225,48 +183,44 @@ export default {
 
                     <div class="control">
                         <b-select
-                            placeholder="Select class"
+                            placeholder="Select object"
                             icon="globe"
                             icon-pack="fas"
-                            v-model="selection.translation">
-                            <option v-for="translation in translations" :key="translation.id" :value="translation">{{ translation.class_name }}</option>
+                            v-model="selection.object">
+                            <option v-for="object in moduleObjects" :key="object.id" :value="object">{{ object.name }}</option>
+                        </b-select>
+                    </div>
+
+                    <div class="control">
+                        <b-select
+                            placeholder="Select type"
+                            icon="globe"
+                            icon-pack="fas"
+                            v-model="selection.obtype">
+                            <option v-for="type in moduleObjectTypes" :key="type.id" :value="type">{{ type.name }}</option>
+                        </b-select>
+                    </div>
+
+                    <div class="control">
+                        <b-select
+                            placeholder="Select action"
+                            icon="globe"
+                            icon-pack="fas"
+                            v-model="selection.action">
+                            <option v-for="action in moduleObjectTypeActions" :key="action.id" :value="action">{{ action.name }}</option>
+                        </b-select>
+                    </div>
+
+                    <div class="control">
+                        <b-select
+                            placeholder="Select section"
+                            icon="globe"
+                            icon-pack="fas"
+                            v-model="selection.section">
+                            <option v-for="section in moduleObjectTypeActionSections" :key="section.id" :value="section">{{ section.name }}</option>
                         </b-select>
                     </div>
                     
-                    <template v-if="selection.translation && selection.translation.class_name != 'shared'">
-
-                        <div class="control">
-                            <b-select
-                                placeholder="Select object"
-                                icon="globe"
-                                icon-pack="fas"
-                                v-model="selection.object">
-                                <option v-for="object in translationObjects" :key="object.id" :value="object">{{ object.object_type }}</option>
-                            </b-select>
-                        </div>
-
-                        <div class="control">
-                            <b-select
-                                placeholder="Select group"
-                                icon="globe"
-                                icon-pack="fas"
-                                v-model="selection.group">
-                                <option v-for="group in translationObjectGroups" :key="group.id" :value="group">{{ group.method }}</option>
-                            </b-select>
-                        </div>
-
-                        <div class="control">
-                            <b-select
-                                placeholder="Select section"
-                                icon="globe"
-                                icon-pack="fas"
-                                v-model="selection.section">
-                                <option v-for="section in translationObjectGroupSections" :key="section.id" :value="section">{{ section.name }}</option>
-                            </b-select>
-                        </div>
-
-                    </template>
-
                 </div>
             </div>
         </div>
@@ -277,7 +231,7 @@ export default {
                     All the labels
                 </h4>
                 <div class="card-header-icon">
-                    <form @submit.prevent="postTranslationObjectGroupSectionLabels()">
+                    <form @submit.prevent="postTranslationString()">
                         <div class="control has-icons-left has-icons-right">
                             <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
                             <span class="icon is-small is-left">
@@ -289,23 +243,34 @@ export default {
             </div>
             <div class="card-content">
                 <b-table 
-                    :data="translationObjectGroupSectionLabels">
+                    detailed 
+                    detail-key="id" 
+                    :show-detail-icon="true"
+                    :data="moduleObjectTypeActionSectionStrings">
                     <template v-slot="props">
                         <b-table-column field="label" label="Label">
                             {{ props.row.label }}
                         </b-table-column>
-                        <b-table-column field="context" label="Context">
-                            {{ props.row.context }}
+                        <b-table-column field="en" label="en">
+                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
                         </b-table-column>
-                        <b-table-column field="en" label="en"  >
-                            <input type="text" v-on:input="patchTranslationObjectGroupSectionLabels(props.row)" v-model="props.row.en" />
+                        <b-table-column field="es" label="es">
+                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
                         </b-table-column>
-                        <b-table-column field="es" label="es"  >
-                            <input type="text" v-on:input="patchTranslationObjectGroupSectionLabels(props.row)" v-model="props.row.es" />
+                        <b-table-column field="de" label="de">
+                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
                         </b-table-column>
-                        <b-table-column field="de" label="de"  >
-                            <input type="text" v-on:input="patchTranslationObjectGroupSectionLabels(props.row)" v-model="props.row.de" />
+                        <b-table-column label="status">
+                            <div class="select">
+                                <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
+                                    <option value="0">pending</option>
+                                    <option value="1">completed</option>
+                                </select>
+                            </div>
                         </b-table-column>
+                    </template>
+                    <template slot="detail" slot-scope="props">
+                        <input type="text" class="is-fullwidth" v-on:input="patchTranslationString(props.row)" v-model="props.row.context" />
                     </template>
                 </b-table>
             </div>

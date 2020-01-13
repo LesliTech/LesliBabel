@@ -1,12 +1,11 @@
 CloudBabel::Engine.routes.draw do
 
-    resources :translation_object_group_section_labels
-    resources :translations do
-        resources :translation_object_group_section_labels
-        resources :translation_objects do 
-            resources :translation_object_groups do
-                resources :translation_object_group_sections do
-                    resources :translation_object_group_section_labels
+    resource :translation do
+        scope module: :translation do
+            resources :strings
+            resources :modules do
+                resources :objects do
+                    resources :strings
                 end
             end
         end
