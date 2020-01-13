@@ -8,7 +8,7 @@ module CloudBabel
         def clean_label_string
             self.label = self.label
                 .downcase                       # string to lowercase
-                .gsub(/[^0-9A-Za-z\s\-]/, '')   # remove special characters from string
+                .gsub(/[^0-9A-Za-z]/, '')       # remove special characters from string
                 .gsub(/-/, '_')                 # replace dashes with underscore
                 .gsub(/\s+/, '_')               # replace spaces or spaces with single dash
 

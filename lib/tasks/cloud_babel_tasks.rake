@@ -4,7 +4,7 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do  
 
-        load_demo_data = true
+        load_demo_data = false
 
         translation_list = []
 
@@ -12,7 +12,6 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, Rails.application.routes.routes, "Core")
 
         # build engines controller list
-=begin
         translation_list = get_controllers_from_routes(translation_list, CloudTeam::Engine.routes.routes, CloudTeam) if defined?(CloudTeam)
         translation_list = get_controllers_from_routes(translation_list, CloudDriver::Engine.routes.routes, CloudDriver) if defined?(CloudDriver)
         translation_list = get_controllers_from_routes(translation_list, CloudLesli::Engine.routes.routes, CloudLesli) if defined?(CloudLesli)
@@ -22,17 +21,16 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, CloudPanel::Engine.routes.routes, CloudPanel) if defined?(CloudPanel)
         translation_list = get_controllers_from_routes(translation_list, CloudLock::Engine.routes.routes, CloudLock) if defined?(CloudLock)
         translation_list = get_controllers_from_routes(translation_list, CloudBabel::Engine.routes.routes, CloudBabel) if defined?(CloudBabel)
-=end
+
         translation_list.each do |t|
             
             # Add object to the translation workflow
-            #translation = Translation::Module.find_or_create_by({ module_name: t[:module_name], object_name: t[:object_name] })
             translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module_name] })
             translation_object = CloudBabel::Translation::Object.find_or_create_by({ name: t[:object_name], object_type: 'object', module: translation_module })
 
             build_standard_labels_for translation_object, 'views', ['index', 'show', 'new', 'edit', 'delete'], load_demo_data
-            #build_standard_labels_for translation, 'models', ['create', 'update', 'destroy'], load_demo_data
-            #build_standard_labels_for translation, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
+            build_standard_labels_for translation_object, 'models', ['create', 'update', 'destroy'], load_demo_data
+            build_standard_labels_for translation_object, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
             
             p "object found: #{t[:module_name]}/#{t[:object_name]}"
 
@@ -120,27 +118,22 @@ namespace :cloud_babel do
             files[lang] = { }
         end
 
-        CloudBabel::TranslationObjectGroupSectionLabel.all.each do |label|
+        CloudBabel::Translation::String.where(status: 1).each do |string|
 
             available_langs.each do |lang|
 
-                module_name = label.section.group.object.translation.module_name
-
-                module_name_sym = module_name.downcase.sub('cloud', 'cloud_')
+                section = string.object
+                action = section.parent
+                type = action.parent
+                object = type.parent
+                module_name = object.module.name
+                
                 module_name_sym = module_name.downcase.sub('cloud', '')
 
-                class_name = label.section.group.object.translation.class_name
-
-                object_type = label.section.group.object.object_type
-
-                method = label.section.group.method
-
-                section = label.section.name
-
-                file_path = Rails.root.join("config", "locales", object_type, class_name, "#{class_name.gsub('/','_')}.#{lang}.yml")
+                file_path = Rails.root.join("config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
 
                 if module_name != "Core"
-                    file_path = Rails.root.join("engines", module_name, "config", "locales", object_type, class_name, "#{class_name.gsub('/','_')}.#{lang}.yml")
+                    file_path = Rails.root.join("engines", module_name, "config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
                 end
 
                 file_id = file_path.to_s.to_sym
@@ -153,23 +146,23 @@ namespace :cloud_babel do
                     files[lang][file_id][module_name_sym] = { }
                 end
 
-                unless files[lang][file_id][module_name_sym].has_key? class_name
-                    files[lang][file_id][module_name_sym][class_name] = { }
+                unless files[lang][file_id][module_name_sym].has_key? object.name
+                    files[lang][file_id][module_name_sym][object.name] = { }
                 end
 
-                unless files[lang][file_id][module_name_sym][class_name].has_key? object_type
-                    files[lang][file_id][module_name_sym][class_name][object_type] = { }
+                unless files[lang][file_id][module_name_sym][object.name].has_key? type.name
+                    files[lang][file_id][module_name_sym][object.name][type.name] = { }
                 end
 
-                unless files[lang][file_id][module_name_sym][class_name][object_type].has_key? method
-                    files[lang][file_id][module_name_sym][class_name][object_type][method] = { }
+                unless files[lang][file_id][module_name_sym][object.name][type.name].has_key? action.name
+                    files[lang][file_id][module_name_sym][object.name][type.name][action.name] = { }
                 end
 
-                unless files[lang][file_id][module_name_sym][class_name][object_type][method].has_key? section
-                    files[lang][file_id][module_name_sym][class_name][object_type][method][section] = { }
+                unless files[lang][file_id][module_name_sym][object.name][type.name][action.name].has_key? section.name
+                    files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name] = { }
                 end
 
-                files[lang][file_id][module_name_sym][class_name][object_type][method][section][label.label] = label[lang]
+                files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name][string.label] = string[lang]
 
             end
 
@@ -202,9 +195,5 @@ namespace :cloud_babel do
         end
 
     end
-    
-
-
-    
 
 end
