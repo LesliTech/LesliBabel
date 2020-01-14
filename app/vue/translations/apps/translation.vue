@@ -35,6 +35,7 @@ export default {
             moduleObjectTypeActionSections: [],
             moduleObjectTypeActionSectionStrings: [],
             selection: { module: null, object: null, obtype: null, action: null, section: null, },
+            sharedTranslationString: false,
             timeout: null,
             label: ''
         }
@@ -99,8 +100,11 @@ export default {
         },
 
         patchTranslationString(string) {
+
             clearTimeout(this.timeout)
+
             this.timeout = setTimeout(() => {
+
                 this.http.patch(`/babel/translation/strings/${string.id}.json`, {
                     translation_string: {
                         context: string.context,
@@ -116,11 +120,20 @@ export default {
                 }).catch(error => {
                     console.log(error)
                 })
+
             }, 1500)
+
         },
 
         postTranslationString(e) {
+
             if (e) { e.preventDefault() }
+
+            let object_id = this.selection.section.id
+
+            if (this.selection.object.name == 'shared') {
+                object_id = this.selection.object.id
+            }
             
             this.http.post('/babel/translation/strings.json', {
                 translation_string: {
@@ -129,7 +142,7 @@ export default {
                     en: '',
                     es: '',
                     de: '',
-                    cloud_babel_translation_objects_id: this.selection.section.id
+                    cloud_babel_translation_objects_id: object_id
                 }
             }).then(result => {
                 this.alert("Label successfully added", "success")
@@ -138,6 +151,7 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+
         }
 
     },
@@ -147,6 +161,11 @@ export default {
         },
         'selection.object': function() {
             this.getModuleObjectTypes()
+            if (this.selection.object.name == 'shared') {
+                this.sharedTranslationString = true
+            } else {
+                this.sharedTranslationString = false
+            }
         },
         'selection.obtype': function() {
             this.getModuleObjectTypeActions()
@@ -168,9 +187,9 @@ export default {
                     Selection
                 </h4>
             </div>
-
             <div class="card-content">
                 <div class="field is-grouped">
+
                     <div class="control">
                         <b-select
                             placeholder="Select module"
@@ -191,35 +210,39 @@ export default {
                         </b-select>
                     </div>
 
-                    <div class="control">
-                        <b-select
-                            placeholder="Select type"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.obtype">
-                            <option v-for="type in moduleObjectTypes" :key="type.id" :value="type">{{ type.name }}</option>
-                        </b-select>
-                    </div>
+                    <template v-if="!sharedTranslationString">
 
-                    <div class="control">
-                        <b-select
-                            placeholder="Select action"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.action">
-                            <option v-for="action in moduleObjectTypeActions" :key="action.id" :value="action">{{ action.name }}</option>
-                        </b-select>
-                    </div>
+                        <div class="control">
+                            <b-select
+                                placeholder="Select type"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.obtype">
+                                <option v-for="type in moduleObjectTypes" :key="type.id" :value="type">{{ type.name }}</option>
+                            </b-select>
+                        </div>
 
-                    <div class="control">
-                        <b-select
-                            placeholder="Select section"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.section">
-                            <option v-for="section in moduleObjectTypeActionSections" :key="section.id" :value="section">{{ section.name }}</option>
-                        </b-select>
-                    </div>
+                        <div class="control">
+                            <b-select
+                                placeholder="Select action"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.action">
+                                <option v-for="action in moduleObjectTypeActions" :key="action.id" :value="action">{{ action.name }}</option>
+                            </b-select>
+                        </div>
+
+                        <div class="control">
+                            <b-select
+                                placeholder="Select section"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.section">
+                                <option v-for="section in moduleObjectTypeActionSections" :key="section.id" :value="section">{{ section.name }}</option>
+                            </b-select>
+                        </div>
+
+                    </template>
                     
                 </div>
             </div>

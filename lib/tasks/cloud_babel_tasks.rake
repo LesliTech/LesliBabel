@@ -4,7 +4,7 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do  
 
-        load_demo_data = false
+        load_demo_data = true
 
         translation_list = []
 
@@ -23,16 +23,21 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, CloudBabel::Engine.routes.routes, CloudBabel) if defined?(CloudBabel)
 
         translation_list.each do |t|
-            
+
+            p "object found: #{t[:module_name]}/#{t[:object_name]}"
+
             # Add object to the translation workflow
             translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module_name] })
             translation_object = CloudBabel::Translation::Object.find_or_create_by({ name: t[:object_name], object_type: 'object', module: translation_module })
 
-            build_standard_labels_for translation_object, 'views', ['index', 'show', 'new', 'edit', 'delete'], load_demo_data
-            build_standard_labels_for translation_object, 'models', ['create', 'update', 'destroy'], load_demo_data
-            build_standard_labels_for translation_object, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
-            
-            p "object found: #{t[:module_name]}/#{t[:object_name]}"
+            # Shared strings should not have this tree
+            if t[:object_name] == "shared"
+                register_shared_labels_for translation_object, load_demo_data
+            else
+                register_standard_labels_for translation_object, 'views', ['index', 'show', 'new', 'edit', 'delete'], load_demo_data
+                register_standard_labels_for translation_object, 'models', ['create', 'update', 'destroy'], load_demo_data
+                register_standard_labels_for translation_object, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
+            end
 
         end
 
@@ -62,7 +67,23 @@ namespace :cloud_babel do
 
     end
 
-    def build_standard_labels_for translation, object_type, actions, load_demo_data
+    def register_shared_labels_for translation, load_demo_data
+
+        if load_demo_data
+            user = ::User.find(1)
+            CloudBabel::Translation::String.find_or_create_by({
+                label: "shared_label_demo",
+                es: "Etiqueta de demo",
+                en: "Label demo",
+                de: "Label demo",
+                fr: "",
+                object: translation
+            })
+        end
+
+    end
+
+    def register_standard_labels_for translation, object_type, actions, load_demo_data
 
         # Model object for current translation (module)
         translation_object = CloudBabel::Translation::Object.find_or_create_by({
@@ -88,14 +109,12 @@ namespace :cloud_babel do
                 })
 
                 if load_demo_data
-                    user = ::User.find(1)
                     CloudBabel::Translation::String.find_or_create_by({
                         label: "label_demo",
                         es: "Etiqueta de demo",
                         en: "Label demo",
                         de: "Label demo",
                         fr: "",
-                        user: user,
                         object: translation_object_action_section
                     })
                 end
@@ -120,49 +139,86 @@ namespace :cloud_babel do
 
         CloudBabel::Translation::String.where(status: 1).each do |string|
 
-            available_langs.each do |lang|
+            if string.object.name == "shared"
+
+                object = string.object
+                module_name = object.module.name
+
+                module_name_sym = module_name.downcase.sub('cloud', '')
+
+                available_langs.each do |lang|
+
+                    file_path = Rails.root.join("config", "locales", object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
+
+                    if module_name != "Core"
+                        file_path = Rails.root.join("engines", module_name, "config", "locales", object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
+                    end
+
+                    file_id = file_path.to_s.to_sym
+
+                    unless files[lang].has_key? file_id
+                        files[lang][file_id] = { }
+                    end
+
+                    unless files[lang][file_id].has_key? module_name_sym
+                        files[lang][file_id][module_name_sym] = { }
+                    end
+
+                    unless files[lang][file_id][module_name_sym].has_key? object.name
+                        files[lang][file_id][module_name_sym][object.name] = { }
+                    end
+
+                    files[lang][file_id][module_name_sym][object.name][string.label] = string[lang]
+
+                end
+
+            else
 
                 section = string.object
                 action = section.parent
                 type = action.parent
                 object = type.parent
                 module_name = object.module.name
-                
+
                 module_name_sym = module_name.downcase.sub('cloud', '')
 
-                file_path = Rails.root.join("config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
+                available_langs.each do |lang|
 
-                if module_name != "Core"
-                    file_path = Rails.root.join("engines", module_name, "config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
+                    file_path = Rails.root.join("config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
+
+                    if module_name != "Core"
+                        file_path = Rails.root.join("engines", module_name, "config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
+                    end
+
+                    file_id = file_path.to_s.to_sym
+
+                    unless files[lang].has_key? file_id
+                        files[lang][file_id] = { }
+                    end
+
+                    unless files[lang][file_id].has_key? module_name_sym
+                        files[lang][file_id][module_name_sym] = { }
+                    end
+
+                    unless files[lang][file_id][module_name_sym].has_key? object.name
+                        files[lang][file_id][module_name_sym][object.name] = { }
+                    end
+
+                    unless files[lang][file_id][module_name_sym][object.name].has_key? type.name
+                        files[lang][file_id][module_name_sym][object.name][type.name] = { }
+                    end
+
+                    unless files[lang][file_id][module_name_sym][object.name][type.name].has_key? action.name
+                        files[lang][file_id][module_name_sym][object.name][type.name][action.name] = { }
+                    end
+
+                    unless files[lang][file_id][module_name_sym][object.name][type.name][action.name].has_key? section.name
+                        files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name] = { }
+                    end
+
+                    files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name][string.label] = string[lang]
+
                 end
-
-                file_id = file_path.to_s.to_sym
-
-                unless files[lang].has_key? file_id
-                    files[lang][file_id] = { }
-                end
-
-                unless files[lang][file_id].has_key? module_name_sym
-                    files[lang][file_id][module_name_sym] = { }
-                end
-
-                unless files[lang][file_id][module_name_sym].has_key? object.name
-                    files[lang][file_id][module_name_sym][object.name] = { }
-                end
-
-                unless files[lang][file_id][module_name_sym][object.name].has_key? type.name
-                    files[lang][file_id][module_name_sym][object.name][type.name] = { }
-                end
-
-                unless files[lang][file_id][module_name_sym][object.name][type.name].has_key? action.name
-                    files[lang][file_id][module_name_sym][object.name][type.name][action.name] = { }
-                end
-
-                unless files[lang][file_id][module_name_sym][object.name][type.name][action.name].has_key? section.name
-                    files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name] = { }
-                end
-
-                files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name][string.label] = string[lang]
 
             end
 
