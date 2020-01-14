@@ -252,4 +252,9 @@ namespace :cloud_babel do
 
     end
 
+    desc "Delete translation files"
+    task clean: :environment do
+        FileUtils.remove_dir()
+    end
+
 end
