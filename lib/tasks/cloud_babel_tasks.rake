@@ -1,3 +1,4 @@
+require "./lesli_info"
 
 namespace :cloud_babel do
 
@@ -254,7 +255,13 @@ namespace :cloud_babel do
 
     desc "Delete translation files"
     task clean: :environment do
-        FileUtils.remove_dir()
+        LesliInfo::engines.each do |engine|
+            ['controllers', 'models', 'views', 'shared'].each do |folder|
+                engine_path = Rails.root.join('engines', engine[:name], "config", "locales", folder)
+                FileUtils.rm_rf(engine_path)
+                p "delete translations for: #{engine_path.to_s}"
+            end
+        end
     end
 
 end
