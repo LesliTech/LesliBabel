@@ -32,6 +32,8 @@ export default {
             moduleObjects: [],
             moduleObjectTypes: [],
             moduleObjectTypeActions: [],
+            
+
             moduleObjectTypeActionSections: [],
             moduleObjectTypeActionSectionStrings: [],
             selection: { module: null, object: null, obtype: null, action: null, section: null, },
@@ -75,27 +77,35 @@ export default {
         getModuleObjectTypeActions() {
             this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${this.selection.obtype.id}.json`).then(result => {
                 if (!result.successful) return 
-                this.moduleObjectTypeActions = result.data
+                this.moduleObjectTypeActions = result.data.map(action => {
+                    return { 
+                        id: action.id, 
+                        name: action.name, 
+                        object_type: action.type,
+                        cloud_babel_translation_objects_id: action.cloud_babel_translation_objects_id, 
+                        cloud_babel_translation_modules_id: action.cloud_babel_translation_modules_id,
+                        strings: []
+                    } 
+                })
             }).catch(error => {
                 console.log(error)
             })
         },
 
-        getModuleObjectTypeActionSections() {
-            this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${this.selection.action.id}.json`).then(result => {
-                if (!result.successful) return 
-                this.moduleObjectTypeActionSections = result.data
-            }).catch(error => {
-                console.log(error)
-            })
-        },
+        getModuleObjectTypeStrings() {
+            this.moduleObjectTypeActions.forEach(action => {
 
-        getModuleObjectTypeActionSectionStrings() {
-            this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${this.selection.section.id}/strings.json`).then(result => {
-                if (!result.successful) return 
-                this.moduleObjectTypeActionSectionStrings = result.data
-            }).catch(error => {
-                console.log(error)
+                let request = {}
+
+                request = this.http.get(`/babel/translation/modules/${this.selection.module.id}/objects/${action.id}/strings.json`)
+
+                request.then(result => {
+                    if (!result.successful) return 
+                    action.strings = result.data ? result.data : []
+                }).catch(error => {
+                    console.log(error)
+                })
+
             })
         },
 
@@ -125,16 +135,7 @@ export default {
 
         },
 
-        postTranslationString(e) {
-
-            if (e) { e.preventDefault() }
-
-            let object_id = this.selection.section.id
-
-            if (this.selection.object.name == 'shared') {
-                object_id = this.selection.object.id
-            }
-            
+        postTranslationString(object) {
             this.http.post('/babel/translation/strings.json', {
                 translation_string: {
                     context: '',
@@ -142,16 +143,14 @@ export default {
                     en: '',
                     es: '',
                     de: '',
-                    cloud_babel_translation_objects_id: object_id
+                    cloud_babel_translation_objects_id: object.id
                 }
             }).then(result => {
                 this.alert("Label successfully added", "success")
-                this.getModuleObjectTypeActionSectionStrings()
                 this.label = ''
             }).catch(error => {
                 console.log(error)
             })
-
         }
 
     },
@@ -163,6 +162,7 @@ export default {
             this.getModuleObjectTypes()
             if (this.selection.object.name == 'shared') {
                 this.sharedTranslationString = true
+                this.getModuleObjectTypeActionSectionStrings()
             } else {
                 this.sharedTranslationString = false
             }
@@ -170,6 +170,11 @@ export default {
         'selection.obtype': function() {
             this.getModuleObjectTypeActions()
         },
+        'moduleObjectTypeActions': function() {
+            this.getModuleObjectTypeStrings()
+        },
+
+
         'selection.action': function() {
             this.getModuleObjectTypeActionSections()
         },
@@ -222,7 +227,7 @@ export default {
                             </b-select>
                         </div>
 
-                        <div class="control">
+                        <div class="control" v-if="false">
                             <b-select
                                 placeholder="Select action"
                                 icon="globe"
@@ -232,7 +237,7 @@ export default {
                             </b-select>
                         </div>
 
-                        <div class="control">
+                        <div class="control" v-if="false">
                             <b-select
                                 placeholder="Select section"
                                 icon="globe"
@@ -247,56 +252,61 @@ export default {
                 </div>
             </div>
         </div>
+
         <br />
+
         <div class="card">
-            <div class="card-header">
-                <h4 class="card-header-title">
-                    All the labels
-                </h4>
-                <div class="card-header-icon">
-                    <form @submit.prevent="postTranslationString()">
+            <b-tabs>
+                <b-tab-item v-for="action in moduleObjectTypeActions" :key="action.id">
+                    <template slot="header">
+                        <i class="far fa-comment-dots"></i>
+                        <span>
+                            {{ action.name }}
+                            <b-tag rounded>{{ action.strings.length }}</b-tag>
+                        </span>
+                    </template>
+                    <!-- <form @submit.prevent="postTranslationString(action)">
                         <div class="control has-icons-left has-icons-right">
                             <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
                             <span class="icon is-small is-left">
                                 <i class="fas fa-language"></i>
                             </span>
                         </div>
-                    </form>
-                </div>
-            </div>
-            <div class="card-content">
-                <b-table 
-                    detailed 
-                    detail-key="id" 
-                    :show-detail-icon="true"
-                    :data="moduleObjectTypeActionSectionStrings">
-                    <template v-slot="props">
-                        <b-table-column field="label" label="Label">
-                            {{ props.row.label }}
-                        </b-table-column>
-                        <b-table-column field="en" label="en">
-                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
-                        </b-table-column>
-                        <b-table-column field="es" label="es">
-                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
-                        </b-table-column>
-                        <b-table-column field="de" label="de">
-                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
-                        </b-table-column>
-                        <b-table-column label="status">
-                            <div class="select">
-                                <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
-                                    <option value="0">pending</option>
-                                    <option value="1">completed</option>
-                                </select>
-                            </div>
-                        </b-table-column>
-                    </template>
-                    <template slot="detail" slot-scope="props">
-                        <input type="text" class="is-fullwidth" v-on:input="patchTranslationString(props.row)" v-model="props.row.context" />
-                    </template>
-                </b-table>
-            </div>
+                    </form> -->
+                    <b-table 
+                        detailed 
+                        detail-key="id" 
+                        :show-detail-icon="true"
+                        :data="action.strings">
+                        <template v-slot="props">
+                            <b-table-column field="label" label="Label">
+                                {{ props.row.label }}
+                            </b-table-column>
+                            <b-table-column field="en" label="en">
+                                <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
+                            </b-table-column>
+                            <b-table-column field="es" label="es">
+                                <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
+                            </b-table-column>
+                            <b-table-column field="de" label="de">
+                                <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
+                            </b-table-column>
+                            <b-table-column label="status">
+                                <div class="select">
+                                    <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
+                                        <option value="0">pending</option>
+                                        <option value="1">completed</option>
+                                    </select>
+                                </div>
+                            </b-table-column>
+                        </template>
+                        <template slot="detail" slot-scope="props">
+                            <input type="text" class="is-fullwidth" v-on:input="patchTranslationString(props.row)" v-model="props.row.context" />
+                        </template>
+                    </b-table>
+                </b-tab-item>
+                <b-tab-item></b-tab-item>
+            </b-tabs>
         </div>
     </section>
 </template>

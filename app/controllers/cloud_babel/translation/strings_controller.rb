@@ -6,10 +6,10 @@ module CloudBabel
 
         # GET /translation/strings
         def index
-            strings = Translation::Object.find(params[:object_id])
+            object = Translation::Object.find(params[:object_id])
             respond_to do |format|
                 format.html { }
-                format.json { responseWithSuccessful(strings.strings) }
+                format.json { responseWithSuccessful(object.strings) }
             end
         end
 
