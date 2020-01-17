@@ -5,7 +5,7 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do  
 
-        load_demo_data = true
+        load_demo_data = false
 
         translation_list = []
 
@@ -35,6 +35,7 @@ namespace :cloud_babel do
             if t[:object_name] == "shared"
                 register_shared_labels_for translation_object, load_demo_data
             else
+                register_standard_labels_for translation_object, 'shared', [], load_demo_data
                 register_standard_labels_for translation_object, 'views', ['index', 'show', 'new', 'edit', 'delete'], load_demo_data
                 register_standard_labels_for translation_object, 'models', ['create', 'update', 'destroy'], load_demo_data
                 register_standard_labels_for translation_object, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
@@ -101,7 +102,8 @@ namespace :cloud_babel do
                 parent: translation_object
             })
 
-            ['alerts', 'messages'].each do |section_name|
+            #['alerts', 'messages'].each do |section_name|
+            [].each do |section_name|                
 
                 translation_object_action_section = CloudBabel::Translation::Object.find_or_create_by({
                     name: section_name,
@@ -129,6 +131,8 @@ namespace :cloud_babel do
 
     desc "Build translation files"
     task build: :environment do
+
+        Rake::Task["dev:db:dump_babel"].invoke
 
         files = { }
 
