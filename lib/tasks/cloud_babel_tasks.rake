@@ -5,7 +5,7 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do  
 
-        load_demo_data = false
+        load_demo_data = true
 
         translation_list = []
 
@@ -15,6 +15,7 @@ namespace :cloud_babel do
         # build engines controller list
         translation_list = get_controllers_from_routes(translation_list, CloudTeam::Engine.routes.routes, CloudTeam) if defined?(CloudTeam)
         translation_list = get_controllers_from_routes(translation_list, CloudDriver::Engine.routes.routes, CloudDriver) if defined?(CloudDriver)
+        translation_list = get_controllers_from_routes(translation_list, CloudHouse::Engine.routes.routes, CloudHouse) if defined?(CloudHouse)
         translation_list = get_controllers_from_routes(translation_list, CloudLesli::Engine.routes.routes, CloudLesli) if defined?(CloudLesli)
         translation_list = get_controllers_from_routes(translation_list, CloudBell::Engine.routes.routes, CloudBell) if defined?(CloudBell)
         translation_list = get_controllers_from_routes(translation_list, CloudKb::Engine.routes.routes, CloudKb) if defined?(CloudKb)
@@ -25,20 +26,21 @@ namespace :cloud_babel do
 
         translation_list.each do |t|
 
-            p "object found: #{t[:module_name]}/#{t[:object_name]}"
+            p "object found: #{t[:module]}/#{t[:bucket]}"
 
             # Add object to the translation workflow
-            translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module_name] })
-            translation_object = CloudBabel::Translation::Object.find_or_create_by({ name: t[:object_name], object_type: 'object', module: translation_module })
+            translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module] })
+            translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: t[:bucket], module: translation_module })
 
-            # Shared strings should not have this tree
-            if t[:object_name] == "shared"
-                register_shared_labels_for translation_object, load_demo_data
-            else
-                register_standard_labels_for translation_object, 'shared', [], load_demo_data
-                register_standard_labels_for translation_object, 'views', ['index', 'show', 'new', 'edit', 'delete'], load_demo_data
-                register_standard_labels_for translation_object, 'models', ['create', 'update', 'destroy'], load_demo_data
-                register_standard_labels_for translation_object, 'controllers', ['index', 'show', 'new', 'edit', 'create', 'update', 'destroy'], load_demo_data
+            if load_demo_data
+                CloudBabel::Translation::String.find_or_create_by({
+                    label: "demo_label",
+                    es: "Etiqueta de demo",
+                    en: "Label demo",
+                    de: "Label demo",
+                    fr: "",
+                    bucket: translation_bucket
+                })
             end
 
         end
@@ -59,80 +61,20 @@ namespace :cloud_babel do
             engine_sym_name = engine.downcase.sub('cloud', 'cloud_')
             controller = controller.sub(engine_sym_name + '/', '')
 
-            controller_list.push({ module_name: engine, object_name: controller })
+            controller_list.push({ module: engine, bucket: controller })
         end
 
         # shared engine translations 
-        controller_list.push({ module_name: engine, object_name: 'shared' })
+        controller_list.push({ module: engine, bucket: 'shared' })
 
         return controller_list
 
     end
 
-    def register_shared_labels_for translation, load_demo_data
-
-        if load_demo_data
-            user = ::User.find(1)
-            CloudBabel::Translation::String.find_or_create_by({
-                label: "shared_label_demo",
-                es: "Etiqueta de demo",
-                en: "Label demo",
-                de: "Label demo",
-                fr: "",
-                object: translation
-            })
-        end
-
-    end
-
-    def register_standard_labels_for translation, object_type, actions, load_demo_data
-
-        # Model object for current translation (module)
-        translation_object = CloudBabel::Translation::Object.find_or_create_by({
-            name: object_type,
-            object_type: 'object_type',
-            parent: translation
-        })
-
-        actions.each do |action_name|
-
-            translation_object_action = CloudBabel::Translation::Object.find_or_create_by({
-                name: action_name,
-                object_type: 'action',
-                parent: translation_object
-            })
-
-            #['alerts', 'messages'].each do |section_name|
-            [].each do |section_name|                
-
-                translation_object_action_section = CloudBabel::Translation::Object.find_or_create_by({
-                    name: section_name,
-                    object_type: 'section',
-                    parent: translation_object_action
-                })
-
-                if load_demo_data
-                    CloudBabel::Translation::String.find_or_create_by({
-                        label: "label_demo",
-                        es: "Etiqueta de demo",
-                        en: "Label demo",
-                        de: "Label demo",
-                        fr: "",
-                        object: translation_object_action_section
-                    })
-                end
-
-            end
-
-        end
-
-    end
-
-
     desc "Build translation files"
     task build: :environment do
 
-        Rake::Task["dev:db:dump_babel"].invoke
+        #Rake::Task["dev:db:dump_babel"].invoke
 
         files = { }
 
@@ -144,86 +86,34 @@ namespace :cloud_babel do
 
         CloudBabel::Translation::String.where(status: 1).each do |string|
 
-            if string.object.name == "shared"
+            module_name = string.bucket.module.name
+            bucket_name = string.bucket.name
 
-                object = string.object
-                module_name = object.module.name
+            module_name_sym = module_name.downcase.sub('cloud', '')
 
-                module_name_sym = module_name.downcase.sub('cloud', '')
+            available_langs.each do |lang|
 
-                available_langs.each do |lang|
+                file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub('/','_') }.#{ lang }.yml")
 
-                    file_path = Rails.root.join("config", "locales", object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
-
-                    if module_name != "Core"
-                        file_path = Rails.root.join("engines", module_name, "config", "locales", object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
-                    end
-
-                    file_id = file_path.to_s.to_sym
-
-                    unless files[lang].has_key? file_id
-                        files[lang][file_id] = { }
-                    end
-
-                    unless files[lang][file_id].has_key? module_name_sym
-                        files[lang][file_id][module_name_sym] = { }
-                    end
-
-                    unless files[lang][file_id][module_name_sym].has_key? object.name
-                        files[lang][file_id][module_name_sym][object.name] = { }
-                    end
-
-                    files[lang][file_id][module_name_sym][object.name][string.label] = string[lang]
-
+                if module_name != "Core"
+                    file_path = Rails.root.join("engines", module_name, "config", "locales", bucket_name, "#{ bucket_name.gsub('/','_') }.#{ lang }.yml")
                 end
 
-            else
+                file_id = file_path.to_s.to_sym
 
-                section = string.object
-                action = section.parent
-                type = action.parent
-                object = type.parent
-                module_name = object.module.name
-
-                module_name_sym = module_name.downcase.sub('cloud', '')
-
-                available_langs.each do |lang|
-
-                    file_path = Rails.root.join("config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
-
-                    if module_name != "Core"
-                        file_path = Rails.root.join("engines", module_name, "config", "locales", type.name, object.name, "#{object.name.gsub('/','_')}.#{lang}.yml")
-                    end
-
-                    file_id = file_path.to_s.to_sym
-
-                    unless files[lang].has_key? file_id
-                        files[lang][file_id] = { }
-                    end
-
-                    unless files[lang][file_id].has_key? module_name_sym
-                        files[lang][file_id][module_name_sym] = { }
-                    end
-
-                    unless files[lang][file_id][module_name_sym].has_key? object.name
-                        files[lang][file_id][module_name_sym][object.name] = { }
-                    end
-
-                    unless files[lang][file_id][module_name_sym][object.name].has_key? type.name
-                        files[lang][file_id][module_name_sym][object.name][type.name] = { }
-                    end
-
-                    unless files[lang][file_id][module_name_sym][object.name][type.name].has_key? action.name
-                        files[lang][file_id][module_name_sym][object.name][type.name][action.name] = { }
-                    end
-
-                    unless files[lang][file_id][module_name_sym][object.name][type.name][action.name].has_key? section.name
-                        files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name] = { }
-                    end
-
-                    files[lang][file_id][module_name_sym][object.name][type.name][action.name][section.name][string.label] = string[lang]
-
+                unless files[lang].has_key? file_id
+                    files[lang][file_id] = { }
                 end
+
+                unless files[lang][file_id].has_key? module_name_sym
+                    files[lang][file_id][module_name_sym] = { }
+                end
+
+                unless files[lang][file_id][module_name_sym].has_key? bucket_name
+                    files[lang][file_id][module_name_sym][bucket_name] = { }
+                end
+
+                files[lang][file_id][module_name_sym][bucket_name][string.label] = string[lang]
 
             end
 
@@ -260,12 +150,13 @@ namespace :cloud_babel do
     desc "Delete translation files"
     task clean: :environment do
         LesliInfo::engines.each do |engine|
-            ['controllers', 'models', 'views', 'shared'].each do |folder|
-                engine_path = Rails.root.join('engines', engine[:name], "config", "locales", folder)
-                FileUtils.rm_rf(engine_path)
-                p "delete translations for: #{engine_path.to_s}"
-            end
+            engine_path = Rails.root.join('engines', engine['name'], "config", "locales")
+            FileUtils.rm_rf(engine_path)
+            p "delete translations for: #{engine_path.to_s}"
         end
+        engine_path = Rails.root.join("config", "locales")
+        FileUtils.rm_rf(engine_path)
+        p "delete translations for: #{engine_path.to_s}"
     end
 
 end

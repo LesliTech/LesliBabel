@@ -25,7 +25,7 @@ module CloudBabel
 
         # GET /translation/modules/new
         def new
-        @translation_module = Translation::Module.new
+            @translation_module = Translation::Module.new
         end
 
         # GET /translation/modules/1/edit
@@ -34,40 +34,40 @@ module CloudBabel
 
         # POST /translation/modules
         def create
-        @translation_module = Translation::Module.new(translation_module_params)
+            @translation_module = Translation::Module.new(translation_module_params)
 
-        if @translation_module.save
-        redirect_to @translation_module, notice: 'Module was successfully created.'
-        else
-        render :new
-        end
+            if @translation_module.save
+                redirect_to @translation_module, notice: 'Module was successfully created.'
+            else
+                render :new
+            end
         end
 
         # PATCH/PUT /translation/modules/1
         def update
-        if @translation_module.update(translation_module_params)
-        redirect_to @translation_module, notice: 'Module was successfully updated.'
-        else
-        render :edit
-        end
+            if @translation_module.update(translation_module_params)
+                redirect_to @translation_module, notice: 'Module was successfully updated.'
+            else
+                render :edit
+            end
         end
 
         # DELETE /translation/modules/1
         def destroy
-        @translation_module.destroy
-        redirect_to translation_modules_url, notice: 'Module was successfully destroyed.'
+            @translation_module.destroy
+            redirect_to translation_modules_url, notice: 'Module was successfully destroyed.'
         end
 
         private
 
         # Use callbacks to share common setup or constraints between actions.
         def set_translation_module
-        @translation_module = Translation::Module.find(params[:id])
+            @translation_module = Translation::Module.find(params[:id])
         end
 
         # Only allow a trusted parameter "white list" through.
         def translation_module_params
-        params.fetch(:translation_module, {})
+            params.fetch(:translation_module, {})
         end
     end
 end

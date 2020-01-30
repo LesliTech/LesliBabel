@@ -6,10 +6,10 @@ module CloudBabel
 
         # GET /translation/strings
         def index
-            object = Translation::Object.find(params[:object_id])
+            bucket = Translation::Bucket.find(params[:bucket_id])
             respond_to do |format|
                 format.html { }
-                format.json { responseWithSuccessful(object.strings) }
+                format.json { responseWithSuccessful(bucket.strings) }
             end
         end
 
@@ -61,7 +61,7 @@ module CloudBabel
 
         # Only allow a trusted parameter "white list" through.
         def translation_string_params
-            params.require(:translation_string).permit(:context, :label, :en, :es, :de, :status, :cloud_babel_translation_objects_id)
+            params.require(:translation_string).permit(:context, :label, :en, :es, :de, :status, :cloud_babel_translation_buckets_id)
         end
     end
 end

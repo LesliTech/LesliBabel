@@ -1,7 +1,7 @@
 module CloudBabel
     class Translation::String < ApplicationRecord
         belongs_to :user, foreign_key: "users_id", optional: true
-        belongs_to :object, foreign_key: "cloud_babel_translation_objects_id"
+        belongs_to :bucket, foreign_key: "cloud_babel_translation_buckets_id"
 
         before_save :clean_label_string
 

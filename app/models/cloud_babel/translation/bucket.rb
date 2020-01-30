@@ -25,19 +25,11 @@ Building a better future, one line of code at a time.
 
 =end
 
-CloudBabel::Engine.routes.draw do
-
-    resource :translation do
-        scope module: :translation do
-            resources :strings
-            resources :modules do
-                resources :buckets do
-                    resources :strings
-                end
-            end
-        end
+module CloudBabel
+    class Translation::Bucket < ApplicationRecord
+        belongs_to :module, foreign_key: "cloud_babel_translation_modules_id", optional: true
+        belongs_to :parent, class_name: "Translation::Bucket", foreign_key: "cloud_babel_translation_buckets_id", optional: true
+        has_many :children, class_name: "Translation::Bucket", foreign_key: "cloud_babel_translation_buckets_id"
+        has_many :strings, foreign_key: "cloud_babel_translation_buckets_id"
     end
-
-    root to: 'dashboards#default'
-
 end
