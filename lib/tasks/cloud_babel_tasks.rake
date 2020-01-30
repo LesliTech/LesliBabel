@@ -74,7 +74,7 @@ namespace :cloud_babel do
     desc "Build translation files"
     task build: :environment do
 
-        #Rake::Task["dev:db:dump_babel"].invoke
+        Rake::Task["dev:db:dump_babel"].invoke
 
         files = { }
 
