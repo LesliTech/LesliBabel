@@ -93,6 +93,18 @@ export default {
                     console.log(error)
                 })
             }, 1500)
+        },
+        sendToClipboard(string) {
+            const el = document.createElement('textarea');
+            el.value = string
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            this.alert("Copied to clipboard")
         }
 
     },
@@ -111,11 +123,18 @@ export default {
             </h4>
             <div class="card-header-icon">
                 <form @submit.prevent="postTranslationString()">
-                    <div class="control has-icons-left has-icons-right">
-                        <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-language"></i>
-                        </span>
+                    <div class="field has-addons">
+                        <p class="control">
+                            <a class="button is-static">
+                                Add new string:
+                            </a>
+                        </p>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-language"></i>
+                            </span>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -127,7 +146,9 @@ export default {
             :data="strings">
             <template v-slot="props">
                 <b-table-column field="label" label="Label">
-                    {{ props.row.label }}
+                    <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
+                        {{ props.row.label }}
+                    </button>
                 </b-table-column>
                 <b-table-column field="en" label="en">
                     <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />

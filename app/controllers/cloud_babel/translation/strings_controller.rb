@@ -6,10 +6,26 @@ module CloudBabel
 
         # GET /translation/strings
         def index
-            bucket = Translation::Bucket.find(params[:bucket_id])
             respond_to do |format|
                 format.html { }
-                format.json { responseWithSuccessful(bucket.strings) }
+                format.json { 
+                    bucket = Translation::Bucket.find(params[:bucket_id])
+                    strings = bucket.strings.map do |string|
+                        {
+                            id: string.id,
+                            path: "#{bucket.module.name.downcase}.#{bucket.name.downcase}.#{string.label.downcase}",
+                            context: string.context,
+                            label: string.label,
+                            es: string.es,
+                            en: string.en,
+                            de: string.de,
+                            fr: string.fr,
+                            status: string.status,
+                            
+                        }
+                    end
+                    responseWithSuccessful(strings) 
+                }
             end
         end
 

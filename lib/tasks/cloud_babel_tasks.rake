@@ -5,8 +5,6 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do  
 
-        load_demo_data = true
-
         translation_list = []
 
         # build core controller list
@@ -31,17 +29,6 @@ namespace :cloud_babel do
             # Add object to the translation workflow
             translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module] })
             translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: t[:bucket], module: translation_module })
-
-            if load_demo_data
-                CloudBabel::Translation::String.find_or_create_by({
-                    label: "demo_label",
-                    es: "Etiqueta de demo",
-                    en: "Label demo",
-                    de: "Label demo",
-                    fr: "",
-                    bucket: translation_bucket
-                })
-            end
 
         end
 
@@ -71,10 +58,10 @@ namespace :cloud_babel do
 
     end
 
-    desc "Build translation files"
-    task build: :environment do
+    desc "Generate translation files"
+    task generate: :environment do
 
-        Rake::Task["dev:db:dump_babel"].invoke
+        Rake::Task["dev:db:babel_backup"].invoke
 
         files = { }
 
