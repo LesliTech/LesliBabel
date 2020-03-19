@@ -88,7 +88,6 @@ export default {
                     }
                 }).then(result => {
                     this.alert("Translation updated successfully", "success" )
-                    console.log(result)
                 }).catch(error => {
                     console.log(error)
                 })

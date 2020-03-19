@@ -109,7 +109,7 @@ export default {
 }
 </script>
 <template>
-    <section class="section">
+    <section class="application-component">
         <div class="card">
             <div class="card-header">
                 <h4 class="card-header-title">

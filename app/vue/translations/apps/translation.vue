@@ -28,12 +28,14 @@ Building a better future, one line of code at a time.
 
 // · import components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+import componentLayoutHeader from "LesliCoreVue/layouts/component-header.vue"
 import componentStringEditor from "../components/strings-editor.vue"
 
 
 // · 
 export default {
     components: {
+        'component-layout-header': componentLayoutHeader,
         'component-string-editor': componentStringEditor
     },
     data() {
@@ -84,13 +86,16 @@ export default {
 }
 </script>
 <template>
-    <section class="section">
-        <div class="card box">
+    <section class="application-component">
+        <component-layout-header title="Translations" />
+        <div class="card">
+            <!-- 
             <div class="card-header">
                 <h4 class="card-header-title">
-                    Selection
+                    Select
                 </h4>
             </div>
+            -->
             <div class="card-content">
                 <div class="field is-grouped">
 

@@ -102,9 +102,9 @@ namespace :cloud_babel do
     end
 
     desc "Generate translation files"
-    task generate: :environment do
+    task build: :environment do
 
-        Rake::Task["dev:db:babel_backup"].invoke
+        #Rake::Task["dev:db:babel_backup"].invoke
 
         files = { }
 
@@ -114,7 +114,8 @@ namespace :cloud_babel do
             files[lang] = { }
         end
 
-        CloudBabel::Translation::String.where(status: 1).each do |string|
+        #CloudBabel::Translation::String.where(status: 1).each do |string|
+        CloudBabel::Translation::String.all.each do |string|
 
             module_name = string.bucket.module.name
             bucket_name = string.bucket.name
