@@ -36,6 +36,9 @@ CloudBabel::Engine.routes.draw do
                 end
             end
         end
+        collection do
+            post "synchronization"
+        end
     end
 
     root to: 'dashboards#default'

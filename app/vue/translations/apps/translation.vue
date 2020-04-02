@@ -40,6 +40,7 @@ export default {
     },
     data() {
         return {
+            loading: false,
             bucket: {},
             modules: [],
             moduleBuckets: [],
@@ -68,6 +69,21 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+        },
+
+        doBackupSync() {
+            this.loading = true
+            this.http.post(`/babel/translation/synchronization.json`).then(result => {
+                if (!result.successful) {
+                    this.notification.alert("Error", "danger")
+                    return 
+                }
+                this.getModules()
+                this.notification.alert("Synchronization successfully")
+                this.loading = false
+            }).catch(error => {
+                console.log(error)
+            })
         }
 
     },
@@ -87,15 +103,16 @@ export default {
 </script>
 <template>
     <section class="application-component">
-        <component-layout-header title="Translations" />
+        <component-layout-header 
+            title="Translations"
+            :buttons="false">
+            <button class="button" @click="doBackupSync()">
+                <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
+                <span>backup & sync</span>
+            </button>
+        </component-layout-header>
         <div class="card">
-            <!-- 
-            <div class="card-header">
-                <h4 class="card-header-title">
-                    Select
-                </h4>
-            </div>
-            -->
+
             <div class="card-content">
                 <div class="field is-grouped">
 

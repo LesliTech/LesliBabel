@@ -9,18 +9,22 @@ module CloudBabel
             respond_to do |format|
                 format.html { }
                 format.json { 
-                    bucket = Translation::Bucket.find(params[:bucket_id])
-                    strings = bucket.strings.map do |string|
+                    strings = CloudBabel::Translation::String.all
+                    #bucket = Translation::Bucket.find(params[:bucket_id])
+                    #strings = bucket.strings.map do |string|
+                    #strings = bucket.strings
+                    strings = strings.map do |string|
                         {
                             id: string.id,
-                            path: "#{bucket.module.name.downcase}.#{bucket.name.downcase}.#{string.label.downcase}",
+                            #path: "#{bucket.module.name.downcase}.#{bucket.name.downcase}.#{string.label.downcase}",
+                            path:
                             context: string.context,
                             label: string.label,
                             es: string.es,
                             en: string.en,
                             de: string.de,
                             fr: string.fr,
-                            status: string.status,
+                            status: string.status
                             
                         }
                     end
@@ -44,8 +48,11 @@ module CloudBabel
 
         # POST /translation/strings
         def create
+
             translation_string = Translation::String.new(translation_string_params)
+            translation_string.reference_bucket = "#{translation_string.bucket.module.name}-#{translation_string.bucket.name}"
             translation_string.user = current_user
+            
             if translation_string.save
                 responseWithSuccessful(translation_string)
             else
@@ -79,5 +86,6 @@ module CloudBabel
         def translation_string_params
             params.require(:translation_string).permit(:context, :label, :en, :es, :de, :status, :cloud_babel_translation_buckets_id)
         end
+
     end
 end
