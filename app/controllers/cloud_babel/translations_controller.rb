@@ -146,10 +146,12 @@ module CloudBabel
                     en: remote_string['en'],
                     de: remote_string['de'],
                     status: remote_string['status'],
+                    last_update_context: remote_string['last_update_context'],
                     last_update_es: remote_string['last_update_es'],
                     last_update_en: remote_string['last_update_en'],
                     last_update_de: remote_string['last_update_de'],
                     last_update_fr: remote_string['last_update_fr'],
+                    last_update_status: remote_string['last_update_status'],
                     created_at: remote_string['created_at'],
                     bucket: babel_reference_buckets[remote_string['reference_bucket']]
                 }).find_or_create_by({
