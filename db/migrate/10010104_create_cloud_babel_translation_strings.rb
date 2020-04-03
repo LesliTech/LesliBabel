@@ -9,6 +9,13 @@ class CreateCloudBabelTranslationStrings < ActiveRecord::Migration[6.0]
             t.string    :fr
             t.integer   :status
             t.string    :reference_bucket
+            t.datetime  :last_update_context
+            t.datetime  :last_update_es
+            t.datetime  :last_update_en
+            t.datetime  :last_update_de
+            t.datetime  :last_update_fr
+            t.datetime  :last_update_status
+            t.datetime  :deleted_at
             t.timestamps
         end
         add_reference :cloud_babel_translation_strings, :users, foreign_key: true, index: { name: "babel_translation_strings_users" }

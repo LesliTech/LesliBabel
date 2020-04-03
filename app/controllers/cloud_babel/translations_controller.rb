@@ -77,7 +77,7 @@ module CloudBabel
 
         def synchronization
             host = "https://server.raven.dev.gt"
-            #host = "http://localhost:8888"
+            host = "http://localhost:8888"
 
             # get last sync data
             response = Faraday.get("#{host}/api/bucket/cloud-babel-dl/documents?last=1")
@@ -125,34 +125,93 @@ module CloudBabel
 
             # working with strings
             babel_reference_buckets = {}
-            response['strings'].each do |babel_string|
+            response['strings'].each do |remote_string|
 
                 # reference to modules that buckets belongs to
-                if babel_reference_buckets[babel_string['reference_bucket']].blank?
-                    babel_reference_buckets[babel_string['reference_bucket']] = 
+                if babel_reference_buckets[remote_string['reference_bucket']].blank?
+                    babel_reference_buckets[remote_string['reference_bucket']] = 
                     CloudBabel::Translation::Bucket.find_by(
-                        name: babel_string['reference_bucket'].split('-')[1],
-                        reference_module: babel_string['reference_bucket'].split('-')[0]
+                        name: remote_string['reference_bucket'].split('-')[1],
+                        reference_module: remote_string['reference_bucket'].split('-')[0]
                     )
                 end
-
-                babel_string_reference = "#{babel_reference_buckets[babel_string['reference_bucket']].module.name}-#{babel_reference_buckets[babel_string['reference_bucket']].name}"
-
-                # add new bucket
-                CloudBabel::Translation::String
+            
+                remote_string_reference = "#{babel_reference_buckets[remote_string['reference_bucket']].module.name}-#{babel_reference_buckets[remote_string['reference_bucket']].name}"
+            
+                # add new string if it does not exist
+                local_string = CloudBabel::Translation::String
                 .create_with({
-                    context: babel_string['context'],
-                    es: babel_string['es'],
-                    en: babel_string['en'],
-                    de: babel_string['de'],
-                    status: babel_string['status'],
-                    created_at: babel_string['created_at'],
-                    bucket: babel_reference_buckets[babel_string['reference_bucket']]
+                    context: remote_string['context'],
+                    es: remote_string['es'],
+                    en: remote_string['en'],
+                    de: remote_string['de'],
+                    status: remote_string['status'],
+                    last_update_es: remote_string['last_update_es'],
+                    last_update_en: remote_string['last_update_en'],
+                    last_update_de: remote_string['last_update_de'],
+                    last_update_fr: remote_string['last_update_fr'],
+                    created_at: remote_string['created_at'],
+                    bucket: babel_reference_buckets[remote_string['reference_bucket']]
                 }).find_or_create_by({
-                    label: babel_string['label'], 
-                    reference_bucket: babel_string_reference
+                    label: remote_string['label'], 
+                    reference_bucket: remote_string_reference
                 })
+            
+                # if status changed
+                if remote_string["status"] != local_string["status"]
 
+                    # check if remote is newer than local
+                    if (remote_string["last_update_status"] > 
+                        local_string["last_update_status"])
+
+                        # if so, update local translation with the incoming
+                        local_string["status"] = remote_string["status"]
+                        local_string["last_update_status"] = remote_string["last_update_status"]
+
+                    end
+
+                end
+
+                # if context changed
+                if remote_string["context"] != local_string["context"]
+
+                    # check if remote is newer than local
+                    if (remote_string["last_update_context"] > 
+                        local_string["last_update_context"])
+
+                        # if so, update local translation with the incoming
+                        local_string["context"] = remote_string["context"]
+                        local_string["last_update_context"] = remote_string["last_update_context"]
+
+                    end
+
+                end
+
+
+                # check if necessary to update any translation
+                Translation.locales.each do |locale|
+            
+                    locale = locale[0]
+            
+                    # if translation changed
+                    if local_string[locale] != remote_string[locale]
+            
+                        # check if remote is newer than local
+                        if (remote_string["last_update_#{locale}"] > 
+                            local_string["last_update_#{locale}"])
+            
+                            # if so, update local translation with the incoming
+                            local_string[locale] = remote_string[locale]
+                            local_string["last_update_#{locale}"] = remote_string["last_update_#{locale}"]
+
+                        end
+            
+                    end
+                    
+                end
+
+                local_string.save!
+            
             end
 
             # get and parse modules
@@ -175,7 +234,9 @@ module CloudBabel
                 ({ modules: modules, buckets: buckets, strings: strings }).to_json,
                 "Content-Type" => "application/json"
             )
+
             responseWithSuccessful()
+
         end
 
         private

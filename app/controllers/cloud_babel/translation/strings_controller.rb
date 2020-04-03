@@ -20,8 +20,7 @@ module CloudBabel
 
                     # returns strings for specif module
                     if not params[:module_id].blank? and params[:bucket_id].blank?
-                        strings = Translation::String
-                            .joins(:bucket)
+                        strings = Translation::String.joins(:bucket)
                             .where("cloud_babel_translation_buckets.cloud_babel_translation_modules_id = ?", params[:module_id])
                     end
 
@@ -44,7 +43,9 @@ module CloudBabel
                             status: string.status
                         }
                     end
+
                     responseWithSuccessful(strings) 
+
                 }
             end
         end
@@ -68,6 +69,12 @@ module CloudBabel
             translation_string = Translation::String.new(translation_string_params)
             translation_string.reference_bucket = "#{translation_string.bucket.module.name}-#{translation_string.bucket.name}"
             translation_string.user = current_user
+
+            translation_string.last_update_status = Time.now
+            translation_string.last_update_context = Time.now
+            Translation.locales.each do |locale|
+                translation_string["last_update_#{locale[0]}"] = Time.now
+            end
             
             if translation_string.save
                 responseWithSuccessful(translation_string)
@@ -78,6 +85,37 @@ module CloudBabel
 
         # PATCH/PUT /translation/strings/1
         def update
+
+            # if status changed
+            if @translation_string["status"] != translation_string_params["status"]
+
+                # saved update date
+                @translation_string["last_update_status"] = Time.now
+
+            end
+
+            # if context changed
+            if @translation_string["context"] != translation_string_params["context"]
+
+                # saved update date
+                @translation_string["last_update_context"] = Time.now
+
+            end
+
+            Translation.locales.each do |locale|
+            
+                locale = locale[0]
+
+                # if translation changed
+                if @translation_string[locale] != translation_string_params[locale]
+
+                    # saved update date
+                    @translation_string["last_update_#{locale}"] = Time.now
+
+                end
+
+            end
+
             if @translation_string.update(translation_string_params)
                 responseWithSuccessful(@translation_string)
             else
