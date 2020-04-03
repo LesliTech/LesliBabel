@@ -91,6 +91,7 @@ export default {
 
         // triggers after Select Module
         'selection.module': function() {
+            this.selection.bucket = {}
             this.getModuleBuckets()
         },
 
@@ -140,7 +141,8 @@ export default {
             </div>
         </div>
 
-        <component-string-editor v-if="bucket.id" :module="selection.module" :bucket="bucket" />
+        <!-- <component-string-editor v-if="bucket.id" :module="selection.module" :bucket="bucket" /> -->
+        <component-string-editor v-if="selection.module" :module="selection.module" :bucket="bucket" />
         
     </section>
 </template>

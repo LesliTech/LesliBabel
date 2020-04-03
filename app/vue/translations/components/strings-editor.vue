@@ -46,12 +46,22 @@ export default {
     methods: {
 
         getBucketStrings() {
-            this.http.get(`/babel/translation/modules/${this.module.id}/buckets/${this.bucket.id}/strings.json`).then(result => {
+
+            // get strings for module (default)
+            let url = `/babel/translation/modules/${this.module.id}/strings.json`
+
+            // if user selects bucket
+            if (this.bucket.id) {
+                url = `/babel/translation/modules/${this.module.id}/buckets/${this.bucket.id}/strings.json`
+            }
+
+            this.http.get(url).then(result => {
                 if (!result.successful) return 
                 this.strings = result.data ? result.data : []
             }).catch(error => {
                 console.log(error)
             })
+           
         },
 
         postTranslationString() {
@@ -66,7 +76,7 @@ export default {
                 }
             }).then(result => {
                 if (!result) this.alert("Error adding label", "danger")
-                this.alert("Label successfully added", "success")
+                this.notification.alert("Label successfully added", "success")
                 this.getBucketStrings()
                 this.label = ''
             }).catch(error => {
@@ -87,7 +97,7 @@ export default {
                         de: string.de
                     }
                 }).then(result => {
-                    this.alert("Translation updated successfully", "success" )
+                    this.notification.alert("Translation updated successfully", "success" )
                 }).catch(error => {
                     console.log(error)
                 })
@@ -110,6 +120,9 @@ export default {
     watch: {
         'bucket': function() {
             this.getBucketStrings()
+        },
+        'module': function() {
+            this.getBucketStrings()
         }
     }
 }
@@ -120,7 +133,7 @@ export default {
             <h4 class="card-header-title">
                 Labels
             </h4>
-            <div class="card-header-icon">
+            <div class="card-header-icon" v-if="this.bucket.id">
                 <form @submit.prevent="postTranslationString()">
                     <div class="field has-addons">
                         <p class="control">

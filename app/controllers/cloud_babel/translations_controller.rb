@@ -77,11 +77,16 @@ module CloudBabel
 
         def synchronization
             host = "https://server.raven.dev.gt"
-            host = "http://localhost:8888"
+            #host = "http://localhost:8888"
 
             # get last sync data
-            response = Faraday.get("#{host}/api/bucket/cloud-babel-dl/documents")
+            response = Faraday.get("#{host}/api/bucket/cloud-babel-dl/documents?last=1")
             response = JSON.parse(response.body)
+
+            puts "";puts "";puts "";puts "";puts "";
+            p response['data']
+            puts "";puts "";puts "";puts "";puts "";
+
             response = response['data']['rows'][0]
 
 

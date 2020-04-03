@@ -9,15 +9,32 @@ module CloudBabel
             respond_to do |format|
                 format.html { }
                 format.json { 
-                    strings = CloudBabel::Translation::String.all
-                    #bucket = Translation::Bucket.find(params[:bucket_id])
-                    #strings = bucket.strings.map do |string|
-                    #strings = bucket.strings
+
+                    # empty strings by default
+                    strings = []
+
+                    # if bucket or module was not sent, return all the strings in the database
+                    if params[:module_id].blank? and params[:bucket_id].blank?
+                        strings = Translation::String.all
+                    end
+
+                    # returns strings for specif module
+                    if not params[:module_id].blank? and params[:bucket_id].blank?
+                        strings = Translation::String
+                            .joins(:bucket)
+                            .where("cloud_babel_translation_buckets.cloud_babel_translation_modules_id = ?", params[:module_id])
+                    end
+
+                    # returns strings for specif module and bucket
+                    if not params[:module_id].blank? and not params[:bucket_id].blank?
+                        bucket = Translation::Bucket.find(params[:bucket_id])
+                        strings = bucket.strings
+                    end
+
                     strings = strings.map do |string|
                         {
                             id: string.id,
-                            #path: "#{bucket.module.name.downcase}.#{bucket.name.downcase}.#{string.label.downcase}",
-                            path:
+                            path: "#{string.bucket.module.name.downcase}.#{string.bucket.name.downcase}.#{string.label.downcase}",
                             context: string.context,
                             label: string.label,
                             es: string.es,
@@ -25,7 +42,6 @@ module CloudBabel
                             de: string.de,
                             fr: string.fr,
                             status: string.status
-                            
                         }
                     end
                     responseWithSuccessful(strings) 
