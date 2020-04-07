@@ -29,10 +29,8 @@ Building a better future, one line of code at a time.
 import app from 'LesliCoreVue/app'
 
 
-
 // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import appList from './apps/list.vue'
 import appTranslation from './apps/translation.vue'
 
 

@@ -75,6 +75,84 @@ module CloudBabel
             redirect_to translations_url, notice: 'Translation was successfully destroyed.'
         end
 
+        def build
+
+            clean
+
+            files = { }
+
+            Translation.locales.each do |lang|
+                files[ lang[0] ] = { }
+            end
+    
+            #CloudBabel::Translation::String.where(status: 1).each do |string|
+            Translation::String.all.each do |string|
+    
+                module_name = string.bucket.module.name
+                bucket_name = string.bucket.name
+    
+                module_name_sym = module_name.downcase.sub('cloud', '')
+    
+                Translation.locales.each do |lang|
+
+                    lang = lang[0]
+    
+                    file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub('/','_') }.#{ lang }.yml")
+    
+                    if module_name != "Core"
+                        file_path = Rails.root.join("engines", module_name, "config", "locales", bucket_name, "#{ bucket_name.gsub('/','_') }.#{ lang }.yml")
+                    end
+    
+                    file_id = file_path.to_s.to_sym
+    
+                    unless files[lang].has_key? file_id
+                        files[lang][file_id] = { }
+                    end
+    
+                    unless files[lang][file_id].has_key? module_name_sym
+                        files[lang][file_id][module_name_sym] = { }
+                    end
+    
+                    unless files[lang][file_id][module_name_sym].has_key? bucket_name
+                        files[lang][file_id][module_name_sym][bucket_name] = { }
+                    end
+    
+                    files[lang][file_id][module_name_sym][bucket_name][string.label] = string[lang]
+    
+                end
+    
+            end
+    
+            files.each do |file_by_language|
+    
+                lang = file_by_language[0]
+                file_by_class = file_by_language[1]
+    
+                file_by_class.each do |file|
+    
+                    file_path = file[0].to_s
+                    translations = file[1]
+    
+                    # creates folder and subfolders
+                    FileUtils.makedirs(File.dirname(file_path))
+    
+                    # creates translation file for every available language
+                    translation_file = File.new(file_path, "w+")
+    
+                    translation_file.write({ "#{lang}": translations}.to_yaml)
+    
+                    translation_file.close
+
+                    p "file added: #{ file_path }"
+        
+                end
+    
+            end
+
+            responseWithSuccessful()
+
+        end
+
         def synchronization
             host = "https://server.raven.dev.gt"
             #host = "http://localhost:8888"
@@ -242,6 +320,15 @@ module CloudBabel
         end
 
         private
+
+        def clean
+            Lesli::engines.each do |engine|
+                engine_path = Rails.root.join("engines", engine["name"], "config", "locales")
+                FileUtils.rm_rf(engine_path)
+            end
+            engine_path = Rails.root.join("config", "locales")
+            FileUtils.rm_rf(engine_path)
+        end
 
         # Use callbacks to share common setup or constraints between actions.
         def set_translation

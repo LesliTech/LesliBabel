@@ -84,6 +84,16 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+        },
+
+        postBuild() {
+            this.http.post("/babel/translation/build").then(result => {
+                if (!result.successful) { this.notification.alert("Error", "danger")}
+                this.notification.alert("Translations files built successfully")
+                this.notification.alert("Restart Rails to see the new translations")
+            }).catch(error => {
+                console.log(error)
+            })
         }
 
     },
@@ -107,10 +117,16 @@ export default {
         <component-layout-header 
             title="Translations"
             :buttons="false">
-            <button class="button" @click="doBackupSync()">
-                <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
-                <span>backup & sync</span>
-            </button>
+            <div class="is-grouped">
+                <button class="button" @click="postBuild()">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span>build locales</span>
+                </button>
+                <button class="button" @click="doBackupSync()">
+                    <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
+                    <span>synchronize</span>
+                </button>
+            </div>
         </component-layout-header>
         <div class="card">
 
