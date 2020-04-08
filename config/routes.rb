@@ -38,6 +38,7 @@ CloudBabel::Engine.routes.draw do
             end
         end
         collection do
+            post "clean"
             post "build"
             post "synchronization"
         end

@@ -77,7 +77,7 @@ module CloudBabel
 
         def build
 
-            clean
+            do_clean
 
             files = { }
 
@@ -319,9 +319,14 @@ module CloudBabel
 
         end
 
+        def clean
+            do_clean
+            responseWithSuccessful()
+        end
+
         private
 
-        def clean
+        def do_clean
             Lesli::engines.each do |engine|
                 engine_path = Rails.root.join("engines", engine["name"], "config", "locales")
                 FileUtils.rm_rf(engine_path)
