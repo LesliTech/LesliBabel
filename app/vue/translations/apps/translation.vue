@@ -94,6 +94,25 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+        },
+
+        sendPathToClipboard() {
+
+            let path = [this.selection.module.name, this.selection.bucket.name].join(".")
+
+            path = path.toLowerCase()
+
+            const el = document.createElement('textarea');
+            el.value = path
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            this.notification.alert("Copied to clipboard")
+
         }
 
     },
@@ -129,7 +148,6 @@ export default {
             </div>
         </component-layout-header>
         <div class="card">
-
             <div class="card-content">
                 <div class="field is-grouped">
 
@@ -151,6 +169,12 @@ export default {
                             v-model="selection.bucket">
                             <option v-for="bucket in moduleBuckets" :key="bucket.id" :value="bucket">{{ bucket.name }}</option>
                         </b-select>
+                    </div>
+
+                    <div class="control" v-if="selection.module && selection.bucket && selection.bucket.id">
+                        <button class="button is-text" @click="sendPathToClipboard()">
+                            <i class="far fa-copy"></i>
+                        </button>
                     </div>
 
                 </div>

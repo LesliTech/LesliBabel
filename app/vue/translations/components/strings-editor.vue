@@ -113,7 +113,7 @@ export default {
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            this.alert("Copied to clipboard")
+            this.notification.alert("Copied to clipboard")
         }
 
     },
@@ -151,38 +151,47 @@ export default {
                 </form>
             </div>
         </div>
-        <b-table 
-            detailed 
-            detail-key="id" 
-            :show-detail-icon="true"
-            :data="strings">
-            <template v-slot="props">
-                <b-table-column field="label" label="Label">
-                    <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
-                        {{ props.row.label }}
-                    </button>
-                </b-table-column>
-                <b-table-column field="en" label="en">
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
-                </b-table-column>
-                <b-table-column field="es" label="es">
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
-                </b-table-column>
-                <b-table-column field="de" label="de">
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
-                </b-table-column>
-                <b-table-column label="status">
-                    <div class="select">
-                        <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
-                            <option value="0">pending</option>
-                            <option value="1">completed</option>
-                        </select>
-                    </div>
-                </b-table-column>
-            </template>
-            <template slot="detail" slot-scope="props">
-                <input type="text" class="is-fullwidth" v-on:input="patchTranslationString(props.row)" v-model="props.row.context" />
-            </template>
-        </b-table>
+        <div class="table-container">
+            <b-table 
+                detailed 
+                detail-key="id" 
+                :show-detail-icon="true"
+                :data="strings">
+                <template v-slot="props">
+                    <b-table-column class="copy">
+                        <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </b-table-column>
+                    <b-table-column field="label" label="Label">
+                        <button class="button is-text" @click="sendToClipboard(props.row.label)" :title="props.row.path">
+                            {{ props.row.label }}
+                        </button>
+                    </b-table-column>
+                    <b-table-column field="en" label="en">
+                        <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
+                    </b-table-column>
+                    <b-table-column field="es" label="es">
+                        <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
+                    </b-table-column>
+                    <b-table-column field="de" label="de">
+                        <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
+                    </b-table-column>
+                    <!-- 
+                    <b-table-column label="status">
+                        <div class="select">
+                            <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
+                                <option value="0">pending</option>
+                                <option value="1">completed</option>
+                            </select>
+                        </div>
+                    </b-table-column>
+                    -->
+                </template>
+                <template slot="detail" slot-scope="props">
+                    <input type="text" class="is-fullwidth" v-on:input="patchTranslationString(props.row)" v-model="props.row.context" />
+                </template>
+            </b-table>
+        </div>
     </div>
 </template>

@@ -155,10 +155,11 @@ module CloudBabel
 
         def synchronization
             host = "https://server.raven.dev.gt"
+            api_endpoint = "#{host}/api/bucket/cloud-babel-dl/documents"
             #host = "http://localhost:8888"
 
             # get last sync data
-            response = Faraday.get("#{host}/api/bucket/cloud-babel-dl/documents?last=1")
+            response = Faraday.get(api_endpoint+"?last=1")
             response = JSON.parse(response.body)
 
             puts "";puts "";puts "";puts "";puts "";
@@ -310,12 +311,17 @@ module CloudBabel
             end
 
             # send latest translation to raven
-            response = Faraday.post("#{host}/api/bucket/cloud-babel-dl/documents", 
+            response = Faraday.post(api_endpoint, 
                 ({ modules: modules, buckets: buckets, strings: strings }).to_json,
                 "Content-Type" => "application/json"
             )
 
-            responseWithSuccessful()
+            response = JSON.parse(response.body)
+
+            response = response['successful']
+
+            responseWithSuccessful() if response === true
+            responseWithError() if response  != true
 
         end
 
