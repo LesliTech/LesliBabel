@@ -50,6 +50,7 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, CloudPanel::Engine.routes.routes, CloudPanel) if defined?(CloudPanel)
         translation_list = get_controllers_from_routes(translation_list, CloudLock::Engine.routes.routes, CloudLock) if defined?(CloudLock)
         translation_list = get_controllers_from_routes(translation_list, CloudBabel::Engine.routes.routes, CloudBabel) if defined?(CloudBabel)
+        translation_list = get_controllers_from_routes(translation_list, CloudFocus::Engine.routes.routes, CloudFocus) if defined?(CloudFocus)
 
         translation_list.each do |t|
 
