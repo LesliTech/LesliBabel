@@ -117,6 +117,9 @@ module CloudBabel
                         files[lang][file_id][module_name_sym][bucket_name] = { }
                     end
     
+                    # send debug message for missing translations
+                    string[lang] = "missing translation for: " + string.label if string[lang].blank?
+
                     files[lang][file_id][module_name_sym][bucket_name][string.label] = string[lang]
     
                 end
@@ -161,11 +164,6 @@ module CloudBabel
             # get last sync data
             response = Faraday.get(api_endpoint+"?last=1")
             response = JSON.parse(response.body)
-
-            puts "";puts "";puts "";puts "";puts "";
-            p response['data']
-            puts "";puts "";puts "";puts "";puts "";
-
             response = response['data']['rows'][0]
 
 
@@ -350,5 +348,6 @@ module CloudBabel
         def translation_params
             params.fetch(:translation, {})
         end
+
     end
 end
