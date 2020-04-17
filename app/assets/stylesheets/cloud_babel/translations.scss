@@ -67,5 +67,15 @@ table.table {
             width: 100%;
         }
     }
+
+    // table translation helpers
+    .no-context {
+        .chevron-cell a i{
+            color: red;
+            color: lesli-css-get-color(silver);
+        }
+    }
+    .has-context {
+    }
     
 }

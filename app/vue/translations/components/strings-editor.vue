@@ -114,6 +114,12 @@ export default {
             document.execCommand('copy');
             document.body.removeChild(el);
             this.notification.alert("Copied to clipboard")
+        },
+        getRowClass(row) {
+            if (row.context && row.context != "") {
+                return "has-context"
+            }
+            return "no-context"
         }
 
     },
@@ -156,8 +162,9 @@ export default {
                 detailed 
                 detail-key="id" 
                 :show-detail-icon="true"
-                :data="strings">
-                <template v-slot="props">
+                :data="strings"
+                :row-class="getRowClass">
+                <template v-slot="props" class="ldonis">
                     <b-table-column class="copy">
                         <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
                             <i class="far fa-copy"></i>
@@ -168,13 +175,13 @@ export default {
                             {{ props.row.label }}
                         </button>
                     </b-table-column>
-                    <b-table-column field="en" label="en">
+                    <b-table-column field="en" label="en" sortable>
                         <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
                     </b-table-column>
-                    <b-table-column field="es" label="es">
+                    <b-table-column field="es" label="es" sortable>
                         <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
                     </b-table-column>
-                    <b-table-column field="de" label="de">
+                    <b-table-column field="de" label="de" sortable>
                         <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
                     </b-table-column>
                     <!-- 
@@ -189,7 +196,26 @@ export default {
                     -->
                 </template>
                 <template slot="detail" slot-scope="props">
-                    <input type="text" class="is-fullwidth" v-on:input="patchTranslationString(props.row)" v-model="props.row.context" />
+                    <div class="columns">
+                        <div class="column is-11">
+                            <div class="field">
+                                <label class="label">Context</label>
+                                <div class="control">
+                                    <input class="input" type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.context">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-1">
+                            <div class="field">
+                                <label class="label">&nbsp;</label>
+                                <div class="control">
+                                    <b-tooltip label="Request help">
+                                        <button class="button">?</button>
+                                    </b-tooltip>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </template>
             </b-table>
         </div>
