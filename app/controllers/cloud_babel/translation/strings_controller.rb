@@ -2,7 +2,7 @@ require_dependency "cloud_babel/application_controller"
 
 module CloudBabel
     class Translation::StringsController < ApplicationController
-        before_action :set_translation_string, only: [:show, :edit, :update, :destroy]
+        before_action :set_translation_string, only: [:show, :edit, :update, :destroy, :help_request]
 
         # GET /translation/strings
         def index
@@ -40,7 +40,8 @@ module CloudBabel
                             en: string.en,
                             de: string.de,
                             fr: string.fr,
-                            status: string.status
+                            status: string.status,
+                            help_needed: string.help_needed || false
                         }
                     end
 
@@ -81,6 +82,7 @@ module CloudBabel
             else
                 responseWithError("Error on create translation string", translation_string.errors)
             end
+
         end
 
         # PATCH/PUT /translation/strings/1
@@ -117,16 +119,24 @@ module CloudBabel
             end
 
             if @translation_string.update(translation_string_params)
+                @translation_string.update_attribute(:help_needed, false)
                 responseWithSuccessful(@translation_string)
             else
                 responseWithError("Error on update translation string", @translation_object_group_section_label.errors)
             end
+
         end
 
         # DELETE /translation/strings/1
         def destroy
             @translation_string.destroy
             redirect_to translation_strings_url, notice: 'String was successfully destroyed.'
+        end
+
+        def help_request
+            @translation_string.help_needed = true
+            @translation_string.save!
+            responseWithSuccessful()
         end
 
         private
@@ -138,7 +148,15 @@ module CloudBabel
 
         # Only allow a trusted parameter "white list" through.
         def translation_string_params
-            params.require(:translation_string).permit(:context, :label, :en, :es, :de, :status, :cloud_babel_translation_buckets_id)
+            params.require(:translation_string).permit(
+                :context, 
+                :label, 
+                :en, 
+                :es, 
+                :de, 
+                :status,
+                :cloud_babel_translation_buckets_id
+            )
         end
 
     end

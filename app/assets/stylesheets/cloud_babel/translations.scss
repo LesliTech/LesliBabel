@@ -68,14 +68,32 @@ table.table {
         }
     }
 
-    // table translation helpers
-    .no-context {
+    // disable arrow by default due there is no context
+    tr {
         .chevron-cell a i{
-            color: red;
             color: lesli-css-get-color(silver);
         }
     }
-    .has-context {
+    tr.bbl-context {
+        .chevron-cell a i{
+            color: lesli-css-get-color(blue);
+        }
+    }
+    tr.bbl-help td {
+        background-color: lesli-css-get-color(blue);
+
+        input {
+            border: none;
+            padding: 7px;
+            background-color: transparent;
+        }
+
+        i,
+        input,
+        button,
+        &.chevron-cell a i {
+            color: lesli-css-get-color(standard, white);
+        }
     }
     
 }

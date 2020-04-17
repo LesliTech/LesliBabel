@@ -103,6 +103,16 @@ export default {
                 })
             }, 1500)
         },
+
+        putTranslationStringHelpRequest(string) {
+            this.http.put(`/babel/translation/strings/${string.id}/help_request.json`, {
+            }).then(result => {
+                this.notification.alert("Help requested successfully", "success" )
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+
         sendToClipboard(string) {
             const el = document.createElement('textarea');
             el.value = string
@@ -116,10 +126,18 @@ export default {
             this.notification.alert("Copied to clipboard")
         },
         getRowClass(row) {
+
+            var row_class = []
+
             if (row.context && row.context != "") {
-                return "has-context"
+                row_class.push("bbl-context")
             }
-            return "no-context"
+
+            if (row.help_needed) {
+                row_class.push("bbl-help")
+            }
+
+            return row_class.join(" ")
         }
 
     },
@@ -210,7 +228,7 @@ export default {
                                 <label class="label">&nbsp;</label>
                                 <div class="control">
                                     <b-tooltip label="Request help">
-                                        <button class="button">?</button>
+                                        <button class="button" @click="putTranslationStringHelpRequest(props.row)">?</button>
                                     </b-tooltip>
                                 </div>
                             </div>

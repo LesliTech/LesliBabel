@@ -29,7 +29,11 @@ CloudBabel::Engine.routes.draw do
 
     resource :translation do
         scope module: :translation do
-            resources :strings
+            resources :strings do
+                member do
+                    put "help_request"
+                end
+            end
             resources :modules do
                 resources :strings, only: [:index]
                 resources :buckets do

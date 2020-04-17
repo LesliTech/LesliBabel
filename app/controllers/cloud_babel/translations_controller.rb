@@ -223,6 +223,7 @@ module CloudBabel
                     en: remote_string['en'],
                     de: remote_string['de'],
                     status: remote_string['status'],
+                    help_needed: remote_string['help_needed'],
                     last_update_context: remote_string['last_update_context'],
                     last_update_es: remote_string['last_update_es'],
                     last_update_en: remote_string['last_update_en'],
@@ -266,6 +267,20 @@ module CloudBabel
 
                 end
 
+                # if help request changed
+                if remote_string["help_needed"] != local_string["help_needed"]
+
+                    # check if remote is newer than local
+                    if (remote_string["last_update_context"] > 
+                        local_string["last_update_context"])
+
+                        # if so, update local translation with the incoming
+                        local_string["help_needed"] = remote_string["help_needed"]
+                        local_string["last_update_context"] = remote_string["last_update_context"]
+
+                    end
+
+                end
 
                 # check if necessary to update any translation
                 Translation.locales.each do |locale|
