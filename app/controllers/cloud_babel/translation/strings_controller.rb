@@ -33,7 +33,7 @@ module CloudBabel
                     strings = strings.map do |string|
                         {
                             id: string.id,
-                            path: "#{string.bucket.module.name.downcase.sub("cloud","")}.#{string.bucket.name.downcase}.#{string.label.downcase}",
+                            path: string.path,
                             context: string.context,
                             label: string.label,
                             es: string.es,

@@ -118,7 +118,7 @@ module CloudBabel
                     end
     
                     # send debug message for missing translations
-                    string[lang] = "missing translation for: " + string.label if string[lang].blank?
+                    string[lang] = ":" + string.path + ":" if string[lang].blank?
 
                     files[lang][file_id][module_name_sym][bucket_name][string.label] = string[lang]
     

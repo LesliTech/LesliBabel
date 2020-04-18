@@ -14,5 +14,14 @@ module CloudBabel
 
             self.status = 0 if self.status.nil?
         end
+
+        def path
+            [
+                self.bucket.module.name.downcase.sub("cloud",""),
+                self.bucket.name.downcase,
+                self.label.downcase
+            ].join(".")
+        end
+
     end
 end
