@@ -38,6 +38,7 @@ export default {
             label: "",
             strings: [],
             timeout: null,
+            loading: false
         }
     },
     mounted() {
@@ -46,6 +47,9 @@ export default {
     methods: {
 
         getBucketStrings() {
+
+            this.strings = []
+            this.loading = true
 
             // get strings for module (default)
             let url = `/babel/translation/modules/${this.module.id}/strings.json`
@@ -58,8 +62,10 @@ export default {
             this.http.get(url).then(result => {
                 if (!result.successful) return 
                 this.strings = result.data ? result.data : []
+                this.loading = false
             }).catch(error => {
                 console.log(error)
+                this.loading = false
             })
            
         },
@@ -152,90 +158,94 @@ export default {
 }
 </script>
 <template>
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-header-title">
-                Labels
-            </h4>
-            <div class="card-header-icon" v-if="this.bucket.id">
-                <form @submit.prevent="postTranslationString()">
-                    <div class="field has-addons">
-                        <p class="control">
-                            <a class="button is-static">
-                                Add new string:
-                            </a>
-                        </p>
-                        <div class="control has-icons-left has-icons-right">
-                            <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-language"></i>
-                            </span>
+    <section>
+        <component-data-loading class="section" v-if="loading"></component-data-loading>
+        <component-data-empty v-if="!loading && strings.length == 0"></component-data-empty>
+        <div class="card" v-if="strings.length > 0">
+            <div class="card-header">
+                <h4 class="card-header-title">
+                    Labels
+                </h4>
+                <div class="card-header-icon" v-if="this.bucket.id">
+                    <form @submit.prevent="postTranslationString()">
+                        <div class="field has-addons">
+                            <p class="control">
+                                <a class="button is-static">
+                                    Add new string:
+                                </a>
+                            </p>
+                            <div class="control has-icons-left has-icons-right">
+                                <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-language"></i>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+            </div>
+            <div class="table-container">
+                <b-table 
+                    detailed 
+                    detail-key="id" 
+                    :show-detail-icon="true"
+                    :data="strings"
+                    :row-class="getRowClass">
+                    <template v-slot="props" class="ldonis">
+                        <b-table-column class="copy">
+                            <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </b-table-column>
+                        <b-table-column field="label" label="Label">
+                            <button class="button is-text" @click="sendToClipboard(props.row.label)" :title="props.row.path">
+                                {{ props.row.label }}
+                            </button>
+                        </b-table-column>
+                        <b-table-column field="en" label="en" sortable>
+                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
+                        </b-table-column>
+                        <b-table-column field="es" label="es" sortable>
+                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
+                        </b-table-column>
+                        <b-table-column field="de" label="de" sortable>
+                            <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
+                        </b-table-column>
+                        <!-- 
+                        <b-table-column label="status">
+                            <div class="select">
+                                <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
+                                    <option value="0">pending</option>
+                                    <option value="1">completed</option>
+                                </select>
+                            </div>
+                        </b-table-column>
+                        -->
+                    </template>
+                    <template slot="detail" slot-scope="props">
+                        <div class="columns">
+                            <div class="column is-11">
+                                <div class="field">
+                                    <label class="label">Context</label>
+                                    <div class="control">
+                                        <input class="input" type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.context">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-1">
+                                <div class="field">
+                                    <label class="label">&nbsp;</label>
+                                    <div class="control">
+                                        <b-tooltip label="Request help">
+                                            <button class="button" @click="putTranslationStringHelpRequest(props.row)">?</button>
+                                        </b-tooltip>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </b-table>
             </div>
         </div>
-        <div class="table-container">
-            <b-table 
-                detailed 
-                detail-key="id" 
-                :show-detail-icon="true"
-                :data="strings"
-                :row-class="getRowClass">
-                <template v-slot="props" class="ldonis">
-                    <b-table-column class="copy">
-                        <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
-                            <i class="far fa-copy"></i>
-                        </button>
-                    </b-table-column>
-                    <b-table-column field="label" label="Label">
-                        <button class="button is-text" @click="sendToClipboard(props.row.label)" :title="props.row.path">
-                            {{ props.row.label }}
-                        </button>
-                    </b-table-column>
-                    <b-table-column field="en" label="en" sortable>
-                        <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
-                    </b-table-column>
-                    <b-table-column field="es" label="es" sortable>
-                        <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
-                    </b-table-column>
-                    <b-table-column field="de" label="de" sortable>
-                        <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
-                    </b-table-column>
-                    <!-- 
-                    <b-table-column label="status">
-                        <div class="select">
-                            <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
-                                <option value="0">pending</option>
-                                <option value="1">completed</option>
-                            </select>
-                        </div>
-                    </b-table-column>
-                    -->
-                </template>
-                <template slot="detail" slot-scope="props">
-                    <div class="columns">
-                        <div class="column is-11">
-                            <div class="field">
-                                <label class="label">Context</label>
-                                <div class="control">
-                                    <input class="input" type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.context">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column is-1">
-                            <div class="field">
-                                <label class="label">&nbsp;</label>
-                                <div class="control">
-                                    <b-tooltip label="Request help">
-                                        <button class="button" @click="putTranslationStringHelpRequest(props.row)">?</button>
-                                    </b-tooltip>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </b-table>
-        </div>
-    </div>
+    </section>
 </template>

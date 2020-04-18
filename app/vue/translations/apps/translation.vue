@@ -128,6 +128,7 @@ export default {
         'selection.bucket': function() {
             this.bucket = this.selection.bucket
         }
+
     }
 }
 </script>
