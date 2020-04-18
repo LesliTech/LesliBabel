@@ -139,7 +139,9 @@ export default {
             :buttons="false">
             <div class="is-grouped">
                 <button class="button" @click="postBuild()">
-                    <i class="fas fa-puzzle-piece"></i>
+                    <span class="icon is-small">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </span>
                     <span>build locales</span>
                 </button>
                 <button class="button" @click="doBackupSync()">
