@@ -157,19 +157,18 @@ module CloudBabel
         end
 
         def synchronization
+
+            host = "http://localhost:8888"
             host = "https://server.raven.dev.gt"
             api_endpoint = "#{host}/api/bucket/cloud-babel-dl/documents"
-            #host = "http://localhost:8888"
 
             # get last sync data
             response = Faraday.get(api_endpoint+"?last=1")
             response = JSON.parse(response.body)
             response = response['data']['rows'][0]
 
-
             # if first time sync
             response = JSON.parse({modules: [], buckets: [], strings: [] }.to_json) if response.blank?
-
 
             # add new modules
             response['modules'].each do |babel_module|
@@ -200,8 +199,9 @@ module CloudBabel
 
             end
 
-            # working with strings
+            # · working with strings
             babel_reference_buckets = {}
+
             response['strings'].each do |remote_string|
 
                 # reference to modules that buckets belongs to
@@ -216,8 +216,7 @@ module CloudBabel
                 remote_string_reference = "#{babel_reference_buckets[remote_string['reference_bucket']].module.name}-#{babel_reference_buckets[remote_string['reference_bucket']].name}"
             
                 # add new string if it does not exist
-                local_string = CloudBabel::Translation::String
-                .create_with({
+                local_string = CloudBabel::Translation::String.create_with({
                     context: remote_string['context'],
                     es: remote_string['es'],
                     en: remote_string['en'],
@@ -231,12 +230,14 @@ module CloudBabel
                     last_update_fr: remote_string['last_update_fr'],
                     last_update_status: remote_string['last_update_status'],
                     created_at: remote_string['created_at'],
+                    updated_at: remote_string['updated_at'],
+                    deleted_at: remote_string['deleted_at'],
                     bucket: babel_reference_buckets[remote_string['reference_bucket']]
                 }).find_or_create_by({
                     label: remote_string['label'], 
                     reference_bucket: remote_string_reference
                 })
-            
+
                 # if status changed
                 if remote_string["status"] != local_string["status"]
 
@@ -308,6 +309,11 @@ module CloudBabel
             
             end
 
+            # delete all the strings with deleted date
+            CloudBabel::Translation::String.where("deleted_at is not null").destroy_all
+
+            # · Collect modules, buckets and strings for syncronization
+
             # get and parse modules
             modules = CloudBabel::Translation::Module.all.map do |babel_module|
                 babel_module.as_json
@@ -318,7 +324,7 @@ module CloudBabel
                 babel_bucket.as_json
             end
 
-            # get and parse strings
+            # get and parse strings including the deleted ones
             strings = CloudBabel::Translation::String.all.map do |babel_string|
                 babel_string.as_json
             end
@@ -334,6 +340,7 @@ module CloudBabel
             response = response['successful']
 
             responseWithSuccessful() if response === true
+
             responseWithError() if response  != true
 
         end

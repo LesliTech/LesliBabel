@@ -129,8 +129,10 @@ module CloudBabel
 
         # DELETE /translation/strings/1
         def destroy
-            @translation_string.destroy
-            redirect_to translation_strings_url, notice: 'String was successfully destroyed.'
+            #@translation_string.destroy
+            @translation_string.deleted_at = Time.now
+            @translation_string.save!
+            responseWithSuccessful()
         end
 
         def help_request

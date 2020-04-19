@@ -110,6 +110,18 @@ export default {
             }, 1500)
         },
 
+        deleteTranslationString(string) {
+            this.http.delete(`/babel/translation/strings/${string.id}.json`, {
+            }).then(result => {
+                setTimeout(() => {
+                    this.getBucketStrings()
+                }, 1000)
+                this.notification.alert("Translation deleted successfully", "success" )
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+
         putTranslationStringHelpRequest(string) {
             this.http.put(`/babel/translation/strings/${string.id}/help_request.json`, {
             }).then(result => {
@@ -159,9 +171,7 @@ export default {
 </script>
 <template>
     <section>
-        <component-data-loading class="section" v-if="loading"></component-data-loading>
-        <component-data-empty v-if="!loading && strings.length == 0"></component-data-empty>
-        <div class="card" v-if="strings.length > 0">
+        <div class="card">
             <div class="card-header">
                 <h4 class="card-header-title">
                     Labels
@@ -184,7 +194,7 @@ export default {
                     </form>
                 </div>
             </div>
-            <div class="table-container">
+            <div class="table-container" v-if="strings.length > 0">
                 <b-table 
                     detailed 
                     detail-key="id" 
@@ -205,9 +215,11 @@ export default {
                         <b-table-column field="en" label="en" sortable>
                             <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
                         </b-table-column>
+                        <!-- 
                         <b-table-column field="es" label="es" sortable>
                             <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
-                        </b-table-column>
+                        </b-table-column> 
+                        -->
                         <b-table-column field="de" label="de" sortable>
                             <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
                         </b-table-column>
@@ -232,12 +244,19 @@ export default {
                                     </div>
                                 </div>
                             </div>
-                            <div class="column is-1">
+                            <div class="column is-1 has-text-center">
                                 <div class="field">
                                     <label class="label">&nbsp;</label>
                                     <div class="control">
                                         <b-tooltip label="Request help">
                                             <button class="button" @click="putTranslationStringHelpRequest(props.row)">?</button>
+                                        </b-tooltip>
+                                        <b-tooltip label="Delete label">
+                                            <button class="button is-danger is-light" @click="deleteTranslationString(props.row)">
+                                                <span class="icon">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </span>
+                                            </button>
                                         </b-tooltip>
                                     </div>
                                 </div>
@@ -247,5 +266,9 @@ export default {
                 </b-table>
             </div>
         </div>
+
+        <component-data-loading class="section" v-if="loading"></component-data-loading>
+        <component-data-empty v-if="!loading && strings.length == 0"></component-data-empty>
+
     </section>
 </template>
