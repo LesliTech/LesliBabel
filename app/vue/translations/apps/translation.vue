@@ -28,7 +28,7 @@ Building a better future, one line of code at a time.
 
 // · import components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import componentLayoutHeader from "LesliCoreVue/layouts/component-header.vue"
+import componentLayoutHeader from "LesliCoreVue/layout/component-header.vue"
 import componentStringEditor from "../components/strings-editor.vue"
 
 
