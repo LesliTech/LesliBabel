@@ -1,8 +1,0 @@
-{
-    "load": true,
-    "name": "CloudBabel",
-    "code": "cloud_babel",
-    "github_ssh": "git@github.com:leitfaden/CloudBabel.git",
-    "github_url": "https://github.com/leitfaden/CloudBabel",
-    "github_ssh_backup": "git@github.com:LesliTech/CloudBabel.git"
-}
