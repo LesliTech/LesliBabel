@@ -153,6 +153,8 @@ module CloudBabel
     
             end
 
+            do_restart_server
+
             responseWithSuccessful()
 
         end
@@ -389,6 +391,11 @@ module CloudBabel
             end
             engine_path = Rails.root.join("config", "locales")
             FileUtils.rm_rf(engine_path)
+        end
+
+        def do_restart_server
+            return if Rails.env != "production"
+            FileUtils.touch Rails.root.join("tmp", "restart.txt")
         end
 
         # Use callbacks to share common setup or constraints between actions.
