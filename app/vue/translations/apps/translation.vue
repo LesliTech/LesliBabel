@@ -12,13 +12,14 @@ Without the written permission of Lesli Technologies, S. A., any replication, mo
 transmission, publication is strictly forbidden.
 For more information read the license file including with this software.
 
-LesliCloud - Your Smart Business Assistant
+Lesli - Your Smart Business Assistant
 
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
 
+@contact  <hello@lesli.tech>
+@website  <https://lesli.tech>
 @license  Propietary - all rights reserved.
-@version  0.1.0-alpha
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
@@ -28,15 +29,15 @@ Building a better future, one line of code at a time.
 
 // · import components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import componentLayoutHeader from "LesliCoreVue/layout/component-header.vue"
-import componentStringEditor from "../components/strings-editor.vue"
+import componentStringEditorModuleBucket from "../components/string-editor-module-bucket.vue"
+import componentStringEditor from "../components/string-editor.vue"
 
 
 // · 
 export default {
     components: {
-        'component-layout-header': componentLayoutHeader,
-        'component-string-editor': componentStringEditor
+        "component-string-editor-module-bucket": componentStringEditorModuleBucket,
+        "component-string-editor": componentStringEditor
     },
     data() {
         return {
@@ -45,7 +46,7 @@ export default {
             modules: [],
             moduleBuckets: [],
             selection: { module: null, bucket: null },
-            
+            searchStrings: null
         }
     },
     mounted() {
@@ -113,6 +114,21 @@ export default {
             document.body.removeChild(el);
             this.notification.alert("Copied to clipboard")
 
+        },
+
+        getSearch(search) {
+
+            if (search == '') {
+                this.searchStrings = null
+                return
+            }
+
+            this.http.get("/babel/translation/search.json?label="+search).then(result => {
+                this.searchStrings = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+
         }
 
     },
@@ -134,9 +150,7 @@ export default {
 </script>
 <template>
     <section class="application-component">
-        <component-layout-header 
-            title="Translations"
-            :buttons="false">
+        <component-header title="Translations">
             <div class="is-grouped">
                 <button class="button" @click="postBuild()">
                     <span class="icon is-small">
@@ -149,43 +163,55 @@ export default {
                     <span>synchronize</span>
                 </button>
             </div>
-        </component-layout-header>
-        <div class="card">
-            <div class="card-content">
-                <div class="field is-grouped">
+        </component-header>
 
-                    <div class="control">
-                        <b-select
-                            placeholder="Select module"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.module">
-                            <option v-for="module in modules" :key="module.id" :value="module">{{ module.name }}</option>
-                        </b-select>
+        <component-toolbar @search="getSearch">
+        </component-toolbar>
+
+        <!-- String editor for search results -->
+        <component-string-editor v-if="searchStrings" :strings="searchStrings" :showPath="true">
+        </component-string-editor>
+
+        <!-- String editor for module/bucket strings -->
+        <template v-if="!searchStrings">
+            <div class="card">
+                <div class="card-content">
+                    <div class="field is-grouped">
+
+                        <div class="control">
+                            <b-select
+                                placeholder="Select module"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.module">
+                                <option v-for="module in modules" :key="module.id" :value="module">{{ module.name }}</option>
+                            </b-select>
+                        </div>
+
+                        <div class="control">
+                            <b-select
+                                placeholder="Select object"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.bucket">
+                                <option v-for="bucket in moduleBuckets" :key="bucket.id" :value="bucket">{{ bucket.name }}</option>
+                            </b-select>
+                        </div>
+
+                        <div class="control" v-if="selection.module && selection.bucket && selection.bucket.id">
+                            <button class="button is-text" @click="sendPathToClipboard()">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+
                     </div>
-
-                    <div class="control">
-                        <b-select
-                            placeholder="Select object"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.bucket">
-                            <option v-for="bucket in moduleBuckets" :key="bucket.id" :value="bucket">{{ bucket.name }}</option>
-                        </b-select>
-                    </div>
-
-                    <div class="control" v-if="selection.module && selection.bucket && selection.bucket.id">
-                        <button class="button is-text" @click="sendPathToClipboard()">
-                            <i class="far fa-copy"></i>
-                        </button>
-                    </div>
-
                 </div>
             </div>
-        </div>
-
-        <!-- <component-string-editor v-if="bucket.id" :module="selection.module" :bucket="bucket" /> -->
-        <component-string-editor v-if="selection.module" :module="selection.module" :bucket="bucket" />
-        
+            <component-string-editor-module-bucket 
+                v-if="selection.module" 
+                :module="selection.module" 
+                :bucket="bucket">
+            </component-string-editor-module-bucket>
+        </template>
     </section>
 </template>

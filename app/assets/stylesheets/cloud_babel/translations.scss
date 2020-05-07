@@ -50,6 +50,13 @@ table.table {
         }
     }
 
+    td:nth-child(3) {
+        small {
+            display: block;
+            padding: 0 .8rem;
+        }
+    }
+
     th, td {
         padding-right: 0.4rem;
         padding-left: 0.4rem;

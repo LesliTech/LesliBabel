@@ -12,13 +12,14 @@ Without the written permission of Lesli Technologies, S. A., any replication, mo
 transmission, publication is strictly forbidden.
 For more information read the license file including with this software.
 
-LesliCloud - Your Smart Business Assistant
+Lesli - Your Smart Business Assistant
 
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
 
+@contact  <hello@lesli.tech>
+@website  <https://lesli.tech>
 @license  Propietary - all rights reserved.
-@version  0.1.0-alpha
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
@@ -348,6 +349,35 @@ module CloudBabel
         def clean
             do_clean
             responseWithSuccessful()
+        end
+
+        def search
+            
+            label = params[:label]
+            label = label.downcase
+
+            strings = Translation::String.where("LOWER(context) like ?", "%#{label}%")
+            .or(Translation::String.where("LOWER(label) like ?", "%#{label}%"))
+            .or(Translation::String.where("LOWER(de) like ?", "%#{label}%"))
+            .or(Translation::String.where("LOWER(en) like ?", "%#{label}%"))
+            .or(Translation::String.where("LOWER(de) like ?", "%#{label}%"))
+
+            strings = strings.map do |string|
+                {
+                    id: string.id,
+                    path: string.path,
+                    context: string.context,
+                    label: string.label,
+                    es: string.es,
+                    en: string.en,
+                    de: string.de,
+                    fr: string.fr,
+                    status: string.status,
+                    help_needed: string.help_needed || false
+                }
+            end
+
+            responseWithSuccessful(strings)
         end
 
         private
