@@ -87,7 +87,5 @@ namespace :cloud_babel do
         return controller_list
 
     end
-
     
-
 end

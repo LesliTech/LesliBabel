@@ -55,7 +55,7 @@ module CloudBabel
             @translation = Translation.new(translation_params)
 
             if @translation.save
-                redirect_to @translation, notice: 'Translation was successfully created.'
+                redirect_to @translation, notice: "Translation was successfully created."
             else
                 render :new
             end
@@ -64,7 +64,7 @@ module CloudBabel
         # PATCH/PUT /translations/1
         def update
             if @translation.update(translation_params)
-                redirect_to @translation, notice: 'Translation was successfully updated.'
+                redirect_to @translation, notice: "Translation was successfully updated."
             else
                 render :edit
             end
@@ -73,7 +73,7 @@ module CloudBabel
         # DELETE /translations/1
         def destroy
             @translation.destroy
-            redirect_to translations_url, notice: 'Translation was successfully destroyed.'
+            redirect_to translations_url, notice: "Translation was successfully destroyed."
         end
 
         def build
@@ -92,16 +92,16 @@ module CloudBabel
                 module_name = string.bucket.module.name
                 bucket_name = string.bucket.name
     
-                module_name_sym = module_name.downcase.sub('cloud', '')
+                module_name_sym = module_name.downcase.sub("cloud", "")
     
                 Translation.locales.each do |lang|
 
                     lang = lang[0]
     
-                    file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub('/','_') }.#{ lang }.yml")
+                    file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
     
                     if module_name != "Core"
-                        file_path = Rails.root.join("engines", module_name, "config", "locales", bucket_name, "#{ bucket_name.gsub('/','_') }.#{ lang }.yml")
+                        file_path = Rails.root.join("engines", module_name, "config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
                     end
     
                     file_id = file_path.to_s.to_sym
@@ -168,36 +168,39 @@ module CloudBabel
             # get last sync data
             response = Faraday.get(api_endpoint+"?last=1")
             response = JSON.parse(response.body)
-            response = response['data']['rows'][0]
+            response = response["data"]["rows"][0]
 
             # if first time sync
             response = JSON.parse({modules: [], buckets: [], strings: [] }.to_json) if response.blank?
 
             # add new modules
-            response['modules'].each do |babel_module|
+            response["modules"].each do |babel_module|
+                next if babel_module["name"].blank?
                 CloudBabel::Translation::Module
-                .create_with(created_at: babel_module['created_at'])
-                .find_or_create_by({ name: babel_module['name'] })
+                .create_with(created_at: babel_module["created_at"])
+                .find_or_create_by({ name: babel_module["name"] })
             end
 
             # working with buckets
             babel_reference_modules = {}
-            response['buckets'].each do |babel_bucket|
+            response["buckets"].each do |babel_bucket|
+
+                next if babel_bucket["name"].blank?
 
                 # reference to modules that buckets belongs to
-                if babel_reference_modules[babel_bucket['reference_module']].blank?
-                    babel_reference_modules[babel_bucket['reference_module']] = 
-                    CloudBabel::Translation::Module.find_by(name: babel_bucket['reference_module'])
+                if babel_reference_modules[babel_bucket["reference_module"]].blank?
+                    babel_reference_modules[babel_bucket["reference_module"]] = 
+                    CloudBabel::Translation::Module.find_by(name: babel_bucket["reference_module"])
                 end
 
                 # add new bucket
                 CloudBabel::Translation::Bucket
                 .create_with({
-                    created_at: babel_bucket['created_at'],
-                    module: babel_reference_modules[babel_bucket['reference_module']]
+                    created_at: babel_bucket["created_at"],
+                    module: babel_reference_modules[babel_bucket["reference_module"]]
                 }).find_or_create_by({
-                    name: babel_bucket['name'], 
-                    reference_module: babel_bucket['reference_module'] 
+                    name: babel_bucket["name"], 
+                    reference_module: babel_bucket["reference_module"] 
                 })
 
             end
@@ -205,39 +208,39 @@ module CloudBabel
             # · working with strings
             babel_reference_buckets = {}
 
-            response['strings'].each do |remote_string|
+            response["strings"].each do |remote_string|
 
                 # reference to modules that buckets belongs to
-                if babel_reference_buckets[remote_string['reference_bucket']].blank?
-                    babel_reference_buckets[remote_string['reference_bucket']] = 
+                if babel_reference_buckets[remote_string["reference_bucket"]].blank?
+                    babel_reference_buckets[remote_string["reference_bucket"]] = 
                     CloudBabel::Translation::Bucket.find_by(
-                        name: remote_string['reference_bucket'].split('-')[1],
-                        reference_module: remote_string['reference_bucket'].split('-')[0]
+                        name: remote_string["reference_bucket"].split("-")[1],
+                        reference_module: remote_string["reference_bucket"].split("-")[0]
                     )
                 end
             
-                remote_string_reference = "#{babel_reference_buckets[remote_string['reference_bucket']].module.name}-#{babel_reference_buckets[remote_string['reference_bucket']].name}"
+                remote_string_reference = "#{babel_reference_buckets[remote_string["reference_bucket"]].module.name}-#{babel_reference_buckets[remote_string["reference_bucket"]].name}"
             
                 # add new string if it does not exist
                 local_string = CloudBabel::Translation::String.create_with({
-                    context: remote_string['context'],
-                    es: remote_string['es'],
-                    en: remote_string['en'],
-                    de: remote_string['de'],
-                    status: remote_string['status'],
-                    help_needed: remote_string['help_needed'],
-                    last_update_context: remote_string['last_update_context'],
-                    last_update_es: remote_string['last_update_es'],
-                    last_update_en: remote_string['last_update_en'],
-                    last_update_de: remote_string['last_update_de'],
-                    last_update_fr: remote_string['last_update_fr'],
-                    last_update_status: remote_string['last_update_status'],
-                    created_at: remote_string['created_at'],
-                    updated_at: remote_string['updated_at'],
-                    deleted_at: remote_string['deleted_at'],
-                    bucket: babel_reference_buckets[remote_string['reference_bucket']]
+                    context: remote_string["context"],
+                    es: remote_string["es"],
+                    en: remote_string["en"],
+                    de: remote_string["de"],
+                    status: remote_string["status"],
+                    help_needed: remote_string["help_needed"],
+                    last_update_context: remote_string["last_update_context"],
+                    last_update_es: remote_string["last_update_es"],
+                    last_update_en: remote_string["last_update_en"],
+                    last_update_de: remote_string["last_update_de"],
+                    last_update_fr: remote_string["last_update_fr"],
+                    last_update_status: remote_string["last_update_status"],
+                    created_at: remote_string["created_at"],
+                    updated_at: remote_string["updated_at"],
+                    deleted_at: remote_string["deleted_at"],
+                    bucket: babel_reference_buckets[remote_string["reference_bucket"]]
                 }).find_or_create_by({
-                    label: remote_string['label'], 
+                    label: remote_string["label"], 
                     reference_bucket: remote_string_reference
                 })
 
@@ -340,7 +343,7 @@ module CloudBabel
 
             response = JSON.parse(response.body)
 
-            response = response['successful']
+            response = response["successful"]
 
             responseWithSuccessful() if response === true
 
