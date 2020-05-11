@@ -7,6 +7,8 @@ module CloudBabel
         # GET /translation/modules
         def index
             modules = Translation::Module.all.map do |translation_module|
+                next unless translation_module[:name]
+                
                 {
                     id: translation_module[:id],
                     name: translation_module[:name],
