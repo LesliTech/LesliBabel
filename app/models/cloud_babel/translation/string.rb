@@ -5,8 +5,6 @@ module CloudBabel
 
         before_save :clean_label_string
 
-        #acts_as_paranoid
-
         def clean_label_string
             self.label = self.label
                 .downcase                           # string to lowercase

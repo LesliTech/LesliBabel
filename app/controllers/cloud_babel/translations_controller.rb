@@ -385,6 +385,25 @@ module CloudBabel
             responseWithSuccessful(strings)
         end
 
+        def stats
+            total_strings = Translation::String.all.count
+            total_strings_es_translations = Translation::String.where("es is not null").where("es != ''").count
+            total_strings_en_translations = Translation::String.where("en is not null").where("en != ''").count
+            total_strings_de_translations = Translation::String.where("de is not null").where("de != ''").count
+            total_strings_fr_translations = Translation::String.where("fr is not null").where("fr != ''").count
+
+            total_strings_waiting_for_help = Translation::String.where(:help_needed => true).count
+            
+            responseWithSuccessful({
+                total_strings: total_strings,
+                total_strings_es_translations: total_strings_es_translations,
+                total_strings_en_translations: total_strings_en_translations,
+                total_strings_de_translations: total_strings_de_translations,
+                total_strings_fr_translations: total_strings_fr_translations,
+                total_strings_waiting_for_help: total_strings_waiting_for_help
+            })
+        end
+
         private
 
         def do_clean

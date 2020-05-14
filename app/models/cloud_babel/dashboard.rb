@@ -1,4 +1,5 @@
 module CloudBabel
-  class Dashboard < ApplicationRecord
-  end
+    class Dashboard < ApplicationRecord
+
+    end
 end

@@ -32,9 +32,13 @@ import app from 'LesliCoreVue/app'
 
 // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+import appStats from './apps/stats.vue'
 
 
 
 // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-app("CloudBabel", "[]", "/babel", [])
+app("CloudBabel", "[]", "/babel", [{
+    path: '/',
+    component: appStats,
+}])

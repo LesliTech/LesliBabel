@@ -45,11 +45,12 @@ CloudBabel::Engine.routes.draw do
         collection do
             post "clean"
             post "build"
+            get  "stats"
             get  "search"
             post "synchronization"
         end
     end
 
-    root to: "dashboards#default"
+    root to: "dashboards#stats"
 
 end
