@@ -361,6 +361,7 @@ module CloudBabel
             
             label = params[:label]
             label = label.downcase
+            label = label.gsub(" ","%")
 
             strings = Translation::String.where("LOWER(context) like ?", "%#{label}%")
             .or(Translation::String.where("LOWER(label) like ?", "%#{label}%"))
