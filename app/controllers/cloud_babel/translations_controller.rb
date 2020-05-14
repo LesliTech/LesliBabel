@@ -86,7 +86,6 @@ module CloudBabel
                 files[ lang[0] ] = { }
             end
     
-            #CloudBabel::Translation::String.where(status: 1).each do |string|
             Translation::String.all.each do |string|
     
                 module_name = string.bucket.module.name

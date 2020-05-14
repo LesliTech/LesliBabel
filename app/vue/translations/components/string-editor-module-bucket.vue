@@ -49,13 +49,25 @@ export default {
             label: "",
             strings: [],
             timeout: null,
-            loading: false
+            loading: false,
+            pagination: {
+                count: 0,
+                current_page: 1,
+                per_page: 40,
+                range_before: 3,
+                range_after: 3
+            }
         }
     },
     mounted() {
         this.getBucketStrings()
     },
     methods: {
+
+        changePagination(page) {
+            this.pagination.current_page = page
+            this.getBucketStrings()
+        },
 
         getBucketStrings() {
 
@@ -70,9 +82,12 @@ export default {
                 url = `/babel/translation/modules/${this.module.id}/buckets/${this.bucket.id}/strings.json`
             }
 
+            url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
+
             this.http.get(url).then(result => {
                 if (!result.successful) return 
-                this.strings = result.data ? result.data : []
+                this.strings = result.data.strings ? result.data.strings : []
+                this.pagination.count = result.data.total ? result.data.total : 0
                 this.loading = false
             }).catch(error => {
                 console.log(error)
@@ -139,6 +154,25 @@ export default {
             </div>
             <component-string-editor :strings="strings">
             </component-string-editor>
+            <hr>
+            <b-pagination
+                :simple="false"
+                :total="pagination.count"
+                :current.sync="pagination.current_page"
+                :range-before="pagination.range_before"
+                :range-after="pagination.range_after"
+                :per-page="pagination.per_page"
+                @change="changePagination"
+                order="is-centered"
+                icon-prev="chevron-left"
+                icon-next="chevron-right"
+                aria-next-label="Next page"
+                aria-previous-label="Previous page"
+                aria-page-label="Page"
+                aria-current-label="Current page"
+            >
+            </b-pagination>
+            <br>
         </div>
 
         <component-data-loading class="section" v-if="loading"></component-data-loading>

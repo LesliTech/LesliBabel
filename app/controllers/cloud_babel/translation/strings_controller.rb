@@ -30,6 +30,13 @@ module CloudBabel
                         strings = bucket.strings
                     end
 
+                    count = strings.length
+
+                    strings = strings
+                    .page(@query[:pagination][:page])
+                    .per(@query[:pagination][:perPage])
+                    .order(:updated_at)
+
                     strings = strings.map do |string|
                         {
                             id: string.id,
@@ -45,7 +52,10 @@ module CloudBabel
                         }
                     end
 
-                    responseWithSuccessful(strings) 
+                    responseWithSuccessful({
+                        total: count,
+                        strings: strings
+                    }) 
 
                 }
             end
