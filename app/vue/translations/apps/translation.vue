@@ -87,11 +87,12 @@ export default {
             })
         },
 
-        postBuild() {
-            this.http.post("/babel/translation/build").then(result => {
+        postDeploy() {
+            this.loading = true
+            this.http.post("/babel/translation/deploy").then(result => {
                 if (!result.successful) { this.notification.alert("Error", "danger")}
-                this.notification.alert("Translations files built successfully")
-                this.notification.alert("Restart Rails to see the new translations")
+                this.notification.alert("Translations deploy process done successfully")
+                this.loading = false
             }).catch(error => {
                 console.log(error)
             })
@@ -152,11 +153,9 @@ export default {
     <section class="application-component">
         <component-header title="Translations">
             <div class="is-grouped">
-                <button class="button" @click="postBuild()">
-                    <span class="icon is-small">
-                        <i class="fas fa-puzzle-piece"></i>
-                    </span>
-                    <span>build locales</span>
+                <button class="button" @click="postDeploy()">
+                    <b-icon icon="rocket" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
+                    <span>deploy translations</span>
                 </button>
                 <button class="button" @click="doBackupSync()">
                     <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />

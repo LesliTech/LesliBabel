@@ -44,7 +44,7 @@ CloudBabel::Engine.routes.draw do
         end
         collection do
             post "clean"
-            post "build"
+            post "deploy"
             get  "stats"
             get  "search"
             post "synchronization"

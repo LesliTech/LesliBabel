@@ -76,7 +76,7 @@ module CloudBabel
             redirect_to translations_url, notice: "Translation was successfully destroyed."
         end
 
-        def build
+        def deploy
 
             do_clean
 
@@ -152,6 +152,8 @@ module CloudBabel
                 end
     
             end
+
+            system "bundle exec rake i18n:js:export RAILS_ENV=production"
 
             do_restart_server
 
