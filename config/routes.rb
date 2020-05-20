@@ -32,7 +32,8 @@ CloudBabel::Engine.routes.draw do
         scope module: :translation do
             resources :strings do
                 member do
-                    put "help_request"
+                    put "need_help"
+                    put "need_translation"
                 end
             end
             resources :modules do

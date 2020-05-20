@@ -2,7 +2,7 @@ require_dependency "cloud_babel/application_controller"
 
 module CloudBabel
     class Translation::StringsController < ApplicationController
-        before_action :set_translation_string, only: [:show, :edit, :update, :destroy, :help_request]
+        before_action :set_translation_string, only: [:show, :edit, :update, :destroy, :need_help, :need_translation]
 
         # GET /translation/strings
         def index
@@ -13,9 +13,12 @@ module CloudBabel
                     # empty strings by default
                     strings = []
 
-                    # if bucket or module was not sent, return all the strings in the database
+                    # if bucket or module was not sent, return all the strings in the database with missing german translation
                     if params[:module_id].blank? and params[:bucket_id].blank?
-                        strings = Translation::String.all
+                        strings = Translation::String.where(:need_translation => true)
+                        .or(Translation::String.where(:de => nil))
+                        .or(Translation::String.where(:de => ""))
+                        .order(:created_at)
                     end
 
                     # returns strings for specif module
@@ -48,7 +51,8 @@ module CloudBabel
                             de: string.de,
                             fr: string.fr,
                             status: string.status,
-                            help_needed: string.help_needed || false
+                            need_help: string.need_help || false,
+                            need_translation: string.need_translation || false
                         }
                     end
 
@@ -145,8 +149,14 @@ module CloudBabel
             responseWithSuccessful()
         end
 
-        def help_request
-            @translation_string.help_needed = true
+        def need_help
+            @translation_string.need_help = true
+            @translation_string.save!
+            responseWithSuccessful()
+        end
+
+        def need_translation
+            @translation_string.need_translation = true
             @translation_string.save!
             responseWithSuccessful()
         end

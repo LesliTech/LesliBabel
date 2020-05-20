@@ -56,10 +56,19 @@ export default {
             })
         },
 
-        putTranslationStringHelpRequest(string) {
-            this.http.put(`/babel/translation/strings/${string.id}/help_request.json`, {
+        putTranslationStringNeedHelp(string) {
+            this.http.put(`/babel/translation/strings/${string.id}/need_help.json`, {
             }).then(result => {
                 this.notification.alert("Help requested successfully", "success" )
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+
+        putTranslationStringNeedTranslation(string) {
+            this.http.put(`/babel/translation/strings/${string.id}/need_translation.json`, {
+            }).then(result => {
+                this.notification.alert("Translation requested successfully", "success" )
             }).catch(error => {
                 console.log(error)
             })
@@ -127,7 +136,7 @@ export default {
             </template>
             <template slot="detail" slot-scope="props">
                 <div class="columns">
-                    <div class="column is-11">
+                    <div class="column is-10">
                         <div class="field">
                             <label class="label">Context</label>
                             <div class="control">
@@ -135,12 +144,19 @@ export default {
                             </div>
                         </div>
                     </div>
-                    <div class="column is-1 has-text-center">
+                    <div class="column is-12 has-text-center">
                         <div class="field">
                             <label class="label">&nbsp;</label>
-                            <div class="control">
-                                <b-tooltip label="Request help">
-                                    <button class="button" @click="putTranslationStringHelpRequest(props.row)">?</button>
+                            <div class="control has-text-center">
+                                <b-tooltip label="Need help">
+                                    <button class="button" @click="putTranslationStringNeedHelp(props.row)">?</button>
+                                </b-tooltip>
+                                <b-tooltip label="Need translation">
+                                    <button class="button" @click="putTranslationStringNeedTranslation(props.row)">
+                                        <span class="icon">
+                                            <i class="fas fa-language"></i>
+                                        </span>
+                                    </button>
                                 </b-tooltip>
                                 <b-tooltip label="Delete label">
                                     <button class="button is-danger is-light" @click="deleteTranslationString(props.row)">

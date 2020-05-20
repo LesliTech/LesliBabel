@@ -25,11 +25,16 @@ Building a better future, one line of code at a time.
 // · 
 */
 
+
+// · import components
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+
+
 // · 
 export default {
     data() {
         return {
-            stats: {}
+            stats: {},
         }
     },
     mounted() {
@@ -39,12 +44,12 @@ export default {
 
         getStats() {
             this.http.get("/babel/translation/stats").then(result => {
-                console.log(result)
                 this.stats = result.data
             }).catch(error => {
                 console.log(error)
             })
         }
+
     }
 
 }
@@ -114,6 +119,10 @@ export default {
                 </h2>
             </div>
         </div>
+
+        <br>
+
+        
 
     </section>
 </template>

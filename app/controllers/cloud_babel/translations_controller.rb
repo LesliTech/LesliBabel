@@ -229,7 +229,8 @@ module CloudBabel
                     en: remote_string["en"],
                     de: remote_string["de"],
                     status: remote_string["status"],
-                    help_needed: remote_string["help_needed"],
+                    need_help: remote_string["need_help"],
+                    need_translation: remote_string["need_translation"],
                     last_update_context: remote_string["last_update_context"],
                     last_update_es: remote_string["last_update_es"],
                     last_update_en: remote_string["last_update_en"],
@@ -394,7 +395,8 @@ module CloudBabel
             total_strings_de_translations = Translation::String.where("de is not null").where("de != ''").count
             total_strings_fr_translations = Translation::String.where("fr is not null").where("fr != ''").count
 
-            total_strings_waiting_for_help = Translation::String.where(:help_needed => true).count
+            total_strings_waiting_for_help = Translation::String.where(:need_help => true).count
+            total_strings_waiting_for_translation = Translation::String.where(:need_translation => true).count
             
             responseWithSuccessful({
                 total_strings: total_strings,
@@ -402,7 +404,8 @@ module CloudBabel
                 total_strings_en_translations: total_strings_en_translations,
                 total_strings_de_translations: total_strings_de_translations,
                 total_strings_fr_translations: total_strings_fr_translations,
-                total_strings_waiting_for_help: total_strings_waiting_for_help
+                total_strings_waiting_for_help: total_strings_waiting_for_help,
+                total_strings_waiting_for_translation: total_strings_waiting_for_translation
             })
         end
 

@@ -8,7 +8,9 @@ class CreateCloudBabelTranslationStrings < ActiveRecord::Migration[6.0]
             t.string    :de
             t.string    :fr
             t.integer   :status
-            t.boolean   :help_needed
+            t.integer   :priority
+            t.boolean   :need_help
+            t.boolean   :need_translation
             t.string    :reference_bucket
             t.datetime  :last_update_context
             t.datetime  :last_update_es
