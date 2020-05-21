@@ -381,7 +381,8 @@ module CloudBabel
                     de: string.de,
                     fr: string.fr,
                     status: string.status,
-                    help_needed: string.help_needed || false
+                    need_help: string.need_help || false,
+                    need_translation: string.need_translation || false
                 }
             end
 
