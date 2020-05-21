@@ -133,7 +133,7 @@ module CloudBabel
             end
 
             if @translation_string.update(translation_string_params)
-                @translation_string.update_attribute(:help_needed, false)
+                @translation_string.update_attribute(:need_help, false)
                 responseWithSuccessful(@translation_string)
             else
                 responseWithError("Error on update translation string", @translation_object_group_section_label.errors)
