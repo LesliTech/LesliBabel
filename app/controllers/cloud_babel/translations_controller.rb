@@ -162,14 +162,14 @@ module CloudBabel
 
         def synchronization
 
-            host = "http://localhost:8888"
+            host = "http://localhost:8080"
             host = "https://server.raven.dev.gt"
-            api_endpoint = "#{host}/api/bucket/cloud-babel-dl/documents"
+            api_endpoint = "#{host}/api/bucket/lesli-babel-dl/documents"
 
             # get last sync data
             response = Faraday.get(api_endpoint+"?last=1")
             response = JSON.parse(response.body)
-            response = response["data"]["rows"][0]
+            response = response["data"]["documents"][0]
 
             # if first time sync
             response = JSON.parse({modules: [], buckets: [], strings: [] }.to_json) if response.blank?
