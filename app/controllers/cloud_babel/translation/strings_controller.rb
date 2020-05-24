@@ -56,10 +56,10 @@ module CloudBabel
                         }
                     end
 
-                    responseWithSuccessful({
+                    response_with_successful({
                         total: count,
-                        strings: strings
-                    }) 
+                        data: strings
+                    })
 
                 }
             end
