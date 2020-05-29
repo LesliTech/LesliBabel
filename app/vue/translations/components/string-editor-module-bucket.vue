@@ -86,8 +86,8 @@ export default {
 
             this.http.get(url).then(result => {
                 if (!result.successful) return 
-                this.strings = result.data.strings ? result.data.strings : []
-                this.pagination.count = result.data.total ? result.data.total : 0
+                this.strings = result.data ? result.data : []
+                this.pagination.count = result.records.total ? result.records.total : 0
                 this.loading = false
             }).catch(error => {
                 console.log(error)

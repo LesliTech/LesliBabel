@@ -46,7 +46,7 @@ export default {
             modules: [],
             moduleBuckets: [],
             selection: { module: null, bucket: null },
-            missingTranslationStrings: [],
+            missingTranslations: {},
             searchStrings: null
         }
     },
@@ -135,11 +135,13 @@ export default {
         },
 
         getMissingTranslationStrings() {
-
-            //this.http.get("/babel/translation/strings.json?page=1&perPage=2&filter[lang]=de").then(result => {
-            this.missingTranslationStrings= []
+           
+            this.missingTranslations= {}
             this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
-                this.missingTranslationStrings = result.data
+                this.missingTranslations = {
+                    total: result.records.total,
+                    strings: result.data
+                }
             }).catch(error => {
                 console.log(error)
             })
@@ -228,12 +230,12 @@ export default {
         </template>
 
         <!-- String editor for missing translation strings -->
-        <template v-if="!searchStrings && missingTranslationStrings.total > 0">
+        <template v-if="!searchStrings && !selection.module && missingTranslations.total > 0">
             <br>
             <component-header subtitle="Missing or needed translations">
             </component-header>
             <component-string-editor 
-                :strings="missingTranslationStrings.strings" 
+                :strings="missingTranslations.strings" 
                 :showPath="true">
             </component-string-editor>
         </template>
