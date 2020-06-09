@@ -152,7 +152,8 @@ module CloudBabel
     
             end
 
-            system "bundle exec rake i18n:js:export RAILS_ENV=production"
+            logger.debug "/babel/translation"
+            logger.debug system "bundle exec rake i18n:js:export RAILS_ENV=production"
 
             do_restart_server
 
