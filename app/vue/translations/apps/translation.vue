@@ -139,8 +139,8 @@ export default {
             this.missingTranslations= {}
             this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
                 this.missingTranslations = {
-                    total: result.records.total,
-                    strings: result.data
+                    total: result.data.total,
+                    strings: result.data.data
                 }
             }).catch(error => {
                 console.log(error)
