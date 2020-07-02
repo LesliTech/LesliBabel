@@ -42,7 +42,6 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, CloudTeam::Engine.routes.routes, CloudTeam) if defined?(CloudTeam)
         translation_list = get_controllers_from_routes(translation_list, CloudDriver::Engine.routes.routes, CloudDriver) if defined?(CloudDriver)
         translation_list = get_controllers_from_routes(translation_list, CloudHouse::Engine.routes.routes, CloudHouse) if defined?(CloudHouse)
-        translation_list = get_controllers_from_routes(translation_list, CloudHaus::Engine.routes.routes, CloudHaus) if defined?(CloudHaus)
         translation_list = get_controllers_from_routes(translation_list, CloudLesli::Engine.routes.routes, CloudLesli) if defined?(CloudLesli)
         translation_list = get_controllers_from_routes(translation_list, CloudBell::Engine.routes.routes, CloudBell) if defined?(CloudBell)
         translation_list = get_controllers_from_routes(translation_list, CloudKb::Engine.routes.routes, CloudKb) if defined?(CloudKb)
@@ -51,6 +50,8 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, CloudLock::Engine.routes.routes, CloudLock) if defined?(CloudLock)
         translation_list = get_controllers_from_routes(translation_list, CloudBabel::Engine.routes.routes, CloudBabel) if defined?(CloudBabel)
         translation_list = get_controllers_from_routes(translation_list, CloudFocus::Engine.routes.routes, CloudFocus) if defined?(CloudFocus)
+
+        translation_list = get_controllers_from_routes(translation_list, DeutscheLeibrenten::Engine.routes.routes, CloudHaus) if defined?(CloudHaus)
 
         translation_list.each do |t|
 
