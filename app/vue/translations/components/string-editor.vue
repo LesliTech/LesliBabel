@@ -37,7 +37,7 @@ export default {
                         de: string.de
                     }
                 }).then(result => {
-                    this.notification.alert("Translation updated successfully", "success" )
+                    this.alert("Translation updated successfully", "success" )
                 }).catch(error => {
                     console.log(error)
                 })
@@ -50,7 +50,7 @@ export default {
                 setTimeout(() => {
                     this.getBucketStrings()
                 }, 1000)
-                this.notification.alert("Translation deleted successfully", "success" )
+                this.alert("Translation deleted successfully", "success" )
             }).catch(error => {
                 console.log(error)
             })
@@ -59,7 +59,7 @@ export default {
         putTranslationStringNeedHelp(string) {
             this.http.put(`/babel/translation/strings/${string.id}/need_help.json`, {
             }).then(result => {
-                this.notification.alert("Help requested successfully", "success" )
+                this.alert("Help requested successfully", "success" )
             }).catch(error => {
                 console.log(error)
             })
@@ -68,7 +68,7 @@ export default {
         putTranslationStringNeedTranslation(string) {
             this.http.put(`/babel/translation/strings/${string.id}/need_translation.json`, {
             }).then(result => {
-                this.notification.alert("Translation requested successfully", "success" )
+                this.alert("Translation requested successfully", "success" )
             }).catch(error => {
                 console.log(error)
             })
@@ -84,7 +84,7 @@ export default {
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            this.notification.alert("Copied to clipboard")
+            this.alert("Copied to clipboard")
         }
 
     }

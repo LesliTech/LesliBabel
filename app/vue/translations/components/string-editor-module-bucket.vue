@@ -108,7 +108,7 @@ export default {
                 }
             }).then(result => {
                 if (!result) this.alert("Error adding label", "danger")
-                this.notification.alert("Label successfully added", "success")
+                this.alert("Label successfully added", "success")
                 this.getBucketStrings()
                 this.label = ''
             }).catch(error => {

@@ -78,11 +78,11 @@ export default {
             this.loading = true
             this.http.post(`/babel/translation/synchronization.json`).then(result => {
                 if (!result.successful) {
-                    this.notification.alert("Error", "danger")
+                    this.alert("Error", "danger")
                     return 
                 }
                 this.getModules()
-                this.notification.alert("Synchronization successfully")
+                this.alert("Synchronization successfully")
                 this.loading = false
             }).catch(error => {
                 console.log(error)
@@ -92,8 +92,8 @@ export default {
         postDeploy() {
             this.loading = true
             this.http.post("/babel/translation/deploy").then(result => {
-                if (!result.successful) { this.notification.alert("Error", "danger")}
-                this.notification.alert("Translations deploy process done successfully")
+                if (!result.successful) { this.alert("Error", "danger")}
+                this.alert("Translations deploy process done successfully")
                 this.loading = false
             }).catch(error => {
                 console.log(error)
@@ -115,7 +115,7 @@ export default {
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            this.notification.alert("Copied to clipboard")
+            this.alert("Copied to clipboard")
 
         },
 
