@@ -34,6 +34,7 @@ Building a better future, one line of code at a time.
 export default {
     data() {
         return {
+            main_route: '/babel/translation/resources/stats',
             stats: {},
         }
     },
@@ -43,8 +44,12 @@ export default {
     methods: {
 
         getStats() {
-            this.http.get("/babel/translation/stats").then(result => {
-                this.stats = result.data
+            this.http.get(this.main_route).then(result => {
+                if (result.successful) {
+                    this.stats = result.data
+                }else{
+                    this.alert(result.error.message,'danger')
+                }
             }).catch(error => {
                 console.log(error)
             })
