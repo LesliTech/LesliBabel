@@ -28,14 +28,19 @@ Building a better future, one line of code at a time.
 
 CloudBabel::Engine.routes.draw do
 
+    root to: "dashboards#show"
+
     resource :translation do
         scope module: :translation do
             resources :strings do
                 member do
-                    put "need_help"
-                    put "need_translation"
+                    scope :resources do
+                        put "need-help"
+                        put "need-translation"
+                    end
                 end
             end
+
             resources :modules do
                 resources :strings, only: [:index]
                 resources :buckets do
@@ -43,15 +48,18 @@ CloudBabel::Engine.routes.draw do
                 end
             end
         end
+
         collection do
-            post "clean"
-            post "deploy"
-            get  "stats"
-            get  "search"
-            post "synchronization"
+            get  :search
+
+            scope :resources do
+                post :clean
+                post :deploy
+                get  :stats
+                post :synchronization
+            end
+    
         end
     end
-
-    root to: "dashboards#stats"
 
 end
