@@ -52,6 +52,6 @@ CloudBabel::Engine.routes.draw do
         end
     end
 
-    root to: "dashboards#stats"
+    root to: "dashboards#show"
 
 end
