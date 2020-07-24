@@ -16,7 +16,7 @@ module CloudBabel
             end
             respond_to do |format|
                 format.html { }
-                format.json { responseWithSuccessful(modules) }
+                format.json { respond_with_successful(modules) }
             end
         end
 
@@ -46,6 +46,8 @@ module CloudBabel
 
         # PATCH/PUT /translation/modules/1
         def update
+            return respond_with_not_found unless @translation_module
+
             if @translation_module.update(translation_module_params)
                 redirect_to @translation_module, notice: 'Module was successfully updated.'
             else
@@ -55,13 +57,21 @@ module CloudBabel
 
         # DELETE /translation/modules/1
         def destroy
+            return respond_with_not_found unless @translation_module
+
             @translation_module.destroy
             redirect_to translation_modules_url, notice: 'Module was successfully destroyed.'
         end
 
         private
 
-        # Use callbacks to share common setup or constraints between actions.
+        # @return [void]
+        # @description Sets the requested translation module based on the current_users's account
+        # @example
+        #     # Executing this method from a controller action:
+        #     set_translation_module
+        #     puts @translation_module
+        #     # This will either display nil or an instance of Translation::Module
         def set_translation_module
             @translation_module = Translation::Module.find(params[:id])
         end
