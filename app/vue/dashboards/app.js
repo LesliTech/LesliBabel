@@ -32,7 +32,7 @@ import app from 'LesliCoreVue/app'
 
 // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import appStats from './apps/stats.vue'
+import appShow from './apps/show.vue'
 
 
 
@@ -40,5 +40,5 @@ import appStats from './apps/stats.vue'
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 app("CloudBabel", "[]", "/babel", [{
     path: '/',
-    component: appStats,
+    component: appShow,
 }])

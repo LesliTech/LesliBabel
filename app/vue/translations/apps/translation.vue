@@ -57,7 +57,7 @@ export default {
     methods: {
 
         getModules() {
-            this.http.get('/babel/translation/modules.json').then(result => {
+            this.http.get("/babel/translation/modules.json").then(result => {
                 if (!result.successful) return 
                 this.modules = result.data
             }).catch(error => {
@@ -76,7 +76,7 @@ export default {
 
         doBackupSync() {
             this.loading = true
-            this.http.post(`/babel/translation/synchronization.json`).then(result => {
+            this.http.post("/babel/translation/resources/synchronization.json").then(result => {
                 if (!result.successful) {
                     this.alert("Error", "danger")
                     return 
@@ -91,7 +91,7 @@ export default {
 
         postDeploy() {
             this.loading = true
-            this.http.post("/babel/translation/deploy").then(result => {
+            this.http.post("/babel/translation/resources/deploy.json").then(result => {
                 if (!result.successful) { this.alert("Error", "danger")}
                 this.alert("Translations deploy process done successfully")
                 this.loading = false
@@ -106,14 +106,14 @@ export default {
 
             path = path.toLowerCase()
 
-            const el = document.createElement('textarea');
+            const el = document.createElement("textarea");
             el.value = path
-            el.setAttribute('readonly', '');
-            el.style.position = 'absolute';
-            el.style.left = '-9999px';
+            el.setAttribute("readonly", "");
+            el.style.position = "absolute";
+            el.style.left = "-9999px";
             document.body.appendChild(el);
             el.select();
-            document.execCommand('copy');
+            document.execCommand("copy");
             document.body.removeChild(el);
             this.alert("Copied to clipboard")
 
@@ -121,7 +121,7 @@ export default {
 
         getSearch(search) {
 
-            if (search == '') {
+            if (search == "") {
                 this.searchStrings = null
                 return
             }
@@ -152,13 +152,13 @@ export default {
     watch: {
 
         // triggers after Select Module
-        'selection.module': function() {
+        "selection.module": function() {
             this.selection.bucket = {}
             this.getModuleBuckets()
         },
 
         // triggers after Select object
-        'selection.bucket': function() {
+        "selection.bucket": function() {
             this.bucket = this.selection.bucket
         }
 

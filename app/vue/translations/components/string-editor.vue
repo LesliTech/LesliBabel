@@ -57,7 +57,7 @@ export default {
         },
 
         putTranslationStringNeedHelp(string) {
-            this.http.put(`/babel/translation/strings/${string.id}/need_help.json`, {
+            this.http.put(`/babel/translation/strings/${string.id}/resources/need-help.json`, {
             }).then(result => {
                 this.alert("Help requested successfully", "success" )
             }).catch(error => {
@@ -66,7 +66,7 @@ export default {
         },
 
         putTranslationStringNeedTranslation(string) {
-            this.http.put(`/babel/translation/strings/${string.id}/need_translation.json`, {
+            this.http.put(`/babel/translation/strings/${string.id}/resources/need-translation.json`, {
             }).then(result => {
                 this.alert("Translation requested successfully", "success" )
             }).catch(error => {
