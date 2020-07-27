@@ -92,15 +92,16 @@ module CloudBabel
             end
             
             if translation_string.save
-                responseWithSuccessful(translation_string)
+                respond_with_successful(translation_string)
             else
-                responseWithError("Error on create translation string", translation_string.errors)
+                respond_with_error("Error on create translation string", translation_string.errors)
             end
 
         end
 
         # PATCH/PUT /translation/strings/1
         def update
+            return respond_with_not_found unless @translation_string
 
             # if status changed
             if @translation_string["status"] != translation_string_params["status"]
@@ -134,36 +135,43 @@ module CloudBabel
 
             if @translation_string.update(translation_string_params)
                 @translation_string.update_attribute(:need_help, false)
-                responseWithSuccessful(@translation_string)
+                respond_with_successful(@translation_string)
             else
-                responseWithError("Error on update translation string", @translation_object_group_section_label.errors)
+                respond_with_error("Error on update translation string", @translation_object_group_section_label.errors)
             end
 
         end
 
         # DELETE /translation/strings/1
         def destroy
-            #@translation_string.destroy
+            return respond_with_not_found unless @translation_string
+            
             @translation_string.deleted_at = Time.now
             @translation_string.save!
-            responseWithSuccessful()
+            respond_with_successful()
         end
 
         def need_help
             @translation_string.need_help = true
             @translation_string.save!
-            responseWithSuccessful()
+            respond_with_successful()
         end
 
         def need_translation
             @translation_string.need_translation = true
             @translation_string.save!
-            responseWithSuccessful()
+            respond_with_successful()
         end
 
         private
 
-        # Use callbacks to share common setup or constraints between actions.
+        # @return [void]
+        # @description Sets the requested translation string based on the current_users's account
+        # @example
+        #     # Executing this method from a controller action:
+        #     set_translation_string
+        #     puts @translation_string
+        #     # This will either display nil or an instance of Translation::String
         def set_translation_string
             @translation_string = Translation::String.find(params[:id])
         end
