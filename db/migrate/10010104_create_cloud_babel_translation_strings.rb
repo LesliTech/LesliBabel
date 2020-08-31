@@ -1,23 +1,30 @@
 class CreateCloudBabelTranslationStrings < ActiveRecord::Migration[6.0]
     def change
         create_table :cloud_babel_translation_strings do |t|
-            t.string    :context
             t.string    :label
-            t.string    :es
-            t.string    :en
-            t.string    :de
-            t.string    :fr
+            t.string    :es #spanish
+            t.string    :en #english
+            t.string    :de #deutsch/german
+            t.string    :fr #french
+            t.string    :nl #nederlands/netherlands/holanda
+            t.string    :pl #polski/polish/poland
+            t.string    :pt #portuguese
+            t.string    :it #italian
             t.integer   :status
+            t.string    :context
             t.integer   :priority
-            t.boolean   :need_help
-            t.boolean   :need_translation
             t.string    :reference_bucket
-            t.datetime  :last_update_context
             t.datetime  :last_update_es
             t.datetime  :last_update_en
             t.datetime  :last_update_de
             t.datetime  :last_update_fr
+            t.datetime  :last_update_nl
+            t.datetime  :last_update_pl
+            t.datetime  :last_update_pt
+            t.datetime  :last_update_it
             t.datetime  :last_update_status
+            t.datetime  :last_update_context
+            t.datetime  :last_update_priority
             t.datetime  :deleted_at
             t.timestamps
         end
