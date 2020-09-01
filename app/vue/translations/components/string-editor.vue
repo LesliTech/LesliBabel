@@ -113,7 +113,7 @@ export default {
                     </small>
                 </b-table-column>
                 <b-table-column field="en" label="en" sortable>
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
+                    <input class="input" type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
                 </b-table-column>
                 <!-- 
                 <b-table-column field="es" label="es" sortable>

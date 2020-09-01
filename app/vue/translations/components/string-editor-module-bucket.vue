@@ -49,31 +49,31 @@ export default {
             label: "",
             labelPrefix: "",
             prefixes: [
-                'mailer_',
-                'column_',
-                'column_enum_',
+                'mailer',
+                'column',
+                'column_enum',
 
-                'view_',
-                'view_title_',
+                'view',
+                'view_title',
 
-                'view_toolbar_filter_',
-                'view_toolbar_filter_placeholder_',
-                'view_toolbar_search_by_placeholder_',
+                'view_toolbar_filter',
+                'view_toolbar_filter_placeholder',
+                'view_toolbar_search_by_placeholder',
 
-                'view_table_header_',
-                'view_table_action_',
-                'view_placeholder_',
-                'view_btn_',
-                'view_tab_title_',
-                'view_text_',
-                'view_chart_title_',
+                'view_table_header',
+                'view_table_action',
+                'view_placeholder',
+                'view_btn',
+                'view_tab_title',
+                'view_text',
+                'view_chart_title',
 
-                'messages_success_',
-                'messages_info_',
-                'messages_warning_',
-                'messages_danger_',
+                'messages_success',
+                'messages_info',
+                'messages_warning',
+                'messages_danger',
 
-                'activity_description_'
+                'activity_description'
             ],
             strings: [],
             timeout: null,
@@ -128,7 +128,7 @@ export default {
             this.http.post('/babel/translation/strings.json', {
                 translation_string: {
                     context: '',
-                    label: this.labelPrefix + this.label,
+                    label: this.labelPrefix + "_" + this.label,
                     en: '',
                     es: '',
                     de: '',
@@ -159,41 +159,6 @@ export default {
 <template>
     <section>
         <div class="card">
-            <div class="card-content">
-                <div class="field is-grouped">
-
-                    <div class="control">
-                        <b-select
-                            placeholder="Select module"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.module">
-                            <option v-for="module in modules" :key="module.id" :value="module">{{ module.name }}</option>
-                        </b-select>
-                    </div>
-
-                    <div class="control">
-                        <b-select
-                            placeholder="Select object"
-                            icon="globe"
-                            icon-pack="fas"
-                            v-model="selection.bucket">
-                            <option v-for="bucket in moduleBuckets" :key="bucket.id" :value="bucket">{{ bucket.name }}</option>
-                        </b-select>
-                    </div>
-
-                    <div class="control" v-if="selection.module && selection.bucket && selection.bucket.id">
-                        <button class="button is-text" @click="sendPathToClipboard()">
-                            <i class="far fa-copy"></i>
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-
-        <div class="card">
             <div class="card-header">
                 <h4 class="card-header-title">
                     Labels
@@ -201,25 +166,20 @@ export default {
                 <div class="card-header-icon" v-if="this.bucket.id">
                     <form @submit.prevent="postTranslationString()">
                         <div class="field has-addons">
+                            <p class="control">
+                                <a class="button is-static">
+                                    Add new label:
+                                </a>
+                            </p>
                             <div class="control">
                                 <b-select
                                     placeholder="Prefix"
-                                    icon="globe"
-                                    icon-pack="fas"
                                     v-model="labelPrefix">
                                     <option v-for="prefix in prefixes" :key="prefix" :value="prefix">{{ prefix }}</option>
                                 </b-select>
                             </div>
-                            <p class="control">
-                                <a class="button is-static">
-                                    Add new string:
-                                </a>
-                            </p>
-                            <div class="control has-icons-left has-icons-right">
-                                <input class="input is-hovered" type="text" v-model="label" placeholder="Add label to translation workflow">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-language"></i>
-                                </span>
+                            <div class="control">
+                                <input class="input" type="text" v-model="label" placeholder="Add label to translation workflow" style="height: 36px;">
                             </div>
                         </div>
                     </form>
