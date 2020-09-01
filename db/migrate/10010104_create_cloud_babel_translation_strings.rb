@@ -10,6 +10,9 @@ class CreateCloudBabelTranslationStrings < ActiveRecord::Migration[6.0]
             t.string    :pl #polski/polish/poland
             t.string    :pt #portuguese
             t.string    :it #italian
+            t.string    :tr #turkish
+            t.string    :ro #romanian
+            t.string    :bg #bulgarian
             t.integer   :status
             t.string    :context
             t.integer   :priority
@@ -22,6 +25,9 @@ class CreateCloudBabelTranslationStrings < ActiveRecord::Migration[6.0]
             t.datetime  :last_update_pl
             t.datetime  :last_update_pt
             t.datetime  :last_update_it
+            t.datetime  :last_update_tr
+            t.datetime  :last_update_ro
+            t.datetime  :last_update_bg
             t.datetime  :last_update_status
             t.datetime  :last_update_context
             t.datetime  :last_update_priority
