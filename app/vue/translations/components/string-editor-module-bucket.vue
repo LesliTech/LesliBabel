@@ -47,6 +47,34 @@ export default {
     data() {
         return {
             label: "",
+            labelPrefix: "",
+            prefixes: [
+                'mailer_',
+                'column_',
+                'column_enum_',
+
+                'view_',
+                'view_title_',
+
+                'view_toolbar_filter_',
+                'view_toolbar_filter_placeholder_',
+                'view_toolbar_search_by_placeholder_',
+
+                'view_table_header_',
+                'view_table_action_',
+                'view_placeholder_',
+                'view_btn_',
+                'view_tab_title_',
+                'view_text_',
+                'view_chart_title_',
+
+                'messages_success_',
+                'messages_info_',
+                'messages_warning_',
+                'messages_danger_',
+
+                'activity_description_'
+            ],
             strings: [],
             timeout: null,
             loading: false,
@@ -100,7 +128,7 @@ export default {
             this.http.post('/babel/translation/strings.json', {
                 translation_string: {
                     context: '',
-                    label: this.label,
+                    label: this.labelPrefix + this.label,
                     en: '',
                     es: '',
                     de: '',
@@ -111,6 +139,7 @@ export default {
                 this.alert("Label successfully added", "success")
                 this.getBucketStrings()
                 this.label = ''
+                this.labelPrefix = ''
             }).catch(error => {
                 console.log(error)
             })
@@ -137,6 +166,15 @@ export default {
                 <div class="card-header-icon" v-if="this.bucket.id">
                     <form @submit.prevent="postTranslationString()">
                         <div class="field has-addons">
+                            <div class="control">
+                                <b-select
+                                    placeholder="Prefix"
+                                    icon="globe"
+                                    icon-pack="fas"
+                                    v-model="labelPrefix">
+                                    <option v-for="prefix in prefixes" :key="prefix" :value="prefix">{{ prefix }}</option>
+                                </b-select>
+                            </div>
                             <p class="control">
                                 <a class="button is-static">
                                     Add new string:
