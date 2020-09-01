@@ -82,10 +82,12 @@ module CloudBabel
 
             files = { }
 
-            Translation.locales.each do |lang|
-                files[ lang[0] ] = { }
+            available_locales = Rails.application.config.lesli_settings["configuration"]["locales"]
+
+            available_locales.each do |lang|
+                files[ lang ] = { }
             end
-    
+
             Translation::String.all.each do |string|
     
                 module_name = string.bucket.module.name
@@ -93,9 +95,7 @@ module CloudBabel
     
                 module_name_sym = module_name.downcase.sub("cloud", "")
     
-                Translation.locales.each do |lang|
-
-                    lang = lang[0]
+                available_locales.each do |lang|
     
                     file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
     
@@ -155,9 +155,9 @@ module CloudBabel
             logger.debug "/babel/translation"
             logger.debug system "bundle exec rake i18n:js:export RAILS_ENV=production"
 
-            do_restart_server
+            do_restart_server if Rails.env.production?
 
-            responseWithSuccessful()
+            respond_with_successful
 
         end
 

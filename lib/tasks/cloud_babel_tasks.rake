@@ -24,6 +24,19 @@ require 'json'
 
 namespace :cloud_babel do
 
+    desc "Delete translations files"
+    task clean: [:environment] do  
+
+        Lesli::engines.each do |engine|
+            engine_path = Rails.root.join("engines", engine["name"], "config", "locales")
+            FileUtils.rm_rf(engine_path)
+            p "delete translations for: #{engine_path.to_s}"
+        end
+        engine_path = Rails.root.join("config", "locales")
+        FileUtils.rm_rf(engine_path)
+        p "delete translations for: #{engine_path.to_s}"
+    end
+
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do  
 
@@ -34,6 +47,7 @@ namespace :cloud_babel do
             # Add object to the translation workflow
             translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module] })
             translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: t[:bucket], module: translation_module, reference_module: translation_module.name })
+            translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
 
         end
 
