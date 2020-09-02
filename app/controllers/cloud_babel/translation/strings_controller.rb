@@ -87,8 +87,8 @@ module CloudBabel
 
             translation_string.last_update_status = Time.now
             translation_string.last_update_context = Time.now
-            Translation.locales.each do |locale|
-                translation_string["last_update_#{locale[0]}"] = Time.now
+            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                translation_string["last_update_#{locale}"] = Time.now
             end
             
             if translation_string.save
@@ -119,10 +119,7 @@ module CloudBabel
 
             end
 
-            Translation.locales.each do |locale|
-            
-                locale = locale[0]
-
+            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
                 # if translation changed
                 if @translation_string[locale] != translation_string_params[locale]
 

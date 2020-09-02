@@ -293,10 +293,7 @@ module CloudBabel
                 end
 
                 # check if necessary to update any translation
-                Translation.locales.each do |locale|
-            
-                    locale = locale[0]
-            
+                Rails.application.config.lesli_settings["configuration"]["locales"] do |locale|
                     # if translation changed
                     if local_string[locale] != remote_string[locale]
             
