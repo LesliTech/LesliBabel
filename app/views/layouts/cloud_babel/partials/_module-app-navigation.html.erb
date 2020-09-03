@@ -1,14 +1,10 @@
 <template>
-    <li>
-        <%= link_to root_path, class: "navbar-item" do %>
-            <i class="fas fa-tachometer-alt"></i>
-            Dashboard
-        <% end %>
-    </li>
-    <li>
-        <%= link_to translation_path, class: "navbar-item" do %>
-            <i class="fas fa-language"></i>
-            Translations
-        <% end %>
-    </li>
+    <%= nav_link(root_path) do %>
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+    <% end %>
+    <%= nav_link(translation_path) do %>
+        <i class="fas fa-language"></i>
+        <span>Translations</span>
+    <% end %>
 </template>

@@ -15,7 +15,7 @@ module CloudBabel
 
                     # if bucket or module was not sent, return all the strings in the database with missing german translation
                     if params[:module_id].blank? and params[:bucket_id].blank?
-                        strings = Translation::String.where(:need_translation => true)
+                        strings = Translation::String.where(:status => 1) # change for status id for translation needed
                         .or(Translation::String.where(:de => nil))
                         .or(Translation::String.where(:de => ""))
                         .order(:created_at)
@@ -51,8 +51,8 @@ module CloudBabel
                             de: string.de,
                             fr: string.fr,
                             status: string.status,
-                            need_help: string.need_help || false,
-                            need_translation: string.need_translation || false
+                            need_help: false,
+                            need_translation: false
                         }
                     end
 

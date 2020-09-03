@@ -7,6 +7,18 @@ export default {
         strings: {
         }
     },
+    data() {
+        return {
+            locales_available: {}
+        }
+    },
+    mounted() {
+        this.http.get("/babel/translation/options.json").then(result => {
+            this.locales_available = result.data.locales_available
+        }).catch(error => {
+            console.log(error)
+        })
+    },
     methods: {
 
         getRowClass(row) {
@@ -95,8 +107,8 @@ export default {
         <b-table 
             detailed 
             detail-key="id" 
-            :show-detail-icon="true"
             :data="strings"
+            :show-detail-icon="true"
             :row-class="getRowClass">
             <template v-slot="props" class="ldonis">
                 <b-table-column class="copy">
@@ -108,20 +120,16 @@ export default {
                     <button class="button is-text" @click="sendToClipboard(props.row.label)" :title="props.row.path">
                         {{ props.row.label }}
                     </button>
+                    <!-- 
                     <small v-if="showPath">
                         {{ props.row.path }}
-                    </small>
+                    </small> 
+                    -->
                 </b-table-column>
-                <b-table-column field="en" label="en" sortable>
+                <b-table-column 
+                    v-for="(locale_name, locale_code) in locales_available" :key="locale_code"
+                    :field="locale_code" :label="locale_name" sortable>
                     <input class="input" type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
-                </b-table-column>
-                <!-- 
-                <b-table-column field="es" label="es" sortable>
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
-                </b-table-column> 
-                -->
-                <b-table-column field="de" label="de" sortable>
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
                 </b-table-column>
                 <!-- 
                 <b-table-column label="status">

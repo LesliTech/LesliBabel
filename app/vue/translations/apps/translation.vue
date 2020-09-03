@@ -47,12 +47,14 @@ export default {
             moduleBuckets: [],
             selection: { module: null, bucket: null },
             missingTranslations: {},
-            searchStrings: null
+            searchStrings: null,
+            options: {}
         }
     },
     mounted() {
         this.getModules()
         this.getMissingTranslationStrings()
+        this.getOptions()
     },
     methods: {
 
@@ -65,6 +67,31 @@ export default {
             })
         },
 
+        getMissingTranslationStrings() {
+           
+            this.missingTranslations= {}
+            this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
+                this.missingTranslations = {
+                    total: result.data.total,
+                    strings: result.data.data
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+
+        },
+
+        getOptions() {
+
+            this.options = {}
+            this.http.get("/babel/translation/options.json").then(result => {
+                this.options = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+
+        },
+
         getModuleBuckets() {
             this.http.get(`/babel/translation/modules/${this.selection.module.id}/buckets.json`).then(result => {
                 if (!result.successful) return 
@@ -74,7 +101,7 @@ export default {
             })
         },
 
-        doBackupSync() {
+        postSync() {
             this.loading = true
             this.http.post("/babel/translation/resources/synchronization.json").then(result => {
                 if (!result.successful) {
@@ -100,25 +127,6 @@ export default {
             })
         },
 
-        sendPathToClipboard() {
-
-            let path = [this.selection.module.name, this.selection.bucket.name].join(".")
-
-            path = path.toLowerCase()
-
-            const el = document.createElement("textarea");
-            el.value = path
-            el.setAttribute("readonly", "");
-            el.style.position = "absolute";
-            el.style.left = "-9999px";
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand("copy");
-            document.body.removeChild(el);
-            this.alert("Copied to clipboard")
-
-        },
-
         getSearch(search) {
 
             if (search == "") {
@@ -133,20 +141,6 @@ export default {
             })
 
         },
-
-        getMissingTranslationStrings() {
-           
-            this.missingTranslations= {}
-            this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
-                this.missingTranslations = {
-                    total: result.data.total,
-                    strings: result.data.data
-                }
-            }).catch(error => {
-                console.log(error)
-            })
-
-        }
 
     },
     watch: {
@@ -173,7 +167,7 @@ export default {
                     <b-icon icon="rocket" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
                     <span>deploy translations</span>
                 </button>
-                <button class="button" @click="doBackupSync()">
+                <button class="button" @click="postSync()">
                     <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
                     <span>synchronize</span>
                 </button>
@@ -187,57 +181,16 @@ export default {
         <component-string-editor v-if="searchStrings" :strings="searchStrings" :showPath="true">
         </component-string-editor>
 
-        <!-- String editor for module/bucket strings -->
-        <template v-if="!searchStrings">
-            <div class="card">
-                <div class="card-content">
-                    <div class="field is-grouped">
-
-                        <div class="control">
-                            <b-select
-                                placeholder="Select module"
-                                icon="globe"
-                                icon-pack="fas"
-                                v-model="selection.module">
-                                <option v-for="module in modules" :key="module.id" :value="module">{{ module.name }}</option>
-                            </b-select>
-                        </div>
-
-                        <div class="control">
-                            <b-select
-                                placeholder="Select object"
-                                icon="globe"
-                                icon-pack="fas"
-                                v-model="selection.bucket">
-                                <option v-for="bucket in moduleBuckets" :key="bucket.id" :value="bucket">{{ bucket.name }}</option>
-                            </b-select>
-                        </div>
-
-                        <div class="control" v-if="selection.module && selection.bucket && selection.bucket.id">
-                            <button class="button is-text" @click="sendPathToClipboard()">
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <component-string-editor-module-bucket 
-                v-if="selection.module" 
-                :module="selection.module" 
-                :bucket="bucket">
-            </component-string-editor-module-bucket>
-        </template>
-
         <!-- String editor for missing translation strings -->
         <template v-if="!searchStrings && !selection.module && missingTranslations.total > 0">
             <br>
-            <component-header subtitle="Missing or needed translations">
+            <component-header subtitle="Relevant translations">
             </component-header>
             <component-string-editor 
                 :strings="missingTranslations.strings" 
                 :showPath="true">
             </component-string-editor>
         </template>
+
     </section>
 </template>

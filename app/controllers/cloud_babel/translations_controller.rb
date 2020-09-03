@@ -76,6 +76,12 @@ module CloudBabel
             redirect_to translations_url, notice: "Translation was successfully destroyed."
         end
 
+        def options
+            respond_with_successful({
+                locales_available: Rails.application.config.lesli_settings["configuration"]["locales_available"]
+            })
+        end
+
         def deploy
 
             do_clean
@@ -85,7 +91,7 @@ module CloudBabel
             available_locales = Rails.application.config.lesli_settings["configuration"]["locales"]
 
             available_locales.each do |lang|
-                files[ lang ] = { }
+                files[lang] = { }
             end
 
             Translation::String.all.each do |string|
@@ -132,10 +138,10 @@ module CloudBabel
                 file_by_class = file_by_language[1]
     
                 file_by_class.each do |file|
-    
+
                     file_path = file[0].to_s
                     translations = file[1]
-    
+
                     # creates folder and subfolders
                     FileUtils.makedirs(File.dirname(file_path))
     
@@ -379,8 +385,8 @@ module CloudBabel
                     de: string.de,
                     fr: string.fr,
                     status: string.status,
-                    need_help: string.need_help || false,
-                    need_translation: string.need_translation || false
+                    need_help: false,
+                    need_translation: false
                 }
             end
 
@@ -388,21 +394,30 @@ module CloudBabel
         end
 
         def stats
-            total_strings = Translation::String.all.count
-            total_strings_es_translations = Translation::String.where("es is not null").where("es != ''").count
-            total_strings_en_translations = Translation::String.where("en is not null").where("en != ''").count
-            total_strings_de_translations = Translation::String.where("de is not null").where("de != ''").count
-            total_strings_fr_translations = Translation::String.where("fr is not null").where("fr != ''").count
 
-            total_strings_waiting_for_help = Translation::String.where(:need_help => true).count
-            total_strings_waiting_for_translation = Translation::String.where(:need_translation => true).count
+            # total translations registered in babel
+            total_strings = Translation::String.all.count
+
+            # total translations by language
+            total_strings_translations = []
+            
+            Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |locale|
+                total_strings_translations.push({
+                    code: locale[0],
+                    name: locale[1],
+                    total: Translation::String.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
+                })
+            end
+
+            # total translations that needs help
+            total_strings_waiting_for_help = Translation::String.where(:help_needed => true).count
+
+            # total translations that needs translation
+            total_strings_waiting_for_translation = Translation::String.where(:help_translation => true).count
             
             responseWithSuccessful({
                 total_strings: total_strings,
-                total_strings_es_translations: total_strings_es_translations,
-                total_strings_en_translations: total_strings_en_translations,
-                total_strings_de_translations: total_strings_de_translations,
-                total_strings_fr_translations: total_strings_fr_translations,
+                total_strings_translations: total_strings_translations,
                 total_strings_waiting_for_help: total_strings_waiting_for_help,
                 total_strings_waiting_for_translation: total_strings_waiting_for_translation
             })

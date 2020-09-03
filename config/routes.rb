@@ -40,7 +40,6 @@ CloudBabel::Engine.routes.draw do
                     end
                 end
             end
-
             resources :modules do
                 resources :strings, only: [:index]
                 resources :buckets do
@@ -50,15 +49,14 @@ CloudBabel::Engine.routes.draw do
         end
 
         collection do
-            get  :search
-
+            get :search
+            get :options
             scope :resources do
                 post :clean
                 post :deploy
                 get  :stats
                 post :synchronization
             end
-    
         end
     end
 
