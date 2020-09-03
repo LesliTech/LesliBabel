@@ -29,31 +29,32 @@ Building a better future, one line of code at a time.
 
 // · import components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import componentStringEditorModuleBucket from "../components/string-editor-module-bucket.vue"
-import componentStringEditor from "../components/string-editor.vue"
+import componentFormLabelNew from "../components/form-label-new.vue"
+import componentFormLabelEditor from "../components/form-label-editor.vue"
 
 
 // · 
 export default {
     components: {
-        "component-string-editor-module-bucket": componentStringEditorModuleBucket,
-        "component-string-editor": componentStringEditor
+        "component-form-label-new": componentFormLabelNew,
+        "component-form-label-editor": componentFormLabelEditor
     },
     data() {
         return {
             loading: false,
+            searching: false,
             bucket: {},
             modules: [],
             moduleBuckets: [],
             selection: { module: null, bucket: null },
-            missingTranslations: {},
-            searchStrings: null,
+            strings: {},
+            searchString: null,
             options: {}
         }
     },
     mounted() {
         this.getModules()
-        this.getMissingTranslationStrings()
+        this.getRelevantTranslations()
         this.getOptions()
     },
     methods: {
@@ -67,14 +68,10 @@ export default {
             })
         },
 
-        getMissingTranslationStrings() {
-           
+        getRelevantTranslations() {
             this.missingTranslations= {}
             this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
-                this.missingTranslations = {
-                    total: result.data.total,
-                    strings: result.data.data
-                }
+                this.strings = result.data
             }).catch(error => {
                 console.log(error)
             })
@@ -101,6 +98,51 @@ export default {
             })
         },
 
+        getSearch(search) {
+            this.searching = true
+            if (search == "") {
+                this.strings = {}
+                this.getRelevantTranslations()
+                this.searching = false
+                return
+            }
+
+            this.http.get("/babel/translation/search.json?search_string="+search).then(result => {
+                this.strings = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+
+        },
+
+        getBucketStrings() {
+
+            this.strings = {}
+            this.loading = true
+
+            // get strings for module (default)
+            let url = `/babel/translation/modules/${this.selection.module.id}/strings.json`
+
+            // if user selects bucket
+            if (this.bucket.id) {
+                url = `/babel/translation/modules/${this.selection.module.id}/buckets/${this.selection.bucket.id}/strings.json`
+            }
+
+            //url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
+
+            this.http.get(url).then(result => {
+                console.log(result)
+                if (!result.successful) return 
+                this.strings = result.data
+                //this.pagination.count = result.data.total ? result.data.total : 0
+            }).catch(error => {
+                console.error(error)
+            }).finally(() => {
+                this.loading = false
+            })
+           
+        },
+
         postSync() {
             this.loading = true
             this.http.post("/babel/translation/resources/synchronization.json").then(result => {
@@ -125,22 +167,7 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
-        },
-
-        getSearch(search) {
-
-            if (search == "") {
-                this.searchStrings = null
-                return
-            }
-
-            this.http.get("/babel/translation/search.json?label="+search).then(result => {
-                this.searchStrings = result.data
-            }).catch(error => {
-                console.log(error)
-            })
-
-        },
+        }
 
     },
     watch: {
@@ -154,6 +181,7 @@ export default {
         // triggers after Select object
         "selection.bucket": function() {
             this.bucket = this.selection.bucket
+            this.getBucketStrings()
         }
 
     }
@@ -177,20 +205,56 @@ export default {
         <component-toolbar @search="getSearch">
         </component-toolbar>
 
-        <!-- String editor for search results -->
-        <component-string-editor v-if="searchStrings" :strings="searchStrings" :showPath="true">
-        </component-string-editor>
+        <!-- Module/bucket selector -->
+        <template v-if="!searching">
+            <div class="card">
+                <div class="card-content">
+                    <div class="field is-grouped">
 
-        <!-- String editor for missing translation strings -->
-        <template v-if="!searchStrings && !selection.module && missingTranslations.total > 0">
-            <br>
-            <component-header subtitle="Relevant translations">
-            </component-header>
-            <component-string-editor 
-                :strings="missingTranslations.strings" 
-                :showPath="true">
-            </component-string-editor>
+                        <div class="control">
+                            <b-select
+                                placeholder="Select module"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.module">
+                                <option v-for="module in modules" :key="module.id" :value="module">{{ module.name }}</option>
+                            </b-select>
+                        </div>
+
+                        <div class="control">
+                            <b-select
+                                placeholder="Select object"
+                                icon="globe"
+                                icon-pack="fas"
+                                v-model="selection.bucket">
+                                <option v-for="bucket in moduleBuckets" :key="bucket.id" :value="bucket">{{ bucket.name }}</option>
+                            </b-select>
+                        </div>
+
+                        <div class="control" v-if="selection.module && selection.bucket && selection.bucket.id">
+                            <button class="button is-text" @click="sendPathToClipboard()">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </template>
+
+        <component-form-label-new
+            v-if="selection.module" 
+            :module="selection.module" 
+            :bucket="bucket">
+        </component-form-label-new>
+        <br>
+        <component-form-label-editor 
+            :strings="strings"
+            :options="options">
+        </component-form-label-editor>
+        
+        <component-data-loading class="section" v-if="loading"></component-data-loading>
+        <component-data-empty v-if="!loading && strings.length == 0"></component-data-empty>
 
     </section>
 </template>

@@ -13,8 +13,9 @@ class CreateCloudBabelTranslationStrings < ActiveRecord::Migration[6.0]
             t.string    :tr #turkish
             t.string    :ro #romanian
             t.string    :bg #bulgarian
+            t.string    :status
             t.string    :context
-            t.integer   :priority
+            t.string    :priority
             t.boolean   :help_needed
             t.boolean   :help_translation
             t.string    :reference_bucket

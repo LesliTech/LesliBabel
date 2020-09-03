@@ -364,33 +364,37 @@ module CloudBabel
 
         def search
             
-            label = params[:label]
-            label = label.downcase
-            label = label.gsub(" ","%")
+            search_string = params[:search_string]
+            search_string = search_string.downcase
+            search_string = search_string.gsub(" ","%")
 
-            strings = Translation::String.where("LOWER(context) like ?", "%#{label}%")
-            .or(Translation::String.where("LOWER(label) like ?", "%#{label}%"))
-            .or(Translation::String.where("LOWER(de) like ?", "%#{label}%"))
-            .or(Translation::String.where("LOWER(en) like ?", "%#{label}%"))
-            .or(Translation::String.where("LOWER(de) like ?", "%#{label}%"))
+            sql_where_condition = []
 
-            strings = strings.map do |string|
-                {
-                    id: string.id,
-                    path: string.path,
-                    context: string.context,
-                    label: string.label,
-                    es: string.es,
-                    en: string.en,
-                    de: string.de,
-                    fr: string.fr,
-                    status: string.status,
-                    need_help: false,
-                    need_translation: false
-                }
+            # add filter to select only available languages 
+            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                sql_where_condition.push("LOWER(#{locale}) like :search_string")
             end
 
-            responseWithSuccessful(strings)
+            sql_where_condition.push("LOWER(label) like :search_string")
+            sql_where_condition.push("LOWER(context) like :search_string")
+
+            strings = Translation::String.where(sql_where_condition.join(" OR "), { 
+                search_string: "%#{search_string}%" 
+            })
+
+            strings = strings
+            .page(@query[:pagination][:page])
+            .per(@query[:pagination][:perPage])
+            .order(:updated_at)
+
+            respond_with_successful(LC::Response.pagination(
+                strings.current_page,
+                strings.total_pages,
+                strings.total_count,
+                strings.length,
+                strings
+            ))
+            
         end
 
         def stats

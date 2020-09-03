@@ -15,10 +15,29 @@ module CloudBabel
 
                     # if bucket or module was not sent, return all the strings in the database with missing german translation
                     if params[:module_id].blank? and params[:bucket_id].blank?
-                        strings = Translation::String.where(:status => 1) # change for status id for translation needed
-                        .or(Translation::String.where(:de => nil))
-                        .or(Translation::String.where(:de => ""))
-                        .order(:created_at)
+
+                        sql_where_condition = []
+
+                        # add filter to select only available languages 
+                        Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                            sql_where_condition.push("#{locale} is NULL")
+                            sql_where_condition.push("#{locale} = ''")
+                        end
+
+                        sql_where_condition.push("help_needed = TRUE")
+                        sql_where_condition.push("help_translation = TRUE")
+
+                        strings = Translation::String.where(sql_where_condition.join(" OR ")).select(
+                            :id,
+                            :label,
+                            :status,
+                            :context,
+                            :priority,
+                            :help_needed,
+                            :help_translation,
+                            Rails.application.config.lesli_settings["configuration"]["locales"]
+                        )
+
                     end
 
                     # returns strings for specif module
@@ -40,26 +59,13 @@ module CloudBabel
                     .per(@query[:pagination][:perPage])
                     .order(:updated_at)
 
-                    strings = strings.map do |string|
-                        {
-                            id: string.id,
-                            path: string.path,
-                            context: string.context,
-                            label: string.label,
-                            es: string.es,
-                            en: string.en,
-                            de: string.de,
-                            fr: string.fr,
-                            status: string.status,
-                            need_help: false,
-                            need_translation: false
-                        }
-                    end
-
-                    respond_with_successful({
-                        total: count,
-                        data: strings
-                    })
+                    respond_with_successful(LC::Response.pagination(
+                        strings.current_page,
+                        strings.total_pages,
+                        strings.total_count,
+                        strings.length,
+                        strings
+                    ))
 
                 }
             end
@@ -87,6 +93,7 @@ module CloudBabel
 
             translation_string.last_update_status = Time.now
             translation_string.last_update_context = Time.now
+            translation_string.last_update_priority = Time.now
             Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
                 translation_string["last_update_#{locale}"] = Time.now
             end
@@ -131,7 +138,7 @@ module CloudBabel
             end
 
             if @translation_string.update(translation_string_params)
-                @translation_string.update_attribute(:need_help, false)
+                @translation_string.update_attribute(:help_needed, false)
                 respond_with_successful(@translation_string)
             else
                 respond_with_error("Error on update translation string", @translation_object_group_section_label.errors)
@@ -176,13 +183,15 @@ module CloudBabel
         # Only allow a trusted parameter "white list" through.
         def translation_string_params
             params.require(:translation_string).permit(
-                :context, 
-                :label, 
-                :en, 
-                :es, 
-                :de, 
+                :id,
+                :label,
                 :status,
-                :cloud_babel_translation_buckets_id
+                :context,
+                :priority,
+                :help_needed,
+                :help_translation,
+                :cloud_babel_translation_buckets_id,
+                Rails.application.config.lesli_settings["configuration"]["locales"]
             )
         end
 

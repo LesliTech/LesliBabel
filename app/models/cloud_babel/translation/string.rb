@@ -12,7 +12,8 @@ module CloudBabel
                 .gsub(/-/, '_')                     # replace dashes with underscore
                 .gsub(/\s+/, '_')                   # replace spaces or spaces with single dash
 
-            self.status = 0 if self.status.nil?
+            self.status = "normal" if self.status.nil? or self.status == ""
+            self.priority = "normal" if self.priority.nil? or self.priority == ""
         end
 
         def path
