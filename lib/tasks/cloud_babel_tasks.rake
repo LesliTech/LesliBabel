@@ -52,7 +52,6 @@ namespace :cloud_babel do
         translation_list = get_controllers_from_routes(translation_list, CloudFocus::Engine.routes.routes, CloudFocus) if defined?(CloudFocus)
 
         translation_list = get_controllers_from_routes(translation_list, DeutscheLeibrenten::Engine.routes.routes, CloudHaus) if defined?(CloudHaus)
-
         translation_list.each do |t|
 
             p "object found: #{t[:module]}/#{t[:bucket]}"
