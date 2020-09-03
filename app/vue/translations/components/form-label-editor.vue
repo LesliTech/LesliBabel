@@ -1,10 +1,12 @@
 <script>
 export default {
     props: {
-        showPath: {
-            default: false
-        },
-        strings: {
+        strings: {},
+        options: {}
+    },
+    data() {
+        return {
+            locales_available: {}
         }
     },
     methods: {
@@ -28,14 +30,7 @@ export default {
             clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
                 this.http.patch(`/babel/translation/strings/${string.id}.json`, {
-                    translation_string: {
-                        context: string.context,
-                        status: string.status,
-                        label: string.label,
-                        en: string.en,
-                        es: string.es,
-                        de: string.de
-                    }
+                    translation_string: string
                 }).then(result => {
                     this.alert("Translation updated successfully", "success" )
                 }).catch(error => {
@@ -91,14 +86,14 @@ export default {
 }
 </script>
 <template>
-    <div class="table-container" v-if="strings.length > 0">
+    <div class="card table-container">
         <b-table 
             detailed 
             detail-key="id" 
+            :data="strings.records"
             :show-detail-icon="true"
-            :data="strings"
             :row-class="getRowClass">
-            <template v-slot="props" class="ldonis">
+            <template v-slot="props">
                 <b-table-column class="copy">
                     <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
                         <i class="far fa-copy"></i>
@@ -108,31 +103,20 @@ export default {
                     <button class="button is-text" @click="sendToClipboard(props.row.label)" :title="props.row.path">
                         {{ props.row.label }}
                     </button>
-                    <small v-if="showPath">
-                        {{ props.row.path }}
-                    </small>
                 </b-table-column>
-                <b-table-column field="en" label="en" sortable>
-                    <input class="input" type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.en" />
+                <b-table-column 
+                    v-for="(locale_name, locale_code) in options.locales_available" 
+                    :key="locale_code" 
+                    :field="locale_code" 
+                    :label="locale_name" 
+                    sortable>
+                    <input 
+                        type="text" 
+                        class="input" 
+                        v-model="props.row[locale_code]"
+                        v-on:input="patchTranslationString(props.row)"
+                    />
                 </b-table-column>
-                <!-- 
-                <b-table-column field="es" label="es" sortable>
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.es" />
-                </b-table-column> 
-                -->
-                <b-table-column field="de" label="de" sortable>
-                    <input type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.de" />
-                </b-table-column>
-                <!-- 
-                <b-table-column label="status">
-                    <div class="select">
-                        <select v-on:change="patchTranslationString(props.row)" v-model="props.row.status">
-                            <option value="0">pending</option>
-                            <option value="1">completed</option>
-                        </select>
-                    </div>
-                </b-table-column>
-                -->
             </template>
             <template slot="detail" slot-scope="props">
                 <div class="columns">
@@ -140,31 +124,45 @@ export default {
                         <div class="field">
                             <label class="label">Context</label>
                             <div class="control">
-                                <input class="input" type="text" v-on:input="patchTranslationString(props.row)" v-model="props.row.context">
+                                <input 
+                                    type="text" 
+                                    class="input" 
+                                    v-model="props.row.context"
+                                    v-on:input="patchTranslationString(props.row)">
                             </div>
                         </div>
                     </div>
                     <div class="column is-12 has-text-center">
                         <div class="field">
-                            <label class="label">&nbsp;</label>
+                            <label class="label">Options</label>
                             <div class="control has-text-center">
-                                <b-tooltip label="Need help">
-                                    <button class="button" @click="putTranslationStringNeedHelp(props.row)">?</button>
-                                </b-tooltip>
-                                <b-tooltip label="Need translation">
-                                    <button class="button" @click="putTranslationStringNeedTranslation(props.row)">
-                                        <span class="icon">
-                                            <i class="fas fa-language"></i>
-                                        </span>
+                                <div class="buttons">
+                                    <button 
+                                        class="button is-primary" 
+                                        @click="putTranslationStringNeedHelp(props.row)">
+                                        <b-tooltip label="Need help">
+                                        ?
+                                        </b-tooltip>
                                     </button>
-                                </b-tooltip>
-                                <b-tooltip label="Delete label">
-                                    <button class="button is-danger is-light" @click="deleteTranslationString(props.row)">
-                                        <span class="icon">
-                                            <i class="far fa-trash-alt"></i>
-                                        </span>
+                                    <button 
+                                        class="button is-primary" 
+                                        @click="putTranslationStringNeedTranslation(props.row)">
+                                        <b-tooltip label="Need translation">
+                                            <span class="icon">
+                                                <i class="fas fa-language"></i>
+                                            </span>
+                                        </b-tooltip>
                                     </button>
-                                </b-tooltip>
+                                    <button 
+                                        class="button is-danger" 
+                                        @click="deleteTranslationString(props.row)">
+                                        <b-tooltip label="Delete label" type="is-danger">
+                                            <span class="icon">
+                                                <i class="far fa-trash-alt"></i>
+                                            </span>
+                                        </b-tooltip>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

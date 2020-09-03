@@ -34,7 +34,6 @@ Building a better future, one line of code at a time.
 export default {
     data() {
         return {
-            main_route: '/babel/translation/resources/stats',
             stats: {},
         }
     },
@@ -44,7 +43,7 @@ export default {
     methods: {
 
         getStats() {
-            this.http.get(this.main_route).then(result => {
+            this.http.get("/babel/translation/resources/stats").then(result => {
                 if (result.successful) {
                     this.stats = result.data
                 }else{
@@ -62,58 +61,22 @@ export default {
 <template>
     <section class="application-component">
 
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-header-title is-size-3">{{ stats.total_strings }} total labels</h2>
-            </div>
-        </div>
-
-        <br>
+        <component-header :title="'Registered ' + stats.total_strings + ' labels '">
+        </component-header>
 
         <div class="columns">
-            <div class="column">
-
+            <div class="column" v-for="locale in stats.total_strings_translations" :key="locale.code">
                 <div class="card">
-                    <div class="card-content">
-                        <h4 class="is-size-3">{{ stats.total_strings - stats.total_strings_es_translations }}</h4>
-                        <span class="flag-icon flag-icon-es is-size-3"></span>
-                        <p class="is-size-5">missing <b>es</b> translations</p>
+                    <div class="card-content has-text-centered">
+                        <span :class="['is-size-2','flag-icon', 'flag-icon-'+(locale.code == 'en' ? 'gb':locale.code)]"></span>
+                        <p class="is-size-5">
+                            {{ locale.name }}: {{ locale.total }} translations
+                        </p>
+                        <small>
+                            missing: {{ stats.total_strings - locale.total }} translations
+                        </small>
                     </div>
                 </div>
-
-            </div>
-            <div class="column">
-
-                <div class="card">
-                    <div class="card-content">
-                        <h4 class="is-size-3">{{ stats.total_strings - stats.total_strings_en_translations }}</h4>
-                        <span class="flag-icon flag-icon-gb is-size-3"></span>
-                        <p class="is-size-5">missing <b>en</b> translations</p>
-                    </div>
-                </div>
-
-            </div>
-            <div class="column">
-
-                <div class="card">
-                    <div class="card-content">
-                        <h4 class="is-size-3">{{ stats.total_strings - stats.total_strings_de_translations }}</h4>
-                        <span class="flag-icon flag-icon-de is-size-3"></span>
-                        <p class="is-size-5">missing <b>de</b> translations</p>
-                    </div>
-                </div>
-
-            </div>
-            <div class="column">
-
-                <div class="card">
-                    <div class="card-content">
-                        <h4 class="is-size-3">{{ stats.total_strings - stats.total_strings_fr_translations }}</h4>
-                        <span class="flag-icon flag-icon-fr is-size-3"></span>
-                        <p class="is-size-5">missing <b>fr</b> translations</p>
-                    </div>
-                </div>
-
             </div>
         </div>
 

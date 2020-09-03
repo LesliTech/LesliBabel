@@ -29,30 +29,33 @@ Building a better future, one line of code at a time.
 
 // · import components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import componentStringEditorModuleBucket from "../components/string-editor-module-bucket.vue"
-import componentStringEditor from "../components/string-editor.vue"
+import componentFormLabelNew from "../components/form-label-new.vue"
+import componentFormLabelEditor from "../components/form-label-editor.vue"
 
 
 // · 
 export default {
     components: {
-        "component-string-editor-module-bucket": componentStringEditorModuleBucket,
-        "component-string-editor": componentStringEditor
+        "component-form-label-new": componentFormLabelNew,
+        "component-form-label-editor": componentFormLabelEditor
     },
     data() {
         return {
             loading: false,
+            searching: false,
             bucket: {},
             modules: [],
             moduleBuckets: [],
             selection: { module: null, bucket: null },
-            missingTranslations: {},
-            searchStrings: null
+            strings: {},
+            searchString: null,
+            options: {}
         }
     },
     mounted() {
         this.getModules()
-        this.getMissingTranslationStrings()
+        this.getRelevantTranslations()
+        this.getOptions()
     },
     methods: {
 
@@ -65,6 +68,27 @@ export default {
             })
         },
 
+        getRelevantTranslations() {
+            this.missingTranslations= {}
+            this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
+                this.strings = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+
+        },
+
+        getOptions() {
+
+            this.options = {}
+            this.http.get("/babel/translation/options.json").then(result => {
+                this.options = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+
+        },
+
         getModuleBuckets() {
             this.http.get(`/babel/translation/modules/${this.selection.module.id}/buckets.json`).then(result => {
                 if (!result.successful) return 
@@ -74,7 +98,52 @@ export default {
             })
         },
 
-        doBackupSync() {
+        getSearch(search) {
+            this.searching = true
+            if (search == "") {
+                this.strings = {}
+                this.getRelevantTranslations()
+                this.searching = false
+                return
+            }
+
+            this.http.get("/babel/translation/search.json?search_string="+search).then(result => {
+                this.strings = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+
+        },
+
+        getBucketStrings() {
+
+            this.strings = {}
+            this.loading = true
+
+            // get strings for module (default)
+            let url = `/babel/translation/modules/${this.selection.module.id}/strings.json`
+
+            // if user selects bucket
+            if (this.bucket.id) {
+                url = `/babel/translation/modules/${this.selection.module.id}/buckets/${this.selection.bucket.id}/strings.json`
+            }
+
+            //url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
+
+            this.http.get(url).then(result => {
+                console.log(result)
+                if (!result.successful) return 
+                this.strings = result.data
+                //this.pagination.count = result.data.total ? result.data.total : 0
+            }).catch(error => {
+                console.error(error)
+            }).finally(() => {
+                this.loading = false
+            })
+           
+        },
+
+        postSync() {
             this.loading = true
             this.http.post("/babel/translation/resources/synchronization.json").then(result => {
                 if (!result.successful) {
@@ -98,54 +167,6 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
-        },
-
-        sendPathToClipboard() {
-
-            let path = [this.selection.module.name, this.selection.bucket.name].join(".")
-
-            path = path.toLowerCase()
-
-            const el = document.createElement("textarea");
-            el.value = path
-            el.setAttribute("readonly", "");
-            el.style.position = "absolute";
-            el.style.left = "-9999px";
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand("copy");
-            document.body.removeChild(el);
-            this.alert("Copied to clipboard")
-
-        },
-
-        getSearch(search) {
-
-            if (search == "") {
-                this.searchStrings = null
-                return
-            }
-
-            this.http.get("/babel/translation/search.json?label="+search).then(result => {
-                this.searchStrings = result.data
-            }).catch(error => {
-                console.log(error)
-            })
-
-        },
-
-        getMissingTranslationStrings() {
-           
-            this.missingTranslations= {}
-            this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
-                this.missingTranslations = {
-                    total: result.data.total,
-                    strings: result.data.data
-                }
-            }).catch(error => {
-                console.log(error)
-            })
-
         }
 
     },
@@ -160,6 +181,7 @@ export default {
         // triggers after Select object
         "selection.bucket": function() {
             this.bucket = this.selection.bucket
+            this.getBucketStrings()
         }
 
     }
@@ -173,7 +195,7 @@ export default {
                     <b-icon icon="rocket" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
                     <span>deploy translations</span>
                 </button>
-                <button class="button" @click="doBackupSync()">
+                <button class="button" @click="postSync()">
                     <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
                     <span>synchronize</span>
                 </button>
@@ -183,12 +205,8 @@ export default {
         <component-toolbar @search="getSearch">
         </component-toolbar>
 
-        <!-- String editor for search results -->
-        <component-string-editor v-if="searchStrings" :strings="searchStrings" :showPath="true">
-        </component-string-editor>
-
-        <!-- String editor for module/bucket strings -->
-        <template v-if="!searchStrings">
+        <!-- Module/bucket selector -->
+        <template v-if="!searching">
             <div class="card">
                 <div class="card-content">
                     <div class="field is-grouped">
@@ -222,22 +240,21 @@ export default {
                     </div>
                 </div>
             </div>
-            <component-string-editor-module-bucket 
-                v-if="selection.module" 
-                :module="selection.module" 
-                :bucket="bucket">
-            </component-string-editor-module-bucket>
         </template>
 
-        <!-- String editor for missing translation strings -->
-        <template v-if="!searchStrings && !selection.module && missingTranslations.total > 0">
-            <br>
-            <component-header subtitle="Missing or needed translations">
-            </component-header>
-            <component-string-editor 
-                :strings="missingTranslations.strings" 
-                :showPath="true">
-            </component-string-editor>
-        </template>
+        <component-form-label-new
+            v-if="selection.module" 
+            :module="selection.module" 
+            :bucket="bucket">
+        </component-form-label-new>
+        <br>
+        <component-form-label-editor 
+            :strings="strings"
+            :options="options">
+        </component-form-label-editor>
+        
+        <component-data-loading class="section" v-if="loading"></component-data-loading>
+        <component-data-empty v-if="!loading && strings.length == 0"></component-data-empty>
+
     </section>
 </template>
