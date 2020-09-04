@@ -58,8 +58,13 @@ CloudBabel::Engine.routes.draw do
                 post :synchronization
             end
         end
+
     end
     
-    resources :modules
+    resources :modules do
+        scope module: :module do 
+            resources :buckets
+        end
+    end
   
 end

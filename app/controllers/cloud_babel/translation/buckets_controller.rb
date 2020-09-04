@@ -19,7 +19,6 @@ module CloudBabel
 
         # GET /translation/buckets/new
         def new
-            @translation_bucket = Translation::Bucket.new
         end
 
         # GET /translation/buckets/1/edit
