@@ -60,11 +60,7 @@ CloudBabel::Engine.routes.draw do
         end
 
     end
-    
-    resources :modules do
-        scope module: :module do 
-            resources :buckets
-        end
-    end
-  
+
+    resources :modules
+
 end

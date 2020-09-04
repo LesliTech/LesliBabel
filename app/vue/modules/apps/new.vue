@@ -3,7 +3,7 @@ export default {
     data() {
         return {
             module: {
-                name:"ldonis",
+                name:"",
                 module_type: ""
             }
         }
@@ -11,16 +11,19 @@ export default {
     methods: {
 
         postModule() {
-            console.log(this.module)
-            this.http.post("/babel/modules", {
-                module: this.module
+            if (this.module.name == "" || this.module.module_type == "") {
+                this.alert("Please complete the form", "warning")
+                return
+            }
+            this.http.post("/babel/translation/modules", {
+                translation_module: this.module
             }).then(result => {
-                console.log(result)
+
+                this.alert("New module created")
             }).catch(error => {
                 console.log(error)
             })
         }
-
     }
 }
 </script>

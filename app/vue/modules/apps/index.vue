@@ -55,11 +55,15 @@ export default {
     methods: {
 
         getModules() {
-            this.http.get("/babel/modules.json").then(result => {
+            this.http.get("/babel/translation/modules.json").then(result => {
                 this.modules = result.data
             }).catch(error => {
                 console.log(error)
             })
+        },
+
+        showModule(module) {
+            this.$router.push(`/${module.id}`)
         }
 
     }
@@ -79,7 +83,11 @@ export default {
         </component-header>
         <div class="card">
             <div class="card-content">
-                <b-table :data="modules" :columns="columns"></b-table>
+                <b-table 
+                    @click="showModule"
+                    :data="modules" 
+                    :columns="columns">
+                </b-table>
             </div>
         </div>
     </section>

@@ -27,12 +27,14 @@ module CloudBabel
 
         # POST /translation/buckets
         def create
-            @translation_bucket = Translation::Bucket.new(translation_bucket_params)
-
-            if @translation_bucket.save
-            redirect_to @translation_bucket, notice: 'Bucket was successfully created.'
+            translation_module = Translation::Module.find(params[:module_id])
+            translation_bucket = Translation::Bucket.new(translation_bucket_params)
+            translation_bucket.reference_module = translation_module.name
+            translation_bucket.module = translation_module
+            if translation_bucket.save
+                respond_with_successful(translation_bucket)
             else
-            render :new
+                respond_with_error("Error on create module", translation_bucket.errors)
             end
         end
 
@@ -70,7 +72,7 @@ module CloudBabel
 
         # Only allow a trusted parameter "white list" through.
         def translation_bucket_params
-        params.fetch(:translation_bucket, {})
+            params.require(:translation_bucket).permit(:name)
         end
     end
 end

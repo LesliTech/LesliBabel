@@ -2,12 +2,11 @@ require_dependency "cloud_babel/application_controller"
 
 module CloudBabel
     class Translation::ModulesController < ApplicationController
-        #before_action :set_translation_module, only: [:show, :edit, :update, :destroy]
+        before_action :set_translation_module, only: [:show, :edit, :update, :destroy]
 
         # GET /translation/modules
         def index
             modules = Translation::Module.where("name is not null").map do |translation_module|
-                
                 {
                     id: translation_module[:id],
                     name: translation_module[:name],
@@ -22,6 +21,7 @@ module CloudBabel
 
         # GET /translation/modules/1
         def show
+            respond_with_successful(@translation_module)
         end
 
         # GET /translation/modules/new
@@ -35,12 +35,11 @@ module CloudBabel
 
         # POST /translation/modules
         def create
-            @translation_module = Translation::Module.new(translation_module_params)
-
-            if @translation_module.save
-                redirect_to @translation_module, notice: 'Module was successfully created.'
+            new_module = Translation::Module.new(translation_module_params)
+            if new_module.save
+                respond_with_successful(new_module)
             else
-                render :new
+                respond_with_error("Error on create module", new_module.errors)
             end
         end
 
@@ -78,7 +77,7 @@ module CloudBabel
 
         # Only allow a trusted parameter "white list" through.
         def translation_module_params
-            params.fetch(:translation_module, {})
+            params.require(:translation_module).permit(:name, :module_type)
         end
     end
 end

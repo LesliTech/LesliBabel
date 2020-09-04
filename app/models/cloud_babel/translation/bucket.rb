@@ -31,5 +31,16 @@ module CloudBabel
         belongs_to :parent, class_name: "Translation::Bucket", foreign_key: "cloud_babel_translation_buckets_id", optional: true
         has_many :children, class_name: "Translation::Bucket", foreign_key: "cloud_babel_translation_buckets_id"
         has_many :strings, foreign_key: "cloud_babel_translation_buckets_id"
+
+        before_save :format_bucket_name
+
+        def format_bucket_name
+            self.name = self.name
+                .downcase                           # string to lowercase
+                .gsub(/[^0-9A-Za-z\s\-\_]/, '')     # remove special characters from string
+                .gsub(/-/, '_')                     # replace dashes with underscore
+                .gsub(/\s+/, '/')                   # replace spaces or spaces with single dash
+        end
+
     end
 end
