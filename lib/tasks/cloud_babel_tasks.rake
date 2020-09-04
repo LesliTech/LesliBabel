@@ -38,7 +38,7 @@ namespace :cloud_babel do
     end
 
     desc "Create standard structure for translations according to the objects in the app"
-    task scan: [:environment] do  
+    task scan: [:environment] do 
 
         LC::System::Routes.scan.each do |t|
 
