@@ -9,5 +9,7 @@ class Languages < ActiveRecord::Migration[6.0]
         #add_column :cloud_babel_translation_strings, :bg, :string
         #remove_column :cloud_babel_translation_strings, :need_help
         #remove_column :cloud_babel_translation_strings, :need_translation
+
+        #add_column :cloud_babel_translation_modules, :module_type, :string
     end
 end
