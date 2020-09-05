@@ -45,7 +45,7 @@ namespace :cloud_babel do
             p "object found: #{t[:module]}/#{t[:bucket]}"
 
             # Add object to the translation workflow
-            translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module]})
+            translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module], module_type: "rails" })
             translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: t[:bucket], module: translation_module, reference_module: translation_module.name })
             translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
 
