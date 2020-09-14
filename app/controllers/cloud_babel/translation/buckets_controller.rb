@@ -6,7 +6,7 @@ module CloudBabel
 
         # GET /translation/buckets
         def index
-            translation_buckets = Translation::Module.find(params[:module_id]).buckets
+            translation_buckets = Translation::Module.find(params[:module_id]).buckets.order(name: :asc)
             respond_to do |format|
                 format.html { }
                 format.json { respond_with_successful(translation_buckets) }

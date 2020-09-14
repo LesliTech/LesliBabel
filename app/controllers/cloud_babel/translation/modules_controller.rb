@@ -6,7 +6,7 @@ module CloudBabel
 
         # GET /translation/modules
         def index
-            modules = Translation::Module.where("name is not null").map do |translation_module|
+            modules = Translation::Module.where("name is not null").order(name: :asc).map do |translation_module|
                 {
                     id: translation_module[:id],
                     name: translation_module[:name],
