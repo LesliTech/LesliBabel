@@ -37,7 +37,7 @@ module CloudBabel
         def format_bucket_name
             self.name = self.name
                 .downcase                           # string to lowercase
-                .gsub(/[^0-9A-Za-z\s\-\_]/, '')     # remove special characters from string
+                .gsub(/[^0-9A-Za-z\s\-\_\/]/, '')   # remove special characters from string
                 .gsub(/-/, '_')                     # replace dashes with underscore
                 .gsub(/\s+/, '/')                   # replace spaces or spaces with single dash
         end
