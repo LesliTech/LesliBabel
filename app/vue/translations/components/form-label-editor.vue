@@ -54,7 +54,13 @@ export default {
         putTranslationStringNeedHelp(string) {
             this.http.put(`/babel/translation/strings/${string.id}/resources/need-help.json`, {
             }).then(result => {
-                this.alert("Help requested successfully", "success" )
+                string.help_needed = ! string.help_needed
+
+                if(string.help_needed){
+                    this.alert("Help requested successfully", "success" )
+                }else{
+                    this.alert("Help request cleared", "success" )
+                }
             }).catch(error => {
                 console.log(error)
             })
@@ -63,7 +69,13 @@ export default {
         putTranslationStringNeedTranslation(string) {
             this.http.put(`/babel/translation/strings/${string.id}/resources/need-translation.json`, {
             }).then(result => {
-                this.alert("Translation requested successfully", "success" )
+                string.help_translation = ! string.help_translation
+
+                if(string.help_translation){
+                    this.alert("Translation requested successfully", "success" )
+                }else{
+                    this.alert("Translation request cleared", "success" )
+                }
             }).catch(error => {
                 console.log(error)
             })
@@ -138,14 +150,14 @@ export default {
                             <div class="control has-text-center">
                                 <div class="buttons">
                                     <button 
-                                        class="button is-primary" 
+                                        :class="['button', 'is-primary', {'is-outlined': !props.row.help_needed}]" 
                                         @click="putTranslationStringNeedHelp(props.row)">
                                         <b-tooltip label="Need help">
                                         ?
                                         </b-tooltip>
                                     </button>
                                     <button 
-                                        class="button is-primary" 
+                                        :class="['button', 'is-primary', {'is-outlined': !props.row.help_translation}]" 
                                         @click="putTranslationStringNeedTranslation(props.row)">
                                         <b-tooltip label="Need translation">
                                             <span class="icon">
