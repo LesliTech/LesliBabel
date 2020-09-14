@@ -156,13 +156,17 @@ module CloudBabel
         end
 
         def need_help
-            @translation_string.need_help = true
+            return respond_with_not_found unless @translation_string
+
+            @translation_string.help_needed = !@translation_string.help_needed
             @translation_string.save!
             respond_with_successful()
         end
 
         def need_translation
-            @translation_string.need_translation = true
+            return respond_with_not_found unless @translation_string
+            
+            @translation_string.help_translation = !@translation_string.help_translation
             @translation_string.save!
             respond_with_successful()
         end
