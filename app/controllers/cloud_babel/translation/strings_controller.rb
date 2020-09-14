@@ -27,7 +27,7 @@ module CloudBabel
                         sql_where_condition.push("help_needed = TRUE")
                         sql_where_condition.push("help_translation = TRUE")
 
-                        strings = Translation::String.where(sql_where_condition.join(" OR ")).select(
+                        strings = Translation::String.where(sql_where_condition.join(" OR ")).order(id: :desc).select(
                             :id,
                             :label,
                             :status,
