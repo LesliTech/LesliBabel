@@ -26,11 +26,43 @@ Building a better future, one line of code at a time.
 
 @import "lesli/templates/component";
 
+
+
 .card {
+
     button.button.is-text {
         text-decoration: none;
     }
+
+    table.table {
+    
+        td.chevron-cell {
+            padding-left: 0;
+            padding-right: 0;
+            text-align: center;
+        }
+
+        // disable arrow by default due there is no context
+        tr {
+            .chevron-cell a i {
+                color: lesli-css-get-color(silver);
+            }
+            &.has-context {
+                .chevron-cell a i {
+                    color: lesli-css-get-color(blue);
+                }
+            }
+            &.has-need-help-translation {
+                background-color: lesli-css-get-color(banana, 100);
+            }
+        }
+
+    }
+
 }
+
+/*
+
 
 table.table {
     width: 100%;
@@ -76,17 +108,7 @@ table.table {
         }
     }
 
-    // disable arrow by default due there is no context
-    tr {
-        .chevron-cell a i{
-            color: lesli-css-get-color(silver);
-        }
-    }
-    tr.bbl-context {
-        .chevron-cell a i{
-            color: lesli-css-get-color(blue);
-        }
-    }
+ 
     tr.bbl-help td {
         background-color: lesli-css-get-color(blue);
 
@@ -105,3 +127,4 @@ table.table {
     }
     
 }
+*/

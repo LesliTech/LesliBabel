@@ -11,21 +11,6 @@ export default {
     },
     methods: {
 
-        getRowClass(row) {
-
-            var row_class = []
-
-            if (row.context && row.context != "") {
-                row_class.push("bbl-context")
-            }
-
-            if (row.help_needed) {
-                row_class.push("bbl-help")
-            }
-
-            return row_class.join(" ")
-        },
-
         patchTranslationString(string) {
             clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
@@ -80,6 +65,22 @@ export default {
             document.execCommand('copy');
             document.body.removeChild(el);
             this.alert("Copied to clipboard")
+        },
+
+        getRowClass(row) {
+
+            var row_class = []
+
+            if (row.context && row.context != "") {
+                row_class.push("has-context")
+            }
+
+            if (row.need_help || row.need_translation) {
+                row_class.push("has-need-help-translation")
+            }
+
+            return row_class.join(" ")
+
         }
 
     }
@@ -94,13 +95,8 @@ export default {
             :show-detail-icon="true"
             :row-class="getRowClass">
             <template v-slot="props">
-                <b-table-column class="copy">
-                    <button class="button is-text" @click="sendToClipboard(props.row.path)" :title="props.row.path">
-                        <i class="far fa-copy"></i>
-                    </button>
-                </b-table-column>
                 <b-table-column field="label" label="Label">
-                    <button class="button is-text" @click="sendToClipboard(props.row.label)" :title="props.row.path">
+                    <button class="button is-text is-paddingless" @click="sendToClipboard(props.row.label)" :title="props.row.path">
                         {{ props.row.label }}
                     </button>
                 </b-table-column>
@@ -124,6 +120,7 @@ export default {
                         <div class="field">
                             <label class="label">Context</label>
                             <div class="control">
+                                {{ props.row }}
                                 <input 
                                     type="text" 
                                     class="input" 

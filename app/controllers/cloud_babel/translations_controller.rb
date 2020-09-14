@@ -82,6 +82,9 @@ module CloudBabel
             })
         end
 
+        def build
+        end
+
         def deploy
 
             do_clean
@@ -96,16 +99,21 @@ module CloudBabel
 
             Translation::String.all.each do |string|
     
+                module_type = string.bucket.module.module_type
                 module_name = string.bucket.module.name
                 bucket_name = string.bucket.name
-    
+
+                # build translation files for rails applications only
+                next unless ["rails_engine", "rails_core"].include? module_type
+
                 module_name_sym = module_name.downcase.sub("cloud", "")
     
                 available_locales.each do |lang|
     
                     file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
-    
-                    if module_name != "Core"
+
+                    # prepend engine path when building translations for engines
+                    if module_type == "rails_engine"
                         file_path = Rails.root.join("engines", module_name, "config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
                     end
     
@@ -414,10 +422,10 @@ module CloudBabel
             end
 
             # total translations that needs help
-            total_strings_waiting_for_help = Translation::String.where(:help_needed => true).count
+            total_strings_waiting_for_help = Translation::String.where(:need_help => true).count
 
             # total translations that needs translation
-            total_strings_waiting_for_translation = Translation::String.where(:help_translation => true).count
+            total_strings_waiting_for_translation = Translation::String.where(:need_translation => true).count
             
             responseWithSuccessful({
                 total_strings: total_strings,

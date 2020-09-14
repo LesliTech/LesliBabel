@@ -167,6 +167,10 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+        },
+
+        getDownloadTranslation() {
+            
         }
 
     },
@@ -198,6 +202,10 @@ export default {
                 <button class="button" @click="postSync()">
                     <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
                     <span>synchronize</span>
+                </button>
+                <button class="button" @click="getDownloadTranslation()">
+                    <b-icon icon="download" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
+                    <span>download translations</span>
                 </button>
             </div>
         </component-header>

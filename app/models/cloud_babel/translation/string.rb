@@ -5,6 +5,72 @@ module CloudBabel
 
         before_save :clean_label_string
 
+        def self.index current_user, query, params
+
+            # empty strings by default
+            strings = []
+
+            # if bucket or module was not sent, return all the strings in the database with missing german translation
+            if params[:module_id].blank? and params[:bucket_id].blank?
+
+                sql_where_condition = []
+
+                # add filter to select only available languages 
+                Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                    sql_where_condition.push("#{locale} is NULL")
+                    sql_where_condition.push("#{locale} = ''")
+                end
+
+                sql_where_condition.push("need_help = TRUE")
+                sql_where_condition.push("need_translation = TRUE")
+
+                strings = Translation::String.where(sql_where_condition.join(" OR "))
+
+            end
+
+            # returns strings for specif module
+            if not params[:module_id].blank? and params[:bucket_id].blank?
+                strings = Translation::String.joins(:bucket)
+                    .where("cloud_babel_translation_buckets.cloud_babel_translation_modules_id = ?", params[:module_id])
+            end
+
+            # returns strings for specif module and bucket
+            if not params[:module_id].blank? and not params[:bucket_id].blank?
+                bucket = Translation::Bucket.find(params[:bucket_id])
+                strings = bucket.strings
+            end
+
+            strings = strings.select(
+                :id,
+                :label,
+                :status,
+                :context,
+                :priority,
+                :need_help,
+                :need_translation,
+                Rails.application.config.lesli_settings["configuration"]["locales"],
+                "'' as path",
+                :cloud_babel_translation_buckets_id,
+                :reference_bucket
+            )
+
+            count = strings.length
+
+            strings = strings
+            .page(query[:pagination][:page])
+            .per(query[:pagination][:perPage])
+            .order(:updated_at)
+
+            LC::Response.pagination(
+                strings.current_page,
+                strings.total_pages,
+                strings.total_count,
+                strings.length,
+                strings
+            )
+
+        end
+
         def clean_label_string
             self.label = self.label
                 .downcase                           # string to lowercase
@@ -17,11 +83,13 @@ module CloudBabel
         end
 
         def path
-            [
-                self.bucket.module.name.downcase.sub("cloud",""),
-                self.bucket.name.downcase,
-                self.label.downcase
-            ].join(".")
+            self
+            .reference_bucket
+            .downcase
+            .gsub(/\bcloud/,"")
+            .sub("-",".")
+            .concat(".")
+            .concat(self.label)
         end
 
     end
