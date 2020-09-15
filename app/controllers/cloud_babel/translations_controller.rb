@@ -2,24 +2,17 @@
 
 Lesli
 
-Copyright (c) 2020, Lesli Technologies, S. A.
+Copyright (c) 2020, all rights reserved.
 
-All the information provided by this website is protected by laws of Guatemala related 
-to industrial property, intellectual property, copyright and relative international laws. 
-Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
-rights of the code, texts, trade mark, design, pictures and any other information.
-Without the written permission of Lesli Technologies, S. A., any replication, modification,
+All the information provided by this platform is protected by international laws related  to 
+industrial property, intellectual property, copyright and relative international laws. 
+All intellectual or industrial property rights of the code, texts, trade mark, design, 
+pictures and any other information belongs to the owner of this platform.
+
+Without the written permission of the owner, any replication, modification,
 transmission, publication is strictly forbidden.
+
 For more information read the license file including with this software.
-
-Lesli - Your Smart Business Assistant
-
-Powered by https://www.lesli.tech
-Building a better future, one line of code at a time.
-
-@contact  <hello@lesli.tech>
-@website  <https://lesli.tech>
-@license  Propietary - all rights reserved.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
@@ -82,97 +75,23 @@ module CloudBabel
             })
         end
 
-        def build
+        def clean
+            responseWithSuccessful()
+        end
+
+        def search
+            respond_with_successful(Translation.search(current_user, @query, params))
+        end
+
+        def stats
+            respond_with_successful(Translation.stats)
         end
 
         def deploy
-
-            do_clean
-
-            files = { }
-
-            available_locales = Rails.application.config.lesli_settings["configuration"]["locales"]
-
-            available_locales.each do |lang|
-                files[lang] = { }
-            end
-
-            Translation::String.all.each do |string|
-    
-                module_type = string.bucket.module.module_type
-                module_name = string.bucket.module.name
-                bucket_name = string.bucket.name
-
-                # build translation files for rails applications only
-                next unless ["rails_engine", "rails_core"].include? module_type
-
-                module_name_sym = module_name.downcase.sub("cloud", "")
-    
-                available_locales.each do |lang|
-    
-                    file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
-
-                    # prepend engine path when building translations for engines
-                    if module_type == "rails_engine"
-                        file_path = Rails.root.join("engines", module_name, "config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
-                    end
-    
-                    file_id = file_path.to_s.to_sym
-    
-                    unless files[lang].has_key? file_id
-                        files[lang][file_id] = { }
-                    end
-    
-                    unless files[lang][file_id].has_key? module_name_sym
-                        files[lang][file_id][module_name_sym] = { }
-                    end
-    
-                    unless files[lang][file_id][module_name_sym].has_key? bucket_name
-                        files[lang][file_id][module_name_sym][bucket_name] = { }
-                    end
-    
-                    # send debug message for missing translations
-                    string[lang] = ":" + string.path + ":" if string[lang].blank?
-
-                    files[lang][file_id][module_name_sym][bucket_name][string.label] = string[lang]
-    
-                end
-    
-            end
-    
-            files.each do |file_by_language|
-    
-                lang = file_by_language[0]
-                file_by_class = file_by_language[1]
-    
-                file_by_class.each do |file|
-
-                    file_path = file[0].to_s
-                    translations = file[1]
-
-                    # creates folder and subfolders
-                    FileUtils.makedirs(File.dirname(file_path))
-    
-                    # creates translation file for every available language
-                    translation_file = File.new(file_path, "w+")
-    
-                    translation_file.write({ "#{lang}": translations}.to_yaml)
-    
-                    translation_file.close
-
-                    p "file added: #{ file_path }"
-        
-                end
-    
-            end
-
-            logger.debug "/babel/translation"
-            logger.debug system "bundle exec rake i18n:js:export RAILS_ENV=production"
-
-            do_restart_server if Rails.env.production?
-
-            respond_with_successful
-
+            TranslationsService.clean
+            result = TranslationsRailsService.build
+            TranslationsService.restart_server
+            respond_with_successful(result)
         end
 
         def synchronization
@@ -365,91 +284,7 @@ module CloudBabel
 
         end
 
-        def clean
-            do_clean
-            responseWithSuccessful()
-        end
-
-        def search
-            
-            search_string = params[:search_string]
-            search_string = search_string.downcase
-            search_string = search_string.gsub(" ","%")
-
-            sql_where_condition = []
-
-            # add filter to select only available languages 
-            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                sql_where_condition.push("LOWER(#{locale}) like :search_string")
-            end
-
-            sql_where_condition.push("LOWER(label) like :search_string")
-            sql_where_condition.push("LOWER(context) like :search_string")
-
-            strings = Translation::String.where(sql_where_condition.join(" OR "), { 
-                search_string: "%#{search_string}%" 
-            })
-
-            strings = strings
-            .page(@query[:pagination][:page])
-            .per(@query[:pagination][:perPage])
-            .order(:updated_at)
-
-            respond_with_successful(LC::Response.pagination(
-                strings.current_page,
-                strings.total_pages,
-                strings.total_count,
-                strings.length,
-                strings
-            ))
-            
-        end
-
-        def stats
-
-            # total translations registered in babel
-            total_strings = Translation::String.all.count
-
-            # total translations by language
-            total_strings_translations = []
-            
-            Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |locale|
-                total_strings_translations.push({
-                    code: locale[0],
-                    name: locale[1],
-                    total: Translation::String.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
-                })
-            end
-
-            # total translations that needs help
-            total_strings_waiting_for_help = Translation::String.where(:need_help => true).count
-
-            # total translations that needs translation
-            total_strings_waiting_for_translation = Translation::String.where(:need_translation => true).count
-            
-            responseWithSuccessful({
-                total_strings: total_strings,
-                total_strings_translations: total_strings_translations,
-                total_strings_waiting_for_help: total_strings_waiting_for_help,
-                total_strings_waiting_for_translation: total_strings_waiting_for_translation
-            })
-        end
-
         private
-
-        def do_clean
-            Lesli::engines.each do |engine|
-                engine_path = Rails.root.join("engines", engine["name"], "config", "locales")
-                FileUtils.rm_rf(engine_path)
-            end
-            engine_path = Rails.root.join("config", "locales")
-            FileUtils.rm_rf(engine_path)
-        end
-
-        def do_restart_server
-            return if Rails.env != "production"
-            FileUtils.touch Rails.root.join("tmp", "restart.txt")
-        end
 
         # Use callbacks to share common setup or constraints between actions.
         def set_translation

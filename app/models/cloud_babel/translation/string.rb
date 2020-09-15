@@ -66,7 +66,10 @@ module CloudBabel
                 strings.total_pages,
                 strings.total_count,
                 strings.length,
-                strings
+                strings.map do |string|
+                    string["path"] = "ldonis"
+                    string
+                end
             )
 
         end
@@ -82,11 +85,14 @@ module CloudBabel
             self.priority = "normal" if self.priority.nil? or self.priority == ""
         end
 
+
         def path
+            return "full_path"
             self
             .reference_bucket
             .downcase
-            .gsub(/\bcloud/,"")
+            #.gsub(/\bcloud/,"") # removes cloud only at start of string
+            .gsub("cloud","") # removes cloud only at start of string
             .sub("-",".")
             .concat(".")
             .concat(self.label)

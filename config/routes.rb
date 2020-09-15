@@ -52,9 +52,9 @@ CloudBabel::Engine.routes.draw do
             get :search
             get :options
             scope :resources do
+                get  :stats
                 post :clean
                 post :deploy
-                get  :stats
                 post :synchronization
             end
         end
