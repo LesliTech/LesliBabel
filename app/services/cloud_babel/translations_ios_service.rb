@@ -3,29 +3,15 @@ module CloudBabel
 
         def self.build 
 
-            translations = { }
+            # get all rails engines
+            engines = Translation::Module.where(:module_type => "ios").map do |engine|
+                engine[:name]
+            end
 
-            strings = []
+            # get strings filtered by module (only rails translations)
+            strings = TranslationsService.strings(engines)
 
-            strings = Translation::String
-            .joins("inner join cloud_babel_translation_buckets on cloud_babel_translation_buckets.id = cloud_babel_translation_strings.cloud_babel_translation_buckets_id")
-            .joins("inner join cloud_babel_translation_modules on cloud_babel_translation_modules.id = cloud_babel_translation_buckets.cloud_babel_translation_modules_id")
-
-            strings = strings.where("cloud_babel_translation_modules.name in (?)", "Mitwerken iOS app")
-
-            strings = strings.select(
-                :id,
-                :label,
-                :status,
-                :context,
-                :priority,
-                :need_help,
-                :need_translation,
-                Rails.application.config.lesli_settings["configuration"]["locales"],
-                "cloud_babel_translation_buckets.id as cloud_babel_translation_buckets_id",
-                "cloud_babel_translation_buckets.name as bucket_name",
-                "cloud_babel_translation_modules.name as engine_name"
-            )
+            translations = {}
 
             available_locales = Rails.application.config.lesli_settings["configuration"]["locales"]
 
@@ -38,12 +24,7 @@ module CloudBabel
 
                 available_locales.each do |lang|
 
-                    file_path = Rails.root.join(
-                        "public", 
-                        "locales",
-                        engine_name, 
-                        "#{ bucket_name.gsub("/","_") }.#{lang}.strings"
-                    )
+                    file_path = Rails.root.join("public", "locales", engine_name, "#{ bucket_name.gsub("/","_") }.#{lang}.strings")
 
                     file_id = file_path.to_s
 
@@ -81,6 +62,8 @@ module CloudBabel
                 translation_file.close
 
             end
+
+            LC::Response.service true, translations
 
         end
 

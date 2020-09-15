@@ -53,25 +53,28 @@ namespace :cloud_babel do
 
     desc ""
     task android: [:environment] do 
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        p "building android translations"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
 
+        puts ""; puts ""; puts ""; 
+        puts "building android translations"
+        result = CloudBabel::TranslationsAndroidService.build
+        result.payload.each do |translation|
+            puts translation[0]
+        end
+        puts ""; puts ""; puts ""; 
 
-        CloudBabel::TranslationsIosService.build
+    end
 
+    desc ""
+    task ios: [:environment] do 
 
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        p "building android translations"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
-        puts "#     #     #     #     #     #     #     #     #     #     #     #"
+        puts ""; puts ""; puts ""; 
+        puts "building android translations"
+        result = CloudBabel::TranslationsIosService.build
+        result.payload.each do |translation|
+            puts translation[0]
+        end
+        puts ""; puts ""; puts ""; 
+
     end
     
 end

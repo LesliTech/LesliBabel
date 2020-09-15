@@ -1,3 +1,23 @@
+=begin
+
+Lesli
+
+Copyright (c) 2020, all rights reserved.
+
+All the information provided by this platform is protected by international laws related  to 
+industrial property, intellectual property, copyright and relative international laws. 
+All intellectual or industrial property rights of the code, texts, trade mark, design, 
+pictures and any other information belongs to the owner of this platform.
+
+Without the written permission of the owner, any replication, modification,
+transmission, publication is strictly forbidden.
+
+For more information read the license file including with this software.
+
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+// · 
+
+=end
 module CloudBabel
     class TranslationsService
 
@@ -30,26 +50,14 @@ module CloudBabel
 
         end
 
-        def self.prepare_strings_for_android_translations string
-            puts "*     *     *     *     *     *     *     *     *     *     *     *     *"
-            puts "*     *     *     *     *     *     *     *     *     *     *     *     *"
-            puts "*     *     *     *     *     *     *     *     *     *     *     *     *"
-            p string
-            puts "*     *     *     *     *     *     *     *     *     *     *     *     *"
-            puts "*     *     *     *     *     *     *     *     *     *     *     *     *"
-            puts "*     *     *     *     *     *     *     *     *     *     *     *     *"
-        end
+        def self.strings engines
 
-        def self.prepare engines
-
-            translations = { }
-
-            strings = []
-
+            # get strings with bucket and module information
             strings = Translation::String
             .joins("inner join cloud_babel_translation_buckets on cloud_babel_translation_buckets.id = cloud_babel_translation_strings.cloud_babel_translation_buckets_id")
             .joins("inner join cloud_babel_translation_modules on cloud_babel_translation_modules.id = cloud_babel_translation_buckets.cloud_babel_translation_modules_id")
 
+            # filter by specific engines
             if engines
                 strings = strings.where("cloud_babel_translation_modules.name in (?)", engines)
             end
@@ -67,61 +75,6 @@ module CloudBabel
                 "cloud_babel_translation_buckets.name as bucket_name",
                 "cloud_babel_translation_modules.name as engine_name"
             )
-
-            available_locales = Rails.application.config.lesli_settings["configuration"]["locales"]
-
-            available_locales.each do |lang|
-                translations[lang] = { }
-            end
-
-            return strings
-
-            strings.each do |string|
-
-                module_name = string.bucket.module.name.downcase.sub("cloud", "")
-                module_type = string.bucket.module.module_type
-                engine_name = string.bucket.module.name
-                bucket_name = string.bucket.name
-
-                available_locales.each do |lang|
-
-                    # translations path for lesli core
-                    file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
-
-                    # translations path for Android & iOS apps
-                    if module_type == "android" 
-                        file_path = Rails.root.join("public", "locales", engine_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.xml")
-                    end
-
-                    # translations path for translations for engines
-                    if module_type == "rails_engine"
-                        file_path = Rails.root.join("engines", engine_name, "config", "locales", bucket_name, "#{ bucket_name }.#{ lang }.yml")
-                    end
-
-                    file_id = file_path.to_s.to_sym
-
-                    unless translations[lang].has_key? file_id
-                        translations[lang][file_id] = { }
-                    end
-
-                    unless translations[lang][file_id].has_key? module_name
-                        translations[lang][file_id][module_name] = { }
-                    end
-
-                    unless translations[lang][file_id][module_name].has_key? bucket_name
-                        translations[lang][file_id][module_name][bucket_name] = { }
-                    end
-
-                    # send debug message for missing translations
-                    string[lang] = ":" + string.path + ":" if string[lang].blank?
-
-                    translations[lang][file_id][module_name][bucket_name][string.label] = string[lang]
-
-                end
-
-            end
-
-            translations
 
         end
 

@@ -89,9 +89,9 @@ module CloudBabel
 
         def deploy
             TranslationsService.clean
-            result = TranslationsRailsService.build
+            TranslationsRailsService.build
             TranslationsService.restart_server
-            respond_with_successful(result)
+            respond_with_successful
         end
 
         def synchronization
