@@ -194,20 +194,29 @@ export default {
 <template>
     <section class="application-component">
         <component-header title="Translations">
-            <div class="is-grouped">
-                <button class="button" @click="postDeploy()">
-                    <b-icon icon="rocket" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
-                    <span>deploy translations</span>
-                </button>
-                <button class="button" @click="postSync()">
-                    <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
-                    <span>synchronize</span>
-                </button>
-                <button class="button" @click="getDownloadTranslation()">
-                    <b-icon icon="download" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
-                    <span>download translations</span>
-                </button>
-            </div>
+                <div class="is-grouped">
+                    <button class="button" @click="postDeploy()">
+                        <b-icon icon="rocket" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
+                        <span>deploy translations</span>
+                    </button>
+                    <button class="button" @click="postSync()">
+                        <b-icon icon="sync" size="is-small" :custom-class="loading ? 'fa-spin' : ''" />
+                        <span>synchronize</span>
+                    </button>
+
+                    <button class="button" @click="getDownloadTranslation()">
+                        <span class="icon">
+                            <i class="fab fa-android"></i>
+                        </span>
+                        <span>download Android translations</span>
+                    </button>
+                    <button class="button" @click="getDownloadTranslation()">
+                        <span class="icon">
+                            <i class="fab fa-swift"></i>
+                        </span>
+                        <span>download iOS translations</span>
+                    </button>
+                </div>
         </component-header>
 
         <component-toolbar @search="getSearch">
