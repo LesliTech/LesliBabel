@@ -7,11 +7,10 @@ module CloudBabel
 
         def self.index current_user, query, params
 
-            # empty strings by default
             strings = []
 
             # if bucket or module was not sent, return all the strings in the database with missing german translation
-            if params[:module_id].blank? and params[:bucket_id].blank?
+            if params[:module_id].blank?
 
                 sql_where_condition = []
 
@@ -24,37 +23,14 @@ module CloudBabel
                 sql_where_condition.push("need_help = TRUE")
                 sql_where_condition.push("need_translation = TRUE")
 
-                strings = Translation::String.where(sql_where_condition.join(" OR "))
+                strings = TranslationsService.strings().where(sql_where_condition.join(" OR "))
 
             end
 
-            # returns strings for specif module
-            if not params[:module_id].blank? and params[:bucket_id].blank?
-                strings = Translation::String.joins(:bucket)
-                    .where("cloud_babel_translation_buckets.cloud_babel_translation_modules_id = ?", params[:module_id])
+            # returns strings for specif module with optional bucket
+            if not params[:module_id].blank?
+                strings = TranslationsService.strings(params[:module_id], params[:bucket_id])
             end
-
-            # returns strings for specif module and bucket
-            if not params[:module_id].blank? and not params[:bucket_id].blank?
-                bucket = Translation::Bucket.find(params[:bucket_id])
-                strings = bucket.strings
-            end
-
-            strings = strings.select(
-                :id,
-                :label,
-                :status,
-                :context,
-                :priority,
-                :need_help,
-                :need_translation,
-                Rails.application.config.lesli_settings["configuration"]["locales"],
-                "'' as path",
-                :cloud_babel_translation_buckets_id,
-                :reference_bucket
-            )
-
-            count = strings.length
 
             strings = strings
             .page(query[:pagination][:page])
@@ -67,7 +43,7 @@ module CloudBabel
                 strings.total_count,
                 strings.length,
                 strings.map do |string|
-                    string["path"] = "ldonis"
+                    string["path"] = string.path
                     string
                 end
             )
@@ -87,15 +63,15 @@ module CloudBabel
 
 
         def path
-            return "full_path"
-            self
-            .reference_bucket
+            return "not engine found" if self[:engine_name].blank?
+            self[:engine_name]
             .downcase
-            #.gsub(/\bcloud/,"") # removes cloud only at start of string
-            .gsub("cloud","") # removes cloud only at start of string
-            .sub("-",".")
+            .sub("cloud", "")
             .concat(".")
-            .concat(self.label)
+            .concat(self[:bucket_name])
+            .concat(".")
+            .concat(self[:label])
+            
         end
 
     end

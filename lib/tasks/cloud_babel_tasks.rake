@@ -52,28 +52,41 @@ namespace :cloud_babel do
     end
 
     desc ""
+    task rails: [:environment] do 
+
+        puts ""; puts "";
+        puts "building rails translations"
+        result = CloudBabel::TranslationsRailsService.build
+        result.payload.each do |translation|
+            puts translation[0]
+        end
+        puts ""; puts "";
+
+    end
+
+    desc ""
     task android: [:environment] do 
 
-        puts ""; puts ""; puts ""; 
+        puts ""; puts "";
         puts "building android translations"
         result = CloudBabel::TranslationsAndroidService.build
         result.payload.each do |translation|
             puts translation[0]
         end
-        puts ""; puts ""; puts ""; 
+        puts ""; puts "";
 
     end
 
     desc ""
     task ios: [:environment] do 
 
-        puts ""; puts ""; puts ""; 
-        puts "building android translations"
+        puts ""; puts "";
+        puts "building ios translations"
         result = CloudBabel::TranslationsIosService.build
         result.payload.each do |translation|
             puts translation[0]
         end
-        puts ""; puts ""; puts ""; 
+        puts ""; puts "";
 
     end
     

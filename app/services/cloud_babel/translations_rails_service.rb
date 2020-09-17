@@ -4,12 +4,9 @@ module CloudBabel
         def self.build
 
             # get all rails engines
-            engines = Translation::Module.where(:module_type => "rails_engine").map do |engine|
-                engine[:name]
+            engines = Translation::Module.where("module_type in ('rails_engine', 'rails_core')").map do |engine|
+                engine[:id]
             end
-
-            # include lesli core
-            engines.push("Core")
 
             # get strings filtered by module (only rails translations)
             strings = TranslationsService.strings(engines)
@@ -25,10 +22,10 @@ module CloudBabel
 
             strings.each do |string|
 
-                module_name = string.bucket.module.name.downcase.sub("cloud", "")
-                module_type = string.bucket.module.module_type
-                engine_name = string.bucket.module.name
-                bucket_name = string.bucket.name
+                module_name = string[:engine_name].downcase.sub("cloud", "")
+                engine_name = string[:engine_name]
+                module_type = string[:module_type]
+                bucket_name = string[:bucket_name]
 
                 available_locales.each do |lang|
 
@@ -94,7 +91,7 @@ module CloudBabel
 
             end
 
-            LC::Response.service true
+            LC::Response.service true, translations
 
         end
 

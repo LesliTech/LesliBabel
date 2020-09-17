@@ -5,7 +5,7 @@ module CloudBabel
 
             # get all rails engines
             engines = Translation::Module.where(:module_type => "android").map do |engine|
-                engine[:name]
+                engine[:id]
             end
 
             # get strings filtered by module (only rails translations)
@@ -17,14 +17,17 @@ module CloudBabel
 
             strings.each do |string|
 
-                module_name = string.bucket.module.name.downcase.sub("cloud", "")
-                module_type = string.bucket.module.module_type
-                engine_name = string.bucket.module.name
-                bucket_name = string.bucket.name
+                module_name = string[:engine_name].downcase.sub("cloud", "")
+                engine_name = string[:engine_name]
+                module_type = string[:module_type]
+                bucket_name = string[:bucket_name]
 
                 available_locales.each do |lang|
 
-                    file_path = Rails.root.join("public", "locales", engine_name, "values-#{lang}", "#{ bucket_name.gsub("/","_") }.xml")
+                    file_path = Rails.root.join(
+                        "public", "tmp", "locales", engine_name, 
+                        "values-#{lang}", "#{ bucket_name.gsub("/","_") }.xml"
+                    )
 
                     file_id = file_path.to_s
 
