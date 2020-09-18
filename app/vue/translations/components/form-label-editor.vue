@@ -87,8 +87,14 @@ export default {
                 row_class.push("has-context")
             }
 
-            if (row.need_help || row.need_translation) {
-                row_class.push("has-need-help-translation")
+            if (row.need_help) {
+                // same color as the button
+                row_class.push("has-background-warning")
+            }
+
+            if (row.need_translation) {
+                // same color as the button
+                row_class.push("has-background-info")
             }
 
             return row_class.join(" ")
@@ -108,7 +114,9 @@ export default {
             :row-class="getRowClass">
             <template v-slot="props">
                 <b-table-column field="label" label="Label">
-                    <button class="button is-text is-paddingless" @click="sendToClipboard(props.row.label)" :title="props.row.path">
+                    <button 
+                        class="button is-text is-paddingless" 
+                        @click="sendToClipboard(props.row.label)">
                         {{ props.row.label }}
                     </button>
                 </b-table-column>
@@ -132,29 +140,27 @@ export default {
                         <div class="field">
                             <label class="label">Context</label>
                             <div class="control">
-                                {{ props.row }}
                                 <input 
                                     type="text" 
                                     class="input" 
                                     v-model="props.row.context"
                                     v-on:input="patchTranslationString(props.row)">
+                                <small @click="sendToClipboard(props.row.path)"><i>path:</i>{{ props.row.path }}</small>
                             </div>
                         </div>
                     </div>
-                    <div class="column is-12 has-text-center">
+                    <div class="column is-2 has-text-center">
                         <div class="field">
                             <label class="label">Options</label>
                             <div class="control has-text-center">
                                 <div class="buttons">
                                     <button 
-                                        :class="['button', 'is-primary', {'is-outlined': !props.row.help_needed}]" 
+                                        :class="['button', 'is-warning', {'is-outlined': !props.row.need_help}]" 
                                         @click="putTranslationStringNeedHelp(props.row)">
-                                        <b-tooltip label="Need help">
-                                        ?
-                                        </b-tooltip>
+                                        <b-tooltip label="Need help">?</b-tooltip>
                                     </button>
                                     <button 
-                                        :class="['button', 'is-primary', {'is-outlined': !props.row.help_translation}]" 
+                                        :class="['button', 'is-info', {'is-outlined': !props.row.need_translation}]" 
                                         @click="putTranslationStringNeedTranslation(props.row)">
                                         <b-tooltip label="Need translation">
                                             <span class="icon">
