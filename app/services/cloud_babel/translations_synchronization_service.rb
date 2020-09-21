@@ -178,10 +178,6 @@ module CloudBabel
                     
                 end
 
-                # Update last synchronization time
-                translation = Translation.find_or_create_by(:id => 1)
-                translation.updated_at = Time.now
-
                 local_string.save!
 
             end
@@ -211,6 +207,11 @@ module CloudBabel
                 ({ modules: modules, buckets: buckets, strings: strings }).to_json,
                 "Content-Type" => "application/json"
             )
+
+            # Update last synchronization time
+            translation = Translation.find_or_create_by(:id => 1)
+            translation.updated_at = Time.now
+            translation.save!
 
             LC::Response.service true
 
