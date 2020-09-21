@@ -5,7 +5,14 @@ module CloudBabel
         before_create :format_module_name
 
         def self.index 
-            Translation::Module.all
+            Translation::Module.where("name is not null").map do |translation_module|
+                {
+                    id: translation_module[:id],
+                    name: translation_module[:name],
+                    code: translation_module[:name].downcase,
+                    type: translation_module[:module_type]
+                }
+            end
         end
 
         def format_module_name

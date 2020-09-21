@@ -16,9 +16,9 @@
     <p class="menu-label">Modules</p>
 
     <% CloudBabel::Translation::Module.all.each do |engine| %>
-        <%= nav_link("") do %>
+        <%= nav_link(modules_path + "/" + engine.id.to_s) do %>
             <i class="far fa-folder-open"></i>
-            <span><%= engine.name %></span>
+            <span><%= engine.name.gsub("Cloud", "") %></span>
         <% end %>
     <% end %>
 

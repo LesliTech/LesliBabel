@@ -41,11 +41,11 @@ namespace :cloud_babel do
 
             # add object to the translation workflow
             translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module], module_type: t[:module_type] })
-            translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: t[:bucket], module: translation_module, reference_module: translation_module.name })
+            translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: t[:controller], module: translation_module, reference_module: translation_module.name })
             translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
 
             # send debug message
-            puts "object found: #{t[:module]}/#{t[:bucket]}"
+            puts "object found: #{t[:module]}/#{t[:controller]}"
 
         end
 

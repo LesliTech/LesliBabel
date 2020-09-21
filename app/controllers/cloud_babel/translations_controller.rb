@@ -95,7 +95,9 @@ module CloudBabel
         end
 
         def synchronization
-            respond_with_successful(TranslationsSynchronizationService.remote_sync)
+            result = TranslationsSynchronizationService.remote_sync
+            respond_with_successful if result.success?
+            respond_with_error if not result.success?
         end
 
         private

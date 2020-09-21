@@ -6,22 +6,18 @@ module CloudBabel
 
         # GET /translation/modules
         def index
-            modules = Translation::Module.where("name is not null").order(name: :asc).map do |translation_module|
-                {
-                    id: translation_module[:id],
-                    name: translation_module[:name],
-                    code: translation_module[:name].downcase,
-                }
-            end
             respond_to do |format|
                 format.html { }
-                format.json { respond_with_successful(modules) }
+                format.json { respond_with_successful(Translation::Module.index) }
             end
         end
 
         # GET /translation/modules/1
         def show
-            respond_with_successful(@translation_module)
+            respond_to do |format|
+                format.html { }
+                format.json { respond_with_successful(@translation_module) }
+            end
         end
 
         # GET /translation/modules/new

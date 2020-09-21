@@ -27,7 +27,8 @@ module CloudBabel
                 total_strings: total_strings,
                 total_strings_translations: total_strings_translations,
                 total_strings_waiting_for_help: total_strings_waiting_for_help,
-                total_strings_waiting_for_translation: total_strings_waiting_for_translation
+                total_strings_waiting_for_translation: total_strings_waiting_for_translation,
+                last_synchronization_at: LC::Date.to_string_datetime(Translation.first.updated_at)
             }
 
         end
