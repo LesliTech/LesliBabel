@@ -38,18 +38,27 @@ module CloudBabel
             # add new modules
             response["modules"].each do |babel_module|
                 next if babel_module["name"].blank?
+
+                # fix module type for core
+                babel_module["module_type"] = "rails_core" if babel_module["name"] == "Core"
+                
                 CloudBabel::Translation::Module
-                .create_with(created_at: babel_module["created_at"])
-                .find_or_create_by({ name: babel_module["name"] })
+                .create_with({
+                    created_at: babel_module["created_at"],
+                    module_type: babel_module["module_type"] || "rails_engine"
+                }).find_or_create_by({ name: babel_module["name"] })
             end
 
             # working with buckets
             babel_reference_modules = {}
+
             response["buckets"].each do |babel_bucket|
 
                 next if babel_bucket["name"].blank?
 
                 # reference to modules that buckets belongs to
+                # this reference as string is necessary because the id of the module can change
+                # between synchronizations, thats why we search for the id of the module every time
                 if babel_reference_modules[babel_bucket["reference_module"]].blank?
                     babel_reference_modules[babel_bucket["reference_module"]] = 
                     CloudBabel::Translation::Module.find_by(name: babel_bucket["reference_module"])
@@ -73,6 +82,8 @@ module CloudBabel
             response["strings"].each do |remote_string|
 
                 # reference to modules that buckets belongs to
+                # this reference as string is necessary because the id of the module or bucket can change
+                # between synchronizations, thats why we search for the id of the module every time
                 if babel_reference_buckets[remote_string["reference_bucket"]].blank?
                     babel_reference_buckets[remote_string["reference_bucket"]] = 
                     CloudBabel::Translation::Bucket.find_by(
@@ -80,8 +91,11 @@ module CloudBabel
                         reference_module: remote_string["reference_bucket"].split("-")[0]
                     )
                 end
+
+                # Do not sync labes that do not have a valid module and bucket reference
+                next if babel_reference_buckets[remote_string["reference_bucket"]].blank?
             
-                remote_string_reference = "#{babel_reference_buckets[remote_string["reference_bucket"]].module.name}-#{babel_reference_buckets[remote_string["reference_bucket"]].name}"
+                remote_string_reference = "#{babel_reference_buckets[remote_string["reference_bucket"]].reference_module}-#{babel_reference_buckets[remote_string["reference_bucket"]].name}"
             
                 # add new string if it does not exist
                 local_string = CloudBabel::Translation::String.create_with({
@@ -110,9 +124,11 @@ module CloudBabel
                 # if status changed
                 if remote_string["status"] != local_string["status"]
 
+                    remote_string["last_update_status"] = Time.now if remote_string["last_update_status"].blank?
+                    local_string["last_update_status"] = Time.now if local_string["last_update_status"].blank?
+
                     # check if remote is newer than local
-                    if (remote_string["last_update_status"] > 
-                        local_string["last_update_status"])
+                    if (remote_string["last_update_status"] > local_string["last_update_status"])
 
                         # if so, update local translation with the incoming
                         local_string["status"] = remote_string["status"]
@@ -125,9 +141,11 @@ module CloudBabel
                 # if context changed
                 if remote_string["context"] != local_string["context"]
 
+                    remote_string["last_update_context"] = Time.now if remote_string["last_update_context"].blank?
+                    local_string["last_update_context"] = Time.now if local_string["last_update_context"].blank?
+
                     # check if remote is newer than local
-                    if (remote_string["last_update_context"] > 
-                        local_string["last_update_context"])
+                    if (remote_string["last_update_context"] > local_string["last_update_context"])
 
                         # if so, update local translation with the incoming
                         local_string["context"] = remote_string["context"]
@@ -137,29 +155,18 @@ module CloudBabel
 
                 end
 
-                # if help request changed
-                if remote_string["help_needed"] != local_string["help_needed"]
-
-                    # check if remote is newer than local
-                    if (remote_string["last_update_context"] > 
-                        local_string["last_update_context"])
-
-                        # if so, update local translation with the incoming
-                        local_string["help_needed"] = remote_string["help_needed"]
-                        local_string["last_update_context"] = remote_string["last_update_context"]
-
-                    end
-
-                end
-
                 # check if necessary to update any translation
-                Rails.application.config.lesli_settings["configuration"]["locales"] do |locale|
+                # due babel can work as client and server at the same time, we have to synchronize labels for all supported languages
+                ["es", "en", "de", "fr", "nl", "pl", "pt", "it", "tr", "ro", "bg"].each do |locale|
+
+                    remote_string["last_update_#{locale}"] = Time.now if remote_string["last_update_#{locale}"].blank?
+                    local_string["last_update_#{locale}"] = Time.now if local_string["last_update_#{locale}"].blank?
+
                     # if translation changed
                     if local_string[locale] != remote_string[locale]
             
                         # check if remote is newer than local
-                        if (remote_string["last_update_#{locale}"] > 
-                            local_string["last_update_#{locale}"])
+                        if (remote_string["last_update_#{locale}"] > local_string["last_update_#{locale}"])
             
                             # if so, update local translation with the incoming
                             local_string[locale] = remote_string[locale]
@@ -171,12 +178,8 @@ module CloudBabel
                     
                 end
 
-                # Update last synchronization time
-                translation = Translation.find_or_create_by(:id => 1)
-                translation.updated_at = Time.now
-
                 local_string.save!
-            
+
             end
 
             # delete all the strings with deleted date
@@ -204,6 +207,11 @@ module CloudBabel
                 ({ modules: modules, buckets: buckets, strings: strings }).to_json,
                 "Content-Type" => "application/json"
             )
+
+            # Update last synchronization time
+            translation = Translation.find_or_create_by(:id => 1)
+            translation.updated_at = Time.now
+            translation.save!
 
             LC::Response.service true
 
