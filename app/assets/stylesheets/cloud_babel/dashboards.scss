@@ -25,3 +25,12 @@ Building a better future, one line of code at a time.
 */
 
 @import "lesli/templates/component";
+
+
+.header-translation-options button {
+    flex-direction: column;
+    height: auto;
+    span {
+        //display: block;
+    }
+}

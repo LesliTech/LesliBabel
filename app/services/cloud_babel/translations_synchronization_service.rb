@@ -171,6 +171,10 @@ module CloudBabel
                     
                 end
 
+                # Update last synchronization time
+                translation = Translation.find_or_create_by(:id => 1)
+                translation.updated_at = Time.now
+
                 local_string.save!
             
             end
@@ -201,13 +205,7 @@ module CloudBabel
                 "Content-Type" => "application/json"
             )
 
-            response = JSON.parse(response.body)
-
-            response = response["successful"]
-
-            responseWithSuccessful() if response === true
-
-            responseWithError() if response  != true
+            LC::Response.service true
 
         end
 
