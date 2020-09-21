@@ -242,7 +242,7 @@ export default {
                                 icon="globe"
                                 icon-pack="fas"
                                 v-model="selection.module">
-                                <option v-for="module in modules" :key="module.id" :value="module">{{ module.name }}</option>
+                                <option v-for="module in modules" :key="module.id" :value="module">{{ module.name.replace("Cloud", "") }}</option>
                             </b-select>
                         </div>
 

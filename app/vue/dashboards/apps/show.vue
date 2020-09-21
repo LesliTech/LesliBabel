@@ -61,7 +61,7 @@ export default {
                     <div class="card-content has-text-centered">
                         <span :class="['is-size-2','flag-icon', 'flag-icon-'+(locale.code == 'en' ? 'gb':locale.code)]"></span>
                         <p class="is-size-5">
-                            {{ locale.name }}: {{ locale.total }} translations
+                            {{ locale.name }}: {{ locale.total }}
                         </p>
                         <small>
                             missing: {{ stats.total_strings - locale.total }} translations
