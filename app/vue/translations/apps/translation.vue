@@ -49,15 +49,35 @@ export default {
             selection: { module: null, bucket: null },
             strings: {},
             searchString: null,
-            options: {}
+            options: {},
+            pagination: {
+                per_page: 10,
+                total_count: 0,
+                current_page: 1,
+                range_before: 3,
+                range_after: 3,
+            }
         }
+    },
+    beforeDestroy(){
+        this.deleteSubscriptions()
     },
     mounted() {
         this.getModules()
         this.getRelevantTranslations()
         this.getOptions()
+        this.setSubscriptions()
     },
     methods: {
+        deleteSubscriptions(){
+            this.bus.$off('post:/babel/translation/strings.json')
+        },
+
+        setSubscriptions(){
+            this.bus.subscribe('post:/babel/translation/strings.json', () => {
+                this.reloadData()
+            })
+        },
 
         getModules() {
             this.http.get("/babel/translation/modules.json").then(result => {
@@ -70,8 +90,9 @@ export default {
 
         getRelevantTranslations() {
             this.missingTranslations= {}
-            this.http.get("/babel/translation/strings.json?perPage=100").then(result => {
+            this.http.get(`/babel/translation/strings.json?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`).then(result => {
                 this.strings = result.data
+                this.setTotalCount(result.data.pagination.count_total)
             }).catch(error => {
                 console.log(error)
             })
@@ -109,6 +130,7 @@ export default {
 
             this.http.get("/babel/translation/search.json?search_string="+search).then(result => {
                 this.strings = result.data
+                this.setTotalCount(result.data.pagination.count_total)
             }).catch(error => {
                 console.log(error)
             })
@@ -116,7 +138,6 @@ export default {
         },
 
         getBucketStrings() {
-
             this.strings = {}
             this.loading = true
 
@@ -128,13 +149,12 @@ export default {
                 url = `/babel/translation/modules/${this.selection.module.id}/buckets/${this.selection.bucket.id}/strings.json`
             }
 
-            //url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
+            url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
 
             this.http.get(url).then(result => {
-                console.log(result)
                 if (!result.successful) return 
                 this.strings = result.data
-                //this.pagination.count = result.data.total ? result.data.total : 0
+                this.setTotalCount(result.data.pagination.count_total)
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -171,6 +191,20 @@ export default {
 
         getDownloadTranslation() {
             
+        },
+
+        reloadData(){
+            if (this.selection.module) {
+                this.getBucketStrings()
+            } else {
+                this.getRelevantTranslations()
+            }
+        },
+        
+        setTotalCount(count_total){
+            this.pagination.total_count = count_total ? 
+                            count_total : 
+                            0
         }
 
     },
@@ -186,8 +220,15 @@ export default {
         "selection.bucket": function() {
             this.bucket = this.selection.bucket
             this.getBucketStrings()
-        }
+        },
 
+        'pagination.current_page'(){
+            this.reloadData()
+        },
+
+        'pagination.per_page'(){
+            this.reloadData()
+        }
     }
 }
 </script>
@@ -228,6 +269,16 @@ export default {
         </component-header>
 
         <component-toolbar @search="getSearch">
+            <div class="control">
+                <div class="select">
+                    <select v-model="pagination.per_page">
+                        <option :value="10">10</option>
+                        <option :value="15">15</option>
+                        <option :value="30">30</option>
+                        <option :value="50">50</option>
+                    </select>
+                </div>
+            </div>
         </component-toolbar>
 
         <!-- Module/bucket selector -->
@@ -275,7 +326,8 @@ export default {
         <br>
         <component-form-label-editor 
             :strings="strings"
-            :options="options">
+            :options="options"
+            :pagination="pagination">
         </component-form-label-editor>
         
         <component-data-loading class="section" v-if="loading"></component-data-loading>
