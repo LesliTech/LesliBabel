@@ -81,7 +81,7 @@ module CloudBabel
             end
 
             if @translation_string.update(translation_string_params)
-                @translation_string.update_attribute(:help_needed, false)
+                @translation_string.update_attribute(:need_help, false)
                 respond_with_successful(@translation_string)
             else
                 respond_with_error("Error on update translation string", @translation_object_group_section_label.errors)
@@ -131,8 +131,8 @@ module CloudBabel
                 :status,
                 :context,
                 :priority,
-                :help_needed,
-                :help_translation,
+                :need_help,
+                :need_translation,
                 :cloud_babel_translation_buckets_id,
                 Rails.application.config.lesli_settings["configuration"]["locales"]
             )
