@@ -24,7 +24,6 @@ module CloudBabel
                 sql_where_condition.push("need_translation = TRUE")
 
                 strings = TranslationsService.strings().where(sql_where_condition.join(" OR "))
-
             end
 
             # returns strings for specif module with optional bucket

@@ -68,7 +68,6 @@ export default {
                 'view_toolbar_filter_placeholder',
                 'view_toolbar_search_by_placeholder',
 
-
             ],
             timeout: null,
             loading: false,
@@ -90,6 +89,8 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+
+            this.bus.publish('post:/babel/translation/strings.json')
         }
 
     }
