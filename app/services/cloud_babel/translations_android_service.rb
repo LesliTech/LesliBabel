@@ -1,7 +1,9 @@
 module CloudBabel
     class TranslationsAndroidService
 
-        def self.build 
+        def self.build(engine_id = nil)
+
+            translation_folder_path = Rails.root.join("public", "tmp", "locales")
 
             # get all rails engines
             engines = Translation::Module.where(:module_type => "android").map do |engine|
@@ -24,9 +26,8 @@ module CloudBabel
 
                 available_locales.each do |lang|
 
-                    file_path = Rails.root.join(
-                        "public", "tmp", "locales", engine_name, 
-                        "values-#{lang}", "#{ bucket_name.gsub("/","_") }.xml"
+                    file_path = translation_folder_path.join(
+                        engine_name, "values-#{lang}", "#{ bucket_name.gsub("/","_") }.xml"
                     )
 
                     file_id = file_path.to_s
@@ -47,10 +48,14 @@ module CloudBabel
 
             end
 
+            translation_files = []
+
             translations.each do |translation|
 
                 file_path = translation[0]
                 strings = translation[1]
+
+                translation_files.push(file_path)
 
                 # creates folder and subfolders
                 FileUtils.makedirs(File.dirname(file_path))
@@ -69,7 +74,7 @@ module CloudBabel
 
             end
 
-            LC::Response.service true, translations
+            LC::Response.service true, translation_files
 
         end
 

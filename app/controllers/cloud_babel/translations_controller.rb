@@ -100,6 +100,20 @@ module CloudBabel
             respond_with_error if not result.success?
         end
 
+        def download
+
+            engine = params[:engine_id]
+            platform = params[:platform]
+
+            
+            translations_result = TranslationsAndroidService.build(engine) if platform == "android" #).payload 
+
+            LC::System::IO.zip("translations.zip", translations_path)
+
+            redirect_to "/tmp/translations.zip"
+
+        end
+
         private
 
         # Use callbacks to share common setup or constraints between actions.
