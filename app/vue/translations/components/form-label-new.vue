@@ -42,31 +42,32 @@ export default {
             label: "",
             labelPrefix: "view_text",
             prefixes: [
-                'mailer',
+                'activity_description',
+
                 'column',
                 'column_enum',
 
-                'view',
-                'view_title',
-
-                'view_toolbar_filter',
-                'view_toolbar_filter_placeholder',
-                'view_toolbar_search_by_placeholder',
-
-                'view_table_header',
-                'view_table_action',
-                'view_placeholder',
-                'view_btn',
-                'view_tab_title',
-                'view_text',
-                'view_chart_title',
-
+                'mailer',
                 'messages_success',
                 'messages_info',
                 'messages_warning',
                 'messages_danger',
 
-                'activity_description'
+                'sidebar_nav',
+
+                'view',
+                'view_btn',
+                'view_chart_title',
+                'view_placeholder',
+                'view_tab_title',
+                'view_table_action',
+                'view_table_header',
+                'view_text',
+                'view_title',
+                'view_toolbar_filter',
+                'view_toolbar_filter_placeholder',
+                'view_toolbar_search_by_placeholder',
+
             ],
             timeout: null,
             loading: false,
@@ -88,6 +89,8 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+
+            this.bus.publish('post:/babel/translation/strings.json')
         }
 
     }

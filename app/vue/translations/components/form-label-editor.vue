@@ -1,8 +1,15 @@
 <script>
 export default {
     props: {
-        strings: {},
-        options: {}
+        strings: {
+            required: true
+        },
+        options: {
+            required: true
+        },
+        pagination: {
+            required: true
+        }
     },
     data() {
         return {
@@ -39,9 +46,9 @@ export default {
         putTranslationStringNeedHelp(string) {
             this.http.put(`/babel/translation/strings/${string.id}/resources/need-help.json`, {
             }).then(result => {
-                string.help_needed = ! string.help_needed
+                string.need_help = ! string.need_help
 
-                if(string.help_needed){
+                if(string.need_help){
                     this.alert("Help requested successfully", "success" )
                 }else{
                     this.alert("Help request cleared", "success" )
@@ -54,9 +61,9 @@ export default {
         putTranslationStringNeedTranslation(string) {
             this.http.put(`/babel/translation/strings/${string.id}/resources/need-translation.json`, {
             }).then(result => {
-                string.help_translation = ! string.help_translation
+                string.need_translation = ! string.need_translation
 
-                if(string.help_translation){
+                if(string.need_translation){
                     this.alert("Translation requested successfully", "success" )
                 }else{
                     this.alert("Translation request cleared", "success" )
@@ -100,7 +107,6 @@ export default {
             return row_class.join(" ")
 
         }
-
     }
 }
 </script>
@@ -184,5 +190,22 @@ export default {
                 </div>
             </template>
         </b-table>
+        <hr>
+        <b-pagination
+            :simple="false"
+            :total="pagination.total_count"
+            :current.sync="pagination.current_page"
+            :range-before="pagination.range_before"
+            :range-after="pagination.range_after"
+            :per-page="pagination.per_page"
+            order="is-centered"
+            icon-prev="chevron-left"
+            icon-next="chevron-right"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page"
+        >
+        </b-pagination>
     </div>
 </template>
