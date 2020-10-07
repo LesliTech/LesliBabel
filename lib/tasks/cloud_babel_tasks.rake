@@ -37,12 +37,14 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do 
 
+        instance = Lesli.instance
+
         LC::System::Routes.scan.each do |t|
 
             # add object to the translation workflow
-            translation_module = CloudBabel::Translation::Module.find_or_create_by({ name: t[:module], module_type: t[:module_type] })
-            translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: t[:controller], module: translation_module, reference_module: translation_module.name })
-            translation_bucket = CloudBabel::Translation::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
+            translation_module = CloudBabel::Module.find_or_create_by({ name: t[:module], platform: t[:module_type], instance: instance })
+            translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: t[:controller], module: translation_module, reference_module: instance + "-" + translation_module.name })
+            translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: instance + "-" + translation_module.name })
 
             # send debug message
             puts "object found: #{t[:module]}/#{t[:controller]}"

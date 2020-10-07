@@ -1,0 +1,17 @@
+<%= form_with(model: module_activity, local: true) do |form| %>
+  <% if module_activity.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(module_activity.errors.count, "error") %> prohibited this module_activity from being saved:</h2>
+
+      <ul>
+        <% module_activity.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
