@@ -31,13 +31,15 @@ Building a better future, one line of code at a time.
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 import componentFormLabelNew from "../components/form-label-new.vue"
 import componentFormLabelEditor from "../components/form-label-editor.vue"
+import componentQuickView from "../components/quickview.vue"
 
 
 // · 
 export default {
     components: {
         "component-form-label-new": componentFormLabelNew,
-        "component-form-label-editor": componentFormLabelEditor
+        "component-form-label-editor": componentFormLabelEditor,
+        "component-quickview": componentQuickView
     },
     data() {
         return {
@@ -56,7 +58,9 @@ export default {
                 current_page: 1,
                 range_before: 3,
                 range_after: 3,
-            }
+            },
+            show_quickview: false,
+            selected_string_id: null
         }
     },
     beforeDestroy(){
@@ -205,6 +209,10 @@ export default {
             this.pagination.total_count = count_total ? 
                             count_total : 
                             0
+        },
+
+        quickviewToggleFunction(){
+            this.show_quickview = ! this.show_quickview
         }
 
     },
@@ -234,6 +242,12 @@ export default {
 </script>
 <template>
     <section class="application-component">
+        <component-quickview
+            :show="show_quickview"
+            :toggleFunction="quickviewToggleFunction"
+            :stringId="selected_string_id"
+        >
+        </component-quickview>
         <component-header title="Translations">
             <div class="is-grouped">
                 <button class="button" @click="postDeploy()">
@@ -324,10 +338,14 @@ export default {
             :bucket="bucket">
         </component-form-label-new>
         <br>
-        <component-form-label-editor 
+        HELLO: {{selected_string_id}}
+        <component-form-label-editor
+            :selected-string-id.sync="selected_string_id"
             :strings="strings"
             :options="options"
-            :pagination="pagination">
+            :pagination="pagination"
+            :quickview-toggle-function="quickviewToggleFunction"
+        >
         </component-form-label-editor>
         
         <component-data-loading class="section" v-if="loading"></component-data-loading>

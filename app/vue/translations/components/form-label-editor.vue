@@ -9,6 +9,12 @@ export default {
         },
         pagination: {
             required: true
+        },
+        quickviewToggleFunction: {
+            required: true
+        },
+        selectedStringId: {
+            required: true
         }
     },
     data() {
@@ -32,14 +38,26 @@ export default {
         },
 
         deleteTranslationString(string) {
-            this.http.delete(`/babel/translation/strings/${string.id}.json`, {
-            }).then(result => {
-                setTimeout(() => {
-                    this.getBucketStrings()
-                }, 1000)
-                this.alert("Translation deleted successfully", "success" )
-            }).catch(error => {
-                console.log(error)
+            window.scrollTo(0,0)
+            this.$buefy.dialog.confirm({
+                title: 'Delete String',
+                message: 'Are you sure you want to continue? This action is irreversible. If at some point you want the string back, you will have to add it manually.',
+                confirmText: 'Yes, Delete it',
+                cancelText: 'Cancel',
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: ()=>{
+                    this.http.delete(`/babel/translation/strings/${string.id}.json`, {
+                    }).then(result => {
+                        console.log(JSON.stringify(this.strings.records))
+                        this.strings.records = this.strings.records.filter((record)=>{
+                            return record.id != string.id
+                        })
+                        this.alert("Translation deleted successfully", "success" )
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                }
             })
         },
 
@@ -86,6 +104,11 @@ export default {
             this.alert("Copied to clipboard")
         },
 
+        toggleQuickview(string){
+            this.$emit('update:selected-string-id', string.id)
+            this.quickviewToggleFunction()
+        },
+
         getRowClass(row) {
 
             var row_class = []
@@ -112,100 +135,117 @@ export default {
 </script>
 <template>
     <div class="card table-container">
-        <b-table 
-            detailed 
-            detail-key="id" 
-            :data="strings.records"
-            :show-detail-icon="true"
-            :row-class="getRowClass">
-            <template v-slot="props">
-                <b-table-column field="label" label="Label">
-                    <button 
-                        class="button is-text is-paddingless" 
-                        @click="sendToClipboard(props.row.label)">
-                        {{ props.row.label }}
-                    </button>
-                </b-table-column>
-                <b-table-column 
-                    v-for="(locale_name, locale_code) in options.locales_available" 
-                    :key="locale_code" 
-                    :field="locale_code" 
-                    :label="locale_name" 
-                    sortable>
-                    <input 
-                        type="text" 
-                        class="input" 
-                        v-model="props.row[locale_code]"
-                        v-on:input="patchTranslationString(props.row)"
-                    />
-                </b-table-column>
-            </template>
-            <template slot="detail" slot-scope="props">
-                <div class="columns">
-                    <div class="column is-10">
-                        <div class="field">
-                            <label class="label">Context</label>
-                            <div class="control">
-                                <input 
-                                    type="text" 
-                                    class="input" 
-                                    v-model="props.row.context"
-                                    v-on:input="patchTranslationString(props.row)">
-                                <small @click="sendToClipboard(props.row.path)"><i>path:</i>{{ props.row.path }}</small>
+        <div class="card-body">
+            <b-table 
+                detailed 
+                detail-key="id" 
+                :data="strings.records"
+                :show-detail-icon="true"
+                :row-class="getRowClass">
+                <template v-slot="props">
+                    <b-table-column field="label" label="Label">
+                        <button 
+                            class="button is-text is-paddingless" 
+                            @click="sendToClipboard(props.row.label)">
+                            {{ props.row.label }}
+                        </button>
+                    </b-table-column>
+                    <b-table-column 
+                        v-for="(locale_name, locale_code) in options.locales_available" 
+                        :key="locale_code" 
+                        :field="locale_code" 
+                        :label="locale_name" 
+                        sortable>
+                        <input 
+                            type="text" 
+                            class="input" 
+                            v-model="props.row[locale_code]"
+                            v-on:input="patchTranslationString(props.row)"
+                        />
+                    </b-table-column>
+                </template>
+                <template slot="detail" slot-scope="props">
+                    <div class="columns">
+                        <div class="column is-10">
+                            <div class="field">
+                                <label class="label">Context</label>
+                                <div class="control">
+                                    <input 
+                                        type="text" 
+                                        class="input" 
+                                        v-model="props.row.context"
+                                        v-on:input="patchTranslationString(props.row)">
+                                    <small @click="sendToClipboard(props.row.path)"><i>path:</i>{{ props.row.path }}</small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="column is-2 has-text-center">
-                        <div class="field">
-                            <label class="label">Options</label>
-                            <div class="control has-text-center">
-                                <div class="buttons">
-                                    <button 
-                                        :class="['button', 'is-warning', {'is-outlined': !props.row.need_help}]" 
-                                        @click="putTranslationStringNeedHelp(props.row)">
-                                        <b-tooltip label="Need help">?</b-tooltip>
-                                    </button>
-                                    <button 
-                                        :class="['button', 'is-info', {'is-outlined': !props.row.need_translation}]" 
-                                        @click="putTranslationStringNeedTranslation(props.row)">
-                                        <b-tooltip label="Need translation">
-                                            <span class="icon">
-                                                <i class="fas fa-language"></i>
-                                            </span>
-                                        </b-tooltip>
-                                    </button>
-                                    <button 
-                                        class="button is-danger" 
-                                        @click="deleteTranslationString(props.row)">
-                                        <b-tooltip label="Delete label" type="is-danger">
-                                            <span class="icon">
-                                                <i class="far fa-trash-alt"></i>
-                                            </span>
-                                        </b-tooltip>
-                                    </button>
+                        <div class="column is-2 has-text-center">
+                            <div class="field">
+                                <label class="label">Options</label>
+                                <div class="control has-text-center">
+                                    <div class="buttons">
+                                        <button 
+                                            :class="['button', 'is-warning', {'is-outlined': !props.row.need_help}]" 
+                                            @click="putTranslationStringNeedHelp(props.row)">
+                                            <b-tooltip label="Need help" type="is-warning">
+                                                <span class="icon">
+                                                    <i class="fas fa-question-circle"></i>
+                                                </span>
+                                            </b-tooltip>
+                                        </button>
+                                        <button 
+                                            :class="['button', 'is-info', {'is-outlined': !props.row.need_translation}]" 
+                                            @click="putTranslationStringNeedTranslation(props.row)">
+                                            <b-tooltip label="Need translation">
+                                                <span class="icon">
+                                                    <i class="fas fa-language"></i>
+                                                </span>
+                                            </b-tooltip>
+                                        </button>
+                                        <button 
+                                            :class="['button', {'is-outlined': !props.row.need_help}]" 
+                                            @click="toggleQuickview(props.row)"
+                                        >
+                                            <b-tooltip label="Open Discussions/Activities" type="is-white">
+                                                <span class="icon">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </span>
+                                            </b-tooltip>
+                                        </button>
+                                        <button 
+                                            class="button is-danger is-pulled-right" 
+                                            @click="deleteTranslationString(props.row)">
+                                            <b-tooltip label="Delete label" type="is-danger">
+                                                <span class="icon">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </span>
+                                            </b-tooltip>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </template>
-        </b-table>
-        <hr>
-        <b-pagination
-            :simple="false"
-            :total="pagination.total_count"
-            :current.sync="pagination.current_page"
-            :range-before="pagination.range_before"
-            :range-after="pagination.range_after"
-            :per-page="pagination.per_page"
-            order="is-centered"
-            icon-prev="chevron-left"
-            icon-next="chevron-right"
-            aria-next-label="Next page"
-            aria-previous-label="Previous page"
-            aria-page-label="Page"
-            aria-current-label="Current page"
-        >
-        </b-pagination>
+                </template>
+            </b-table>
+            <hr>
+            <b-pagination
+                :simple="false"
+                :total="pagination.total_count"
+                :current.sync="pagination.current_page"
+                :range-before="pagination.range_before"
+                :range-after="pagination.range_after"
+                :per-page="pagination.per_page"
+                order="is-centered"
+                icon-prev="chevron-left"
+                icon-next="chevron-right"
+                aria-next-label="Next page"
+                aria-previous-label="Previous page"
+                aria-page-label="Page"
+                aria-current-label="Current page"
+            >
+            </b-pagination>
+            <br>
+        </div>
     </div>
 </template>
