@@ -27,7 +27,7 @@ module CloudBabel
 
         # GET /translations
         def index
-            @translations = Translation.all
+            #@translations = Translation.all
         end
 
         # GET /translations/1

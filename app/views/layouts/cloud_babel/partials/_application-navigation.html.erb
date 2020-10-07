@@ -4,10 +4,12 @@
         <i class="fas fa-tachometer-alt"></i>
         <span>Dashboard</span>
     <% end %>
-    <%= nav_link(translation_path) do %>
+
+    <%= nav_link(translations_path) do %>
         <i class="fas fa-language"></i>
         <span>Translations</span>
     <% end %>
+    
     <%= nav_link(modules_path) do %>
         <i class="fas fa-laptop"></i>
         <span>Modules &amp; devices</span>
@@ -15,7 +17,7 @@
 
     <p class="menu-label">Modules</p>
 
-    <% CloudBabel::Translation::Module.all.each do |engine| %>
+    <% CloudBabel::Module.all.each do |engine| %>
         <%= nav_link(modules_path + "/" + engine.id.to_s) do %>
             <i class="far fa-folder-open"></i>
             <span><%= engine.name.gsub("Cloud", "") %></span>

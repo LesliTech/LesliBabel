@@ -22,13 +22,54 @@ export default {
             locales_available: {}
         }
     },
+    mounted() {
+        document.addEventListener("keyup", this.nextItem);
+    },
     methods: {
+
+        nextItem (e) {
+
+            e = e || window.event;
+
+            if (!e.target.dataset.column_id) {
+                return
+            }
+
+            let column_id = e.target.dataset.column_id
+            let row_id = e.target.dataset.row_id
+
+            if (e.keyCode == '38') {
+                // up arrow
+                column_id--
+            }
+            else if (e.keyCode == '40') {
+                // down arrow
+                column_id++
+            }
+            else if (e.keyCode == '37') {
+                // left arrow
+                row_id--
+            }
+            else if (e.keyCode == '39') {
+                // right arrow
+                row_id++
+            }
+
+            let ref_input = `input-${column_id}-${row_id}`
+
+            if (!this.$refs[ref_input]) {
+                return
+            }
+
+            this.$refs[ref_input][0].focus()
+
+        },
 
         patchTranslationString(string) {
             clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
-                this.http.patch(`/babel/translation/strings/${string.id}.json`, {
-                    translation_string: string
+                this.http.patch(`/babel/strings/${string.id}.json`, {
+                    string: string
                 }).then(result => {
                     this.alert("Translation updated successfully", "success" )
                 }).catch(error => {
@@ -135,48 +176,51 @@ export default {
 </script>
 <template>
     <div class="card table-container">
-        <div class="card-body">
-            <b-table 
-                detailed 
-                detail-key="id" 
-                :data="strings.records"
-                :show-detail-icon="true"
-                :row-class="getRowClass">
-                <template v-slot="props">
-                    <b-table-column field="label" label="Label">
-                        <button 
-                            class="button is-text is-paddingless" 
-                            @click="sendToClipboard(props.row.label)">
-                            {{ props.row.label }}
-                        </button>
-                    </b-table-column>
-                    <b-table-column 
-                        v-for="(locale_name, locale_code) in options.locales_available" 
-                        :key="locale_code" 
-                        :field="locale_code" 
-                        :label="locale_name" 
-                        sortable>
-                        <input 
-                            type="text" 
-                            class="input" 
-                            v-model="props.row[locale_code]"
-                            v-on:input="patchTranslationString(props.row)"
-                        />
-                    </b-table-column>
-                </template>
-                <template slot="detail" slot-scope="props">
-                    <div class="columns">
-                        <div class="column is-10">
-                            <div class="field">
-                                <label class="label">Context</label>
-                                <div class="control">
-                                    <input 
-                                        type="text" 
-                                        class="input" 
-                                        v-model="props.row.context"
-                                        v-on:input="patchTranslationString(props.row)">
-                                    <small @click="sendToClipboard(props.row.path)"><i>path:</i>{{ props.row.path }}</small>
-                                </div>
+        <b-table 
+            detailed 
+            detail-key="id" 
+            :data="strings.records"
+            :show-detail-icon="true"
+            :row-class="getRowClass">
+            <template v-slot="props">
+                <b-table-column field="label" label="Label">
+                    <button 
+                        class="button is-text is-paddingless" 
+                        @click="sendToClipboard(props.row.label)">
+                        {{ props.row.label }}
+                    </button>
+                </b-table-column>
+                <b-table-column 
+                    v-for="(locale_name, locale_code, index) in options.locales_available" 
+                    :key="locale_code" 
+                    :field="locale_code" 
+                    :label="locale_name" 
+                    sortable>
+                    <input 
+                        type="text" 
+                        class="input" 
+                        :tabindex="props.row.id + (strings.records.length * index)"
+                        :data-column_id="props.row.id"
+                        :data-row_id="index"
+                        :data-column_total="strings.records.length"
+                        :ref="`input-${props.row.id}-${index}`"
+                        v-model="props.row[locale_code]"
+                        v-on:input="patchTranslationString(props.row)"
+                    />
+                </b-table-column>
+            </template>
+            <template slot="detail" slot-scope="props">
+                <div class="columns">
+                    <div class="column is-10">
+                        <div class="field">
+                            <label class="label">Context</label>
+                            <div class="control">
+                                <input 
+                                    type="text" 
+                                    class="input" 
+                                    v-model="props.row.context"
+                                    v-on:input="patchTranslationString(props.row)">
+                                <small @click="sendToClipboard(props.row.path)"><i>path:</i>{{ props.row.path }}</small>
                             </div>
                         </div>
                         <div class="column is-2 has-text-center">
@@ -226,9 +270,11 @@ export default {
                             </div>
                         </div>
                     </div>
-                </template>
-            </b-table>
-            <hr>
+                </div>
+            </template>
+        </b-table>
+        <hr>
+        <section class="container pb-5">
             <b-pagination
                 :simple="false"
                 :total="pagination.total_count"
@@ -245,7 +291,6 @@ export default {
                 aria-current-label="Current page"
             >
             </b-pagination>
-            <br>
-        </div>
+        </section>
     </div>
 </template>

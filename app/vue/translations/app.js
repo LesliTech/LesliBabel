@@ -26,7 +26,7 @@ Building a better future, one line of code at a time.
 
 // · Import main app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import app from 'LesliCoreVue/app'
+import app from 'LesliVue/app'
 
 
 // · Import apps and components
@@ -36,7 +36,7 @@ import appTranslation from './apps/translation.vue'
 
 // · Cloud app
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-app("CloudBabel", "[index]", "/babel/translation", [{
+app("CloudBabel", "[index]", "/babel/translations", [{
     path: '/',
     component: appTranslation,
 }])
