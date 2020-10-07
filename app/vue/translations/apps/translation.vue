@@ -340,7 +340,6 @@ export default {
             :bucket="bucket">
         </component-form-label-new>
         <br>
-        HELLO: {{selected_string_id}}
         <component-form-label-editor
             :selected-string-id.sync="selected_string_id"
             :strings="strings"

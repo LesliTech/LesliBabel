@@ -34,6 +34,10 @@ CloudBabel::Engine.routes.draw do
                 get  :stats
             end
         end
+        scope module: :string do
+            resources :discussions
+            resources :activities
+        end
     end
 
     resources :translations, only: [:index] do 

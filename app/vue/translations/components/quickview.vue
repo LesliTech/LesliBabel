@@ -76,7 +76,7 @@ export default {
                 <b-tab-item label="translations.core.text_comments">
                     <component-cloud-object-discussion-simple
                         v-if="stringId"
-                        cloud-module="babel/translation/string" 
+                        cloud-module="babel/string" 
                         :cloud-id="stringId" 
                         translations-path="deutscheleibrenten.shared"
                     />
@@ -84,7 +84,7 @@ export default {
                 <b-tab-item label="translations.core.text_activities">
                     <component-cloud-object-activity-simple
                         v-if="stringId" 
-                        cloud-module="babel/translation/string" 
+                        cloud-module="babel/string" 
                         :cloud-id="stringId"
                     />
                 </b-tab-item>

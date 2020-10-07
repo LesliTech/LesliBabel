@@ -1,5 +1,5 @@
 module CloudBabel
-    class String < ApplicationRecord
+    class String < CloudObject::Base
         belongs_to :user, foreign_key: "users_id", optional: true
         belongs_to :bucket, foreign_key: "cloud_babel_buckets_id"
 

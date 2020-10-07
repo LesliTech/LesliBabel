@@ -223,49 +223,49 @@ export default {
                                 <small @click="sendToClipboard(props.row.path)"><i>path:</i>{{ props.row.path }}</small>
                             </div>
                         </div>
-                        <div class="column is-2 has-text-center">
-                            <div class="field">
-                                <label class="label">Options</label>
-                                <div class="control has-text-center">
-                                    <div class="buttons">
-                                        <button 
-                                            :class="['button', 'is-warning', {'is-outlined': !props.row.need_help}]" 
-                                            @click="putTranslationStringNeedHelp(props.row)">
-                                            <b-tooltip label="Need help" type="is-warning">
-                                                <span class="icon">
-                                                    <i class="fas fa-question-circle"></i>
-                                                </span>
-                                            </b-tooltip>
-                                        </button>
-                                        <button 
-                                            :class="['button', 'is-info', {'is-outlined': !props.row.need_translation}]" 
-                                            @click="putTranslationStringNeedTranslation(props.row)">
-                                            <b-tooltip label="Need translation">
-                                                <span class="icon">
-                                                    <i class="fas fa-language"></i>
-                                                </span>
-                                            </b-tooltip>
-                                        </button>
-                                        <button 
-                                            :class="['button', {'is-outlined': !props.row.need_help}]" 
-                                            @click="toggleQuickview(props.row)"
-                                        >
-                                            <b-tooltip label="Open Discussions/Activities" type="is-white">
-                                                <span class="icon">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </span>
-                                            </b-tooltip>
-                                        </button>
-                                        <button 
-                                            class="button is-danger is-pulled-right" 
-                                            @click="deleteTranslationString(props.row)">
-                                            <b-tooltip label="Delete label" type="is-danger">
-                                                <span class="icon">
-                                                    <i class="far fa-trash-alt"></i>
-                                                </span>
-                                            </b-tooltip>
-                                        </button>
-                                    </div>
+                    </div>
+                    <div class="column is-2 has-text-center">
+                        <div class="field">
+                            <label class="label">Options</label>
+                            <div class="control has-text-center">
+                                <div class="buttons">
+                                    <button 
+                                        :class="['button', 'is-warning', {'is-outlined': !props.row.need_help}]" 
+                                        @click="putTranslationStringNeedHelp(props.row)">
+                                        <b-tooltip label="Need help" type="is-warning">
+                                            <span class="icon">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </b-tooltip>
+                                    </button>
+                                    <button 
+                                        :class="['button', 'is-info', {'is-outlined': !props.row.need_translation}]" 
+                                        @click="putTranslationStringNeedTranslation(props.row)">
+                                        <b-tooltip label="Need translation">
+                                            <span class="icon">
+                                                <i class="fas fa-language"></i>
+                                            </span>
+                                        </b-tooltip>
+                                    </button>
+                                    <button 
+                                        :class="['button', {'is-outlined': !props.row.need_help}]" 
+                                        @click="toggleQuickview(props.row)"
+                                    >
+                                        <b-tooltip label="Open Discussions/Activities" type="is-white">
+                                            <span class="icon">
+                                                <i class="fas fa-info-circle"></i>
+                                            </span>
+                                        </b-tooltip>
+                                    </button>
+                                    <button 
+                                        class="button is-danger is-pulled-right" 
+                                        @click="deleteTranslationString(props.row)">
+                                        <b-tooltip label="Delete label" type="is-danger">
+                                            <span class="icon">
+                                                <i class="far fa-trash-alt"></i>
+                                            </span>
+                                        </b-tooltip>
+                                    </button>
                                 </div>
                             </div>
                         </div>
