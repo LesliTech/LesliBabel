@@ -16,13 +16,54 @@ export default {
             locales_available: {}
         }
     },
+    mounted() {
+        document.addEventListener("keyup", this.nextItem);
+    },
     methods: {
+
+        nextItem (e) {
+
+            e = e || window.event;
+
+            if (!e.target.dataset.column_id) {
+                return
+            }
+
+            let column_id = e.target.dataset.column_id
+            let row_id = e.target.dataset.row_id
+
+            if (e.keyCode == '38') {
+                // up arrow
+                column_id--
+            }
+            else if (e.keyCode == '40') {
+                // down arrow
+                column_id++
+            }
+            else if (e.keyCode == '37') {
+                // left arrow
+                row_id--
+            }
+            else if (e.keyCode == '39') {
+                // right arrow
+                row_id++
+            }
+
+            let ref_input = `input-${column_id}-${row_id}`
+
+            if (!this.$refs[ref_input]) {
+                return
+            }
+
+            this.$refs[ref_input][0].focus()
+
+        },
 
         patchTranslationString(string) {
             clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
-                this.http.patch(`/babel/translation/strings/${string.id}.json`, {
-                    translation_string: string
+                this.http.patch(`/babel/strings/${string.id}.json`, {
+                    string: string
                 }).then(result => {
                     this.alert("Translation updated successfully", "success" )
                 }).catch(error => {
@@ -127,7 +168,7 @@ export default {
                     </button>
                 </b-table-column>
                 <b-table-column 
-                    v-for="(locale_name, locale_code) in options.locales_available" 
+                    v-for="(locale_name, locale_code, index) in options.locales_available" 
                     :key="locale_code" 
                     :field="locale_code" 
                     :label="locale_name" 
@@ -135,6 +176,11 @@ export default {
                     <input 
                         type="text" 
                         class="input" 
+                        :tabindex="props.row.id + (strings.records.length * index)"
+                        :data-column_id="props.row.id"
+                        :data-row_id="index"
+                        :data-column_total="strings.records.length"
+                        :ref="`input-${props.row.id}-${index}`"
                         v-model="props.row[locale_code]"
                         v-on:input="patchTranslationString(props.row)"
                     />
@@ -191,21 +237,23 @@ export default {
             </template>
         </b-table>
         <hr>
-        <b-pagination
-            :simple="false"
-            :total="pagination.total_count"
-            :current.sync="pagination.current_page"
-            :range-before="pagination.range_before"
-            :range-after="pagination.range_after"
-            :per-page="pagination.per_page"
-            order="is-centered"
-            icon-prev="chevron-left"
-            icon-next="chevron-right"
-            aria-next-label="Next page"
-            aria-previous-label="Previous page"
-            aria-page-label="Page"
-            aria-current-label="Current page"
-        >
-        </b-pagination>
+        <section class="container pb-5">
+            <b-pagination
+                :simple="false"
+                :total="pagination.total_count"
+                :current.sync="pagination.current_page"
+                :range-before="pagination.range_before"
+                :range-after="pagination.range_after"
+                :per-page="pagination.per_page"
+                order="is-centered"
+                icon-prev="chevron-left"
+                icon-next="chevron-right"
+                aria-next-label="Next page"
+                aria-previous-label="Previous page"
+                aria-page-label="Page"
+                aria-current-label="Current page"
+            >
+            </b-pagination>
+        </section>
     </div>
 </template>

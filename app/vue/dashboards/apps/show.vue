@@ -34,7 +34,7 @@ export default {
     methods: {
 
         getStats() {
-            this.http.get("/babel/translation/resources/stats").then(result => {
+            this.http.get("/babel/strings/resources/stats").then(result => {
                 if (result.successful) {
                     this.stats = result.data
                 }else{

@@ -64,7 +64,7 @@ export default {
     },
     mounted() {
         this.getModules()
-        this.getRelevantTranslations()
+        this.getRelevantStrings()
         this.getOptions()
         this.setSubscriptions()
     },
@@ -80,7 +80,7 @@ export default {
         },
 
         getModules() {
-            this.http.get("/babel/translation/modules.json").then(result => {
+            this.http.get("/babel/modules.json").then(result => {
                 if (!result.successful) return 
                 this.modules = result.data
             }).catch(error => {
@@ -88,9 +88,18 @@ export default {
             })
         },
 
-        getRelevantTranslations() {
+        getModuleBuckets() {
+            this.http.get(`/babel/modules/${this.selection.module.id}/buckets.json`).then(result => {
+                if (!result.successful) return 
+                this.moduleBuckets = result.data
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+
+        getRelevantStrings() {
             this.missingTranslations= {}
-            this.http.get(`/babel/translation/strings.json?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`).then(result => {
+            this.http.get(`/babel/strings.json?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`).then(result => {
                 this.strings = result.data
                 this.setTotalCount(result.data.pagination.count_total)
             }).catch(error => {
@@ -99,24 +108,41 @@ export default {
 
         },
 
+        getModuleBucketStrings() {
+            this.strings = {}
+            this.loading = true
+
+            // get strings for module (default)
+            let url = `/babel/modules/${this.selection.module.id}/strings.json`
+
+            // if user selects bucket
+            if (this.bucket.id) {
+                url = `/babel/modules/${this.selection.module.id}/buckets/${this.selection.bucket.id}/strings.json`
+            }
+
+            url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
+
+            this.http.get(url).then(result => {
+                if (!result.successful) return 
+                this.strings = result.data
+                this.setTotalCount(result.data.pagination.count_total)
+            }).catch(error => {
+                console.error(error)
+            }).finally(() => {
+                this.loading = false
+            })
+           
+        },
+
         getOptions() {
 
             this.options = {}
-            this.http.get("/babel/translation/options.json").then(result => {
+            this.http.get("/babel/translations/options.json").then(result => {
                 this.options = result.data
             }).catch(error => {
                 console.log(error)
             })
 
-        },
-
-        getModuleBuckets() {
-            this.http.get(`/babel/translation/modules/${this.selection.module.id}/buckets.json`).then(result => {
-                if (!result.successful) return 
-                this.moduleBuckets = result.data
-            }).catch(error => {
-                console.log(error)
-            })
         },
 
         getSearch(search) {
@@ -137,31 +163,7 @@ export default {
 
         },
 
-        getBucketStrings() {
-            this.strings = {}
-            this.loading = true
 
-            // get strings for module (default)
-            let url = `/babel/translation/modules/${this.selection.module.id}/strings.json`
-
-            // if user selects bucket
-            if (this.bucket.id) {
-                url = `/babel/translation/modules/${this.selection.module.id}/buckets/${this.selection.bucket.id}/strings.json`
-            }
-
-            url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
-
-            this.http.get(url).then(result => {
-                if (!result.successful) return 
-                this.strings = result.data
-                this.setTotalCount(result.data.pagination.count_total)
-            }).catch(error => {
-                console.error(error)
-            }).finally(() => {
-                this.loading = false
-            })
-           
-        },
 
         postSync() {
             this.loading = true
@@ -195,7 +197,7 @@ export default {
 
         reloadData(){
             if (this.selection.module) {
-                this.getBucketStrings()
+                this.getModelBucketStrings()
             } else {
                 this.getRelevantTranslations()
             }
@@ -219,7 +221,7 @@ export default {
         // triggers after Select object
         "selection.bucket": function() {
             this.bucket = this.selection.bucket
-            this.getBucketStrings()
+            this.getModuleBucketStrings()
         },
 
         'pagination.current_page'(){

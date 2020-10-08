@@ -76,14 +76,17 @@ export default {
     methods: {
 
         postTranslationString() {
-            this.http.post('/babel/translation/strings.json', {
-                translation_string: {
+            this.http.post('/babel/strings.json', {
+                string: {
+                    cloud_babel_buckets_id: this.bucket.id,
                     context: '',
-                    label: this.labelPrefix + "_" + this.label,
-                    cloud_babel_translation_buckets_id: this.bucket.id
+                    label: this.labelPrefix + "_" + this.label
                 }
             }).then(result => {
-                if (!result) this.alert("Error adding label", "danger")
+                if (!result) {
+                    this.alert("Error adding label", "danger")
+                    return
+                }
                 this.alert("Label successfully added", "success")
                 this.label = ''
             }).catch(error => {
