@@ -8,8 +8,11 @@ class CreateCloudBabelStringActivities < ActiveRecord::Migration[6.0]
                     column["name"].parameterize.underscore.to_sym
                 )
             end
+
+            t.text :reference_module_bucket_string
             t.timestamps
         end
+        add_index :cloud_babel_string_activities, :reference_module_bucket_string, name: :babel_string_activities_module_bucket_string
         add_reference :cloud_babel_string_activities, :cloud_babel_strings, foreign_key: true, index: { name: "babel_string_activities_strings"}
     end
 end

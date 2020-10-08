@@ -9,6 +9,12 @@ export default {
         },
         pagination: {
             required: true
+        },
+        quickviewToggleFunction: {
+            required: true
+        },
+        selectedStringId: {
+            required: true
         }
     },
     data() {
@@ -73,19 +79,34 @@ export default {
         },
 
         deleteTranslationString(string) {
-            this.http.delete(`/babel/translation/strings/${string.id}.json`, {
-            }).then(result => {
-                setTimeout(() => {
-                    this.getBucketStrings()
-                }, 1000)
-                this.alert("Translation deleted successfully", "success" )
-            }).catch(error => {
-                console.log(error)
+            window.scrollTo(0,0)
+            this.$buefy.dialog.confirm({
+                title: 'Delete String',
+                message: 'Are you sure you want to continue? This action is irreversible. If at some point you want the string back, you will have to add it manually.',
+                confirmText: 'Yes, Delete it',
+                cancelText: 'Cancel',
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: ()=>{
+                    this.http.delete(`/babel/strings/${string.id}.json`, {
+                    }).then(result => {
+                        if (result.successful) {
+                            this.strings.records = this.strings.records.filter((record)=>{
+                                return record.id != string.id
+                            })
+                            this.alert("Translation deleted successfully", "success" )
+                        }else{
+                            this.alert(result.error.message,'danger')
+                        }
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                }
             })
         },
 
         putTranslationStringNeedHelp(string) {
-            this.http.put(`/babel/translation/strings/${string.id}/resources/need-help.json`, {
+            this.http.put(`/babel/strings/${string.id}/resources/need-help.json`, {
             }).then(result => {
                 string.need_help = ! string.need_help
 
@@ -100,7 +121,7 @@ export default {
         },
 
         putTranslationStringNeedTranslation(string) {
-            this.http.put(`/babel/translation/strings/${string.id}/resources/need-translation.json`, {
+            this.http.put(`/babel/strings/${string.id}/resources/need-translation.json`, {
             }).then(result => {
                 string.need_translation = ! string.need_translation
 
@@ -125,6 +146,11 @@ export default {
             document.execCommand('copy');
             document.body.removeChild(el);
             this.alert("Copied to clipboard")
+        },
+
+        toggleQuickview(string){
+            this.$emit('update:selected-string-id', string.id)
+            this.quickviewToggleFunction()
         },
 
         getRowClass(row) {
@@ -209,7 +235,11 @@ export default {
                                     <button 
                                         :class="['button', 'is-warning', {'is-outlined': !props.row.need_help}]" 
                                         @click="putTranslationStringNeedHelp(props.row)">
-                                        <b-tooltip label="Need help">?</b-tooltip>
+                                        <b-tooltip label="Need help" type="is-warning">
+                                            <span class="icon">
+                                                <i class="fas fa-question-circle"></i>
+                                            </span>
+                                        </b-tooltip>
                                     </button>
                                     <button 
                                         :class="['button', 'is-info', {'is-outlined': !props.row.need_translation}]" 
@@ -221,7 +251,17 @@ export default {
                                         </b-tooltip>
                                     </button>
                                     <button 
-                                        class="button is-danger" 
+                                        :class="['button', {'is-outlined': !props.row.need_help}]" 
+                                        @click="toggleQuickview(props.row)"
+                                    >
+                                        <b-tooltip label="Open Discussions/Activities" type="is-white">
+                                            <span class="icon">
+                                                <i class="fas fa-info-circle"></i>
+                                            </span>
+                                        </b-tooltip>
+                                    </button>
+                                    <button 
+                                        class="button is-danger is-pulled-right" 
                                         @click="deleteTranslationString(props.row)">
                                         <b-tooltip label="Delete label" type="is-danger">
                                             <span class="icon">

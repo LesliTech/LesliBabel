@@ -8,8 +8,11 @@ class CreateCloudBabelStringDiscussions < ActiveRecord::Migration[6.0]
                     column["name"].parameterize.underscore.to_sym
                 )
             end
+            
+            t.text :reference_module_bucket_string
             t.timestamps
         end
+        add_index :cloud_babel_string_discussions, :reference_module_bucket_string, name: :babel_string_discussions_module_bucket_string
         add_reference :cloud_babel_string_discussions, :users, foreign_key: true
         add_reference :cloud_babel_string_discussions, :cloud_babel_string_discussions, foreign_key: true, index: { name: "babel_string_discussions_discussions" }
         add_reference :cloud_babel_string_discussions, :cloud_babel_strings, foreign_key: true, index: { name: "babel_module_discussions_strings" }
