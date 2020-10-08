@@ -29,28 +29,32 @@ module CloudBabel
 
         # POST /strings
         def create
-            translation_string = String.new(string_params)
-            #translation_string.reference_bucket = "#{translation_string.bucket.module.name}-#{translation_string.bucket.name}"
-            #translation_string.user = current_user
+            string = String.new(string_params)
+            #string.reference_bucket = "#{string.bucket.module.name}-#{string.bucket.name}"
+            #string.user = current_user
 
-            #translation_string.last_update_status = Time.now
-            #translation_string.last_update_context = Time.now
-            #translation_string.last_update_priority = Time.now
+            #string.last_update_status = Time.now
+            #string.last_update_context = Time.now
+            #string.last_update_priority = Time.now
             Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                #translation_string["last_update_#{locale}"] = Time.now
+                #string["last_update_#{locale}"] = Time.now
             end
             
-            if translation_string.save
-                respond_with_successful(translation_string)
+            if string.save
+                String.log_activity_create(current_user, string)
+
+                respond_with_successful(string)
             else
-                respond_with_error("Error on create translation string", translation_string.errors)
+                respond_with_error("Error on create translation string", string.errors)
             end
         end
 
         # PATCH/PUT /strings/1
         def update
-
             return respond_with_not_found unless @string
+
+            # We store the original attributes
+            old_attributes = @string.attributes
 
             # if status changed
             if @string["status"] != string_params["status"]
@@ -82,6 +86,11 @@ module CloudBabel
 
             if @string.update(string_params)
                 @string.update_attribute(:need_help, false)
+
+                # We store the new attributes and compare the activities
+                new_attributes = @string.attributes
+                String.log_activity_update(current_user, @string, old_attributes, new_attributes)
+
                 respond_with_successful(@string)
             else
                 respond_with_error(@string.errors.full_sentence)
@@ -91,8 +100,15 @@ module CloudBabel
 
         # DELETE /strings/1
         def destroy
-            @string.destroy
-            redirect_to strings_url, notice: 'String was successfully destroyed.'
+            return respond_with_not_found unless @string
+
+            if @string.destroy
+                respond_with_successful
+
+                String.log_activity_destroy(current_user, @string)
+            else
+                respond_with_error(@string.errors.full_messages.to_sentence)
+            end
         end
 
         def stats

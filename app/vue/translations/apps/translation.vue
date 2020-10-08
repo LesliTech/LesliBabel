@@ -201,7 +201,7 @@ export default {
 
         reloadData(){
             if (this.selection.module) {
-                this.getModelBucketStrings()
+                this.getModuleBucketStrings()
             } else {
                 this.getRelevantTranslations()
             }

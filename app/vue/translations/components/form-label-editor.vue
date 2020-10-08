@@ -88,13 +88,16 @@ export default {
                 type: 'is-danger',
                 hasIcon: true,
                 onConfirm: ()=>{
-                    this.http.delete(`/babel/translation/strings/${string.id}.json`, {
+                    this.http.delete(`/babel/strings/${string.id}.json`, {
                     }).then(result => {
-                        console.log(JSON.stringify(this.strings.records))
-                        this.strings.records = this.strings.records.filter((record)=>{
-                            return record.id != string.id
-                        })
-                        this.alert("Translation deleted successfully", "success" )
+                        if (result.successful) {
+                            this.strings.records = this.strings.records.filter((record)=>{
+                                return record.id != string.id
+                            })
+                            this.alert("Translation deleted successfully", "success" )
+                        }else{
+                            this.alert(result.error.message,'danger')
+                        }
                     }).catch(error => {
                         console.log(error)
                     })
@@ -103,7 +106,7 @@ export default {
         },
 
         putTranslationStringNeedHelp(string) {
-            this.http.put(`/babel/translation/strings/${string.id}/resources/need-help.json`, {
+            this.http.put(`/babel/strings/${string.id}/resources/need-help.json`, {
             }).then(result => {
                 string.need_help = ! string.need_help
 
@@ -118,7 +121,7 @@ export default {
         },
 
         putTranslationStringNeedTranslation(string) {
-            this.http.put(`/babel/translation/strings/${string.id}/resources/need-translation.json`, {
+            this.http.put(`/babel/strings/${string.id}/resources/need-translation.json`, {
             }).then(result => {
                 string.need_translation = ! string.need_translation
 

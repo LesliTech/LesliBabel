@@ -68,12 +68,12 @@ export default {
 <template>
     <div :class="[{ 'is-active': show }, 'quickview', 'is-size-large']">
         <header class="quickview-header">
-            <h4 class="title">TITLE GOLES HERE</h4>
+            <h4 class="title">Discussions/Activities</h4>
             <span class="delete" @click="toggleFunction"></span>
         </header>
         <div class="quickview-body">
             <b-tabs expanded v-model="active_tab">
-                <b-tab-item label="translations.core.text_comments">
+                <b-tab-item label="Discussions">
                     <component-cloud-object-discussion-simple
                         v-if="stringId"
                         cloud-module="babel/string" 
@@ -81,7 +81,7 @@ export default {
                         translations-path="deutscheleibrenten.shared"
                     />
                 </b-tab-item>
-                <b-tab-item label="translations.core.text_activities">
+                <b-tab-item label="Activities Log">
                     <component-cloud-object-activity-simple
                         v-if="stringId" 
                         cloud-module="babel/string" 
