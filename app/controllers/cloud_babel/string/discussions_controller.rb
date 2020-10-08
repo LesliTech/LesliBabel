@@ -58,7 +58,7 @@ Building a better future, one line of code at a time.
 
         def set_string
             @string = String.where(
-                "reference_module_bucket like ?", "#{LC::System::Info.revision[:instance]}%"
+                "reference_module_bucket like ?", "#{Rails.configuration.lesli_settings["instance"]}%"
             ).find_by(
                 id: params[:string_id]
             )
@@ -69,7 +69,7 @@ Building a better future, one line of code at a time.
             return unless @string
 
             @cloud_object_discussion = @string.discussions.where(
-                "reference_module_bucket_string like ?", "#{LC::System::Info.revision[:instance]}%"
+                "reference_module_bucket_string like ?", "#{Rails.configuration.lesli_settings["instance"]}%"
             ).find_by(
                 id: params[:id]
             )

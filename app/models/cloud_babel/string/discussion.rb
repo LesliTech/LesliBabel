@@ -22,7 +22,7 @@ module CloudBabel
                 "CONCAT(UD.first_name, ' ', UD.last_name) as user_name"
             )
             .where("CO.id = #{cloud_id}")
-            .where("CO.reference_module_bucket LIKE ?", "#{LC::System::Info.revision[:instance]}%")
+            .where("CO.reference_module_bucket LIKE ?", "#{Rails.configuration.lesli_settings["instance"]}%")
             .order(id: :asc)
             .map { |discussion| 
                 discussion_attributes = discussion.attributes
