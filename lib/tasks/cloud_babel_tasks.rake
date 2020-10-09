@@ -37,7 +37,7 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do 
 
-        instance = Lesli.instance
+        instance = Rails.application.config.lesli_settings["instance"][:name]
 
         LC::System::Routes.scan.each do |t|
 
@@ -88,6 +88,16 @@ namespace :cloud_babel do
         result.payload.each do |translation|
             puts translation[0]
         end
+        puts ""; puts "";
+
+    end
+
+    desc ""
+    task sync: [:environment] do 
+
+        puts ""; puts "";
+        puts "syncing translations"
+        CloudBabel::TranslationsSynchronizationService.remote_sync
         puts ""; puts "";
 
     end

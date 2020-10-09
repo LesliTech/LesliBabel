@@ -43,6 +43,9 @@ CloudBabel::Engine.routes.draw do
     resources :translations, only: [:index] do 
         collection do
             get :options
+            scope :resources do
+                post :synchronization
+            end
         end
     end
 
