@@ -28,11 +28,15 @@ CloudBabel::Engine.routes.draw do
         end
     end
 
-    resources :strings, only: [:index, :create, :update] do 
+    resources :strings, only: [:index, :create, :update, :destroy] do 
         collection do
             scope :resources do
                 get  :stats
             end
+        end
+        scope module: :string do
+            resources :discussions
+            resources :activities
         end
     end
 

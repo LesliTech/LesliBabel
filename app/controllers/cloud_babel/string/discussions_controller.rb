@@ -1,62 +1,78 @@
 require_dependency "cloud_babel/application_controller"
 
 module CloudBabel
-  class String::DiscussionsController < ApplicationController
-    before_action :set_string_discussion, only: [:show, :edit, :update, :destroy]
+=begin
 
-    # GET /string/discussions
-    def index
-      @string_discussions = String::Discussion.all
+Lesli
+
+Copyright (c) 2020, Lesli Technologies, S. A.
+
+All the information provided by this website is protected by laws of Guatemala related 
+to industrial property, intellectual property, copyright and relative international laws. 
+Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
+rights of the code, texts, trade mark, design, pictures and any other information.
+Without the written permission of Lesli Technologies, S. A., any replication, modification,
+transmission, publication is strictly forbidden.
+For more information read the license file including with this software.
+
+LesliCloud - Your Smart Business Assistant
+
+Powered by https://www.lesli.tech
+Building a better future, one line of code at a time.
+
+@author   Carlos Hermosilla
+@license  Propietary - all rights reserved.
+@version  0.1.0-alpha
+@description Controller for the *discussions* core entities. It inherits all its functionality
+    from the *CloudObject::DiscussionsController* class
+=end
+    class String::DiscussionsController < CloudObject::DiscussionsController
+        def create
+            set_string
+            return respond_with_not_found unless @string
+
+            discussion = String::Discussion.new(
+                cloud_object_discussion_params.merge({
+                    user_creator: current_user,
+                    cloud_object: @string,
+                    reference_module_bucket_string: "#{@string.reference_module_bucket}-#{@string.label}"
+                })
+            )
+
+            if discussion.save
+                respond_with_successful(discussion.show(current_user))
+            else
+                respond_with_error(discussion.errors.full_messages.to_sentence)
+            end
+        end
+
+        private
+
+        def cloud_object_discussion_params
+            params.require(:string_discussion).permit(
+                :content,
+                :cloud_babe_discussions_id,
+                :reference_module_bucket_string
+            )
+        end
+
+        def set_string
+            @string = String.where(
+                "reference_module_bucket like ?", "#{Rails.configuration.lesli_settings["instance"]}%"
+            ).find_by(
+                id: params[:string_id]
+            )
+        end
+
+        def set_cloud_object_discussion
+            set_string
+            return unless @string
+
+            @cloud_object_discussion = @string.discussions.where(
+                "reference_module_bucket_string like ?", "#{Rails.configuration.lesli_settings["instance"]}%"
+            ).find_by(
+                id: params[:id]
+            )
+        end
     end
-
-    # GET /string/discussions/1
-    def show
-    end
-
-    # GET /string/discussions/new
-    def new
-      @string_discussion = String::Discussion.new
-    end
-
-    # GET /string/discussions/1/edit
-    def edit
-    end
-
-    # POST /string/discussions
-    def create
-      @string_discussion = String::Discussion.new(string_discussion_params)
-
-      if @string_discussion.save
-        redirect_to @string_discussion, notice: 'Discussion was successfully created.'
-      else
-        render :new
-      end
-    end
-
-    # PATCH/PUT /string/discussions/1
-    def update
-      if @string_discussion.update(string_discussion_params)
-        redirect_to @string_discussion, notice: 'Discussion was successfully updated.'
-      else
-        render :edit
-      end
-    end
-
-    # DELETE /string/discussions/1
-    def destroy
-      @string_discussion.destroy
-      redirect_to string_discussions_url, notice: 'Discussion was successfully destroyed.'
-    end
-
-    private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_string_discussion
-        @string_discussion = String::Discussion.find(params[:id])
-      end
-
-      # Only allow a trusted parameter "white list" through.
-      def string_discussion_params
-        params.fetch(:string_discussion, {})
-      end
-  end
 end

@@ -1,7 +1,10 @@
 module CloudBabel
-    class String < ApplicationRecord
+    class String < CloudObject::Base
         belongs_to :user, foreign_key: "users_id", optional: true
         belongs_to :bucket, foreign_key: "cloud_babel_buckets_id"
+
+        has_many :discussions,  foreign_key: "cloud_babel_strings_id"
+        has_many :activities,   foreign_key: "cloud_babel_strings_id"
 
         before_create :clean_label_string
 
@@ -79,6 +82,88 @@ module CloudBabel
                 last_synchronization_at: last_synchronization_at
             }
 
+        end
+
+        #######################################################################################
+        ##############################  Activities Log Methods   ##############################
+        #######################################################################################
+
+        # @return [void]
+        # @param current_user [::User] The user that created the string
+        # @param [CloudBabel::String] The string that was created
+        # @description Creates an activity for this string indicating who created it. And 
+        #   also creates an activity with the initial status of the string
+        # Example
+        #   params = {...}
+        #   string = CloudBabel::String.create(params)
+        #   CloudBabel::String.log_activity_create(User.find(1), string)
+        def self.log_activity_create(current_user, string)
+            string.activities.create(
+                user_creator: current_user,
+                category: "action_create",
+                reference_module_bucket_string: "#{string.reference_module_bucket}-#{string.label}"
+            )
+        end
+
+        # @return [void]
+        # @param current_user [::User] The user that created the string
+        # @param string [CloudBabel::String] The string that was created
+        # @param old_attributes[Hash] The data of the record before update
+        # @param new_attributes[Hash] The data of the record after update
+        # @description Creates an activity for this string if someone changed any of this values
+        # Example
+        #   string = CloudBabel::String.find(1)
+        #   old_attributes  = string.attributes.merge({detail_attributes: string.detail.attributes})
+        #   string.update(user_main: User.find(33))
+        #   new_attributes = string.attributes.merge({detail_attributes: string.detail.attributes})
+        #   CloudBabel::String.log_activity_update(User.find(1), string, old_attributes, new_attributes)
+        def self.log_activity_update(current_user, string, old_attributes, new_attributes)
+            # Bucket is a special case because it's a foreign key
+            if old_attributes["cloud_babel_buckets_id"] != new_attributes["cloud_babel_buckets_id"]
+                string.activities.create(
+                    user_creator: current_user,
+                    category: "action_update",
+                    field_name: "cloud_babel_buckets_id",
+                    value_from: Bucket.find(old_attributes["cloud_babel_buckets_id"]).name,
+                    value_to:   Bucket.find(new_attributes["cloud_babel_buckets_id"]).name
+                )
+            end
+
+            # We exclude certain keys that are not relevant
+            old_attributes.except!("id", "cloud_babe_buckets_id", "created_at", "updated_at", "deleted_at", "users_id")
+
+            old_attributes.each do |key, value|
+                if value != new_attributes[key]
+                    value_from = value
+                    value_to = new_attributes[key]
+                    value_from = LC::Date.to_string_datetime(value_from) if value_from.is_a?(Time) || value_from.is_a?(Date)
+                    value_to = LC::Date.to_string_datetime(value_to) if value_to.is_a?(Time) || value_to.is_a?(Date)
+
+                    string.activities.create(
+                        user_creator: current_user,
+                        category: "action_update",
+                        field_name: key,
+                        value_from: value_from,
+                        value_to: value_to,
+                        reference_module_bucket_string: "#{string.reference_module_bucket}-#{string.label}"
+                    )
+                end
+            end
+        end
+
+        # @return [void]
+        # @param current_user [::User] The user that created the string
+        # @param [CloudBabel::String] The string that was created
+        # @description Creates an activity for this string indicating that someone deleted it
+        # Example
+        #   string = CloudBabel::String.find(1)
+        #   CloudBabel::String.log_activity_show(User.find(1), string)
+        def self.log_activity_destroy(current_user, string)
+            string.activities.create(
+                user_creator: current_user,
+                category: "action_destroy",
+                reference_module_bucket_string: "#{string.reference_module_bucket}-#{string.label}"
+            )
         end
 
         private
