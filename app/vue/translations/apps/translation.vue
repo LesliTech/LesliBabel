@@ -171,7 +171,7 @@ export default {
 
         postSync() {
             this.loading = true
-            this.http.post("/babel/translation/resources/synchronization.json").then(result => {
+            this.http.post("/babel/translations/resources/synchronization.json").then(result => {
                 if (!result.successful) {
                     this.alert("Error", "danger")
                     return 

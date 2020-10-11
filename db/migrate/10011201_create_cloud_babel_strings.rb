@@ -39,6 +39,7 @@ class CreateCloudBabelStrings < ActiveRecord::Migration[6.0]
             t.datetime  :last_update_need_help
             t.datetime  :last_update_need_translation
 
+            t.string    :reference_instance
             t.string    :reference_module_bucket
             t.datetime  :deleted_at
             t.timestamps

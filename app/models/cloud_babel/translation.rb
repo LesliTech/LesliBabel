@@ -1,41 +1,6 @@
 module CloudBabel
     class Translation < ApplicationRecord
 
-        def self.stats
-
-            # total translations registered in babel
-            total_strings = Translation::String.all.count
-
-            # total translations by language
-            total_strings_translations = []
-            
-            Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |locale|
-                total_strings_translations.push({
-                    code: locale[0],
-                    name: locale[1],
-                    total: Translation::String.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
-                })
-            end
-
-            # total translations that needs help
-            total_strings_waiting_for_help = Translation::String.where(:need_help => true).count
-
-            # total translations that needs translation
-            total_strings_waiting_for_translation = Translation::String.where(:need_translation => true).count
-            
-            last_synchronization_at = "Not synchronized"
-            last_synchronization_at = LC::Date.to_string_datetime(Translation.first.updated_at) if not Translation.first.blank?
-
-            {
-                total_strings: total_strings,
-                total_strings_translations: total_strings_translations,
-                total_strings_waiting_for_help: total_strings_waiting_for_help,
-                total_strings_waiting_for_translation: total_strings_waiting_for_translation,
-                last_synchronization_at: last_synchronization_at
-            }
-
-        end
-
         def self.search current_user, query, params
             
             search_string = params[:search_string]
