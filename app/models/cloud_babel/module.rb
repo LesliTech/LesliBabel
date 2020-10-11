@@ -1,8 +1,5 @@
 module CloudBabel
     class Module < ApplicationRecord
-        #belongs_to  :account, foreign_key: "cloud_babel_accounts_id"
-        #has_one     :detail,  inverse_of: :module, autosave: true, foreign_key: "cloud_babel_modules_id"
-        #accepts_nested_attributes_for :detail, update_only: true
         has_many :buckets, foreign_key: "cloud_babel_modules_id"
 
         before_create :format_module_name

@@ -4,7 +4,7 @@ export default {
         return {
             module: {
                 name:"",
-                module_type: ""
+                platform: ""
             }
         }
     },
@@ -15,8 +15,8 @@ export default {
                 this.alert("Please complete the form", "warning")
                 return
             }
-            this.http.post("/babel/translation/modules", {
-                translation_module: this.module
+            this.http.post("/babel/modules", {
+                module: this.module
             }).then(result => {
 
                 this.alert("New module created")
@@ -43,7 +43,7 @@ export default {
                             <div class="field">
                                 <div class="control">
                                     <div class="select">
-                                        <select v-model="module.module_type">
+                                        <select v-model="module.platform">
                                             <option value="standard">Standard</option>
                                             <option value="android">Android</option>
                                             <option value="ios">iOS</option>

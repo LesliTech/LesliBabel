@@ -3,7 +3,6 @@ class CreateCloudBabelModules < ActiveRecord::Migration[6.0]
         create_table :cloud_babel_modules do |t|
             t.string :name
             t.string :platform
-            t.string :instance
             t.datetime :deleted_at
             t.timestamps
         end

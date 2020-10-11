@@ -37,14 +37,14 @@ namespace :cloud_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do 
 
-        instance = Lesli.instance
+        instance = Rails.application.config.lesli_settings["instance"][:name]
 
         LC::System::Routes.scan.each do |t|
 
             # add object to the translation workflow
-            translation_module = CloudBabel::Module.find_or_create_by({ name: t[:module], platform: t[:module_type], instance: instance })
-            translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: t[:controller], module: translation_module, reference_module: instance + "-" + translation_module.name })
-            translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: instance + "-" + translation_module.name })
+            translation_module = CloudBabel::Module.find_or_create_by({ name: t[:module], platform: t[:module_type] })
+            translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: t[:controller], module: translation_module, reference_module: translation_module.name })
+            translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
 
             # send debug message
             puts "object found: #{t[:module]}/#{t[:controller]}"
@@ -88,6 +88,16 @@ namespace :cloud_babel do
         result.payload.each do |translation|
             puts translation[0]
         end
+        puts ""; puts "";
+
+    end
+
+    desc ""
+    task sync: [:environment] do 
+
+        puts ""; puts "";
+        puts "syncing translations"
+        CloudBabel::TranslationsSynchronizationService.remote_sync
         puts ""; puts "";
 
     end

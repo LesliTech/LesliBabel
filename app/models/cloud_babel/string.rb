@@ -61,15 +61,15 @@ module CloudBabel
                 total_strings_translations.push({
                     code: locale[0],
                     name: locale[1],
-                    total: 0 #String.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
+                    total: String.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
                 })
             end
 
             # total translations that needs help
-            total_strings_waiting_for_help = 0 #String.where(:need_help => true).count
+            total_strings_waiting_for_help = String.where(:need_help => true).count
 
             # total translations that needs translation
-            total_strings_waiting_for_translation = 3 #String.where(:need_translation => true).count
+            total_strings_waiting_for_translation = String.where(:need_translation => true).count
             
             last_synchronization_at = "Not synchronized"
             last_synchronization_at = "" #LC::Date.to_string_datetime(Translation.first.updated_at) if not Translation.first.blank?

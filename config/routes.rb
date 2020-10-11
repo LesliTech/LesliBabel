@@ -21,7 +21,7 @@ CloudBabel::Engine.routes.draw do
 
     root to: "dashboards#show"
 
-    resources :modules, only: [:index] do
+    resources :modules, only: [:index, :new, :create] do
         resources :strings, only: [:index]
         resources :buckets, only: [:index] do 
             resources :strings, only: [:index]
@@ -43,6 +43,9 @@ CloudBabel::Engine.routes.draw do
     resources :translations, only: [:index] do 
         collection do
             get :options
+            scope :resources do
+                post :synchronization
+            end
         end
     end
 
