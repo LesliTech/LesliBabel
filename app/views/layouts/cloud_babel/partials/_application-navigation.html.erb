@@ -1,3 +1,22 @@
+<%#
+
+Copyright (c) 2020, all rights reserved.
+
+All the information provided by this platform is protected by international laws related  to 
+industrial property, intellectual property, copyright and relative international laws. 
+All intellectual or industrial property rights of the code, texts, trade mark, design, 
+pictures and any other information belongs to the owner of this platform.
+
+Without the written permission of the owner, any replication, modification,
+transmission, publication is strictly forbidden.
+
+For more information read the license file including with this software.
+
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+// · 
+
+%>
+
 <template>
 
     <%= nav_link(root_path) do %>
@@ -16,6 +35,13 @@
     <% end %>
 
     <p class="menu-label">Modules</p>
+
+    <% CloudBabel::Module.where.not(:platform => ["rails_engine", "rails_core"]).each do |engine| %>
+        <%= navigation_item(modules_path + "/" + engine.id.to_s) do %>
+            <i class="far fa-folder-open"></i>
+            <span><%= engine.name.gsub("Cloud", "") %></span>
+        <% end %>
+    <% end %>
 
     <%# CloudBabel::Module.all.each do |engine| % >
         <%= nav_link(modules_path + "/" + engine.id.to_s) do % >
