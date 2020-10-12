@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
     spec.authors     = ["LesliTech"]
     spec.email       = ["hello@lesli.tech"]
     spec.homepage    = "https://lesli.cloud"
-    spec.summary     = "Translation management for LesliCloud"
+    spec.summary     = "Translation management system"
     spec.license     = "All rights reserved"
 
     spec.files = Dir["{app,config,db,lib}/**/*", "license", "Rakefile", "readme.md"]
