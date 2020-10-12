@@ -85,6 +85,7 @@ module CloudBabel
                 # this reference as string is necessary because the id of the module or bucket can change
                 # between synchronizations, thats why we search for the id of the module every time
                 if babel_reference_buckets[remote_string["reference_bucket"]].blank?
+                    remote_string["reference_bucket"] ||= remote_string["reference_module_bucket"]
                     babel_reference_buckets[remote_string["reference_bucket"]] = 
                     CloudBabel::Bucket.find_by(
                         name: remote_string["reference_bucket"].split("-")[1],
