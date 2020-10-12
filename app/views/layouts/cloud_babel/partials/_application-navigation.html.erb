@@ -34,6 +34,16 @@ For more information read the license file including with this software.
         <span>Modules &amp; devices</span>
     <% end %>
 
+    <% if not current_page?(root_url) %>
+        <p class="menu-label">Languages</p>
+        <% Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |language| %>
+            <%= navigation_item("?language=en") do %>
+                <i class="flag-icon flag-icon-<%= language[0] == "en" ? "gb": language[0] %>"></i>
+                <span><%= language[1] %></span>
+            <% end %>
+        <% end %>
+    <% end %>
+
     <p class="menu-label">Modules</p>
 
     <% CloudBabel::Module.where.not(:platform => ["rails_engine", "rails_core"]).each do |engine| %>
@@ -42,12 +52,5 @@ For more information read the license file including with this software.
             <span><%= engine.name.gsub("Cloud", "") %></span>
         <% end %>
     <% end %>
-
-    <%# CloudBabel::Module.all.each do |engine| % >
-        <%= nav_link(modules_path + "/" + engine.id.to_s) do % >
-            <i class="far fa-folder-open"></i>
-            <span><%= engine.name.gsub("Cloud", "") % ></span>
-        <% end % >
-    <% end #%>
 
 </template>
