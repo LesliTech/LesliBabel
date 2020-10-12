@@ -10,7 +10,7 @@ module CloudBabel
                     id: translation_module[:id],
                     name: translation_module[:name],
                     code: translation_module[:name].downcase,
-                    type: translation_module[:module_type]
+                    platform: translation_module[:platform]
                 }
             end
         end

@@ -31,13 +31,14 @@ module CloudBabel
 
         # POST /buckets
         def create
-        @bucket = Bucket.new(bucket_params)
+            bucket = Bucket.new(bucket_params)
+            bucket.module = Module.find(params[:module_id])
 
-        if @bucket.save
-        redirect_to @bucket, notice: 'Bucket was successfully created.'
-        else
-        render :new
-        end
+            if bucket.save
+                respond_with_successful bucket
+            else
+                respond_with_error bucket.errors.full_messages
+            end
         end
 
         # PATCH/PUT /buckets/1
@@ -59,12 +60,12 @@ module CloudBabel
 
         # Use callbacks to share common setup or constraints between actions.
         def set_bucket
-        @bucket = Bucket.find(params[:id])
+            @bucket = Bucket.find(params[:id])
         end
 
         # Only allow a trusted parameter "white list" through.
         def bucket_params
-        params.fetch(:bucket, {})
+            params.require(:bucket).permit(:name)
         end
 
     end

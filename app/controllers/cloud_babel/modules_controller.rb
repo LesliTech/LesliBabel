@@ -14,6 +14,10 @@ module CloudBabel
 
         # GET /modules/1
         def show
+            respond_to do |format|
+                format.html { }
+                format.json { respond_with_successful(@module) }
+            end
         end
 
         # GET /modules/new

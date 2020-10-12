@@ -24,7 +24,7 @@ export default {
     methods: {
 
         getModule() {
-            this.http.get(`/babel/translation/modules/${this.module_id}.json`).then(result => {
+            this.http.get(`/babel/modules/${this.module_id}.json`).then(result => {
                 this.module = result.data
             }).catch(error => {
                 console.log(error)
@@ -32,7 +32,7 @@ export default {
         },
 
         getBuckets() {
-            this.http.get(`/babel/translation/modules/${this.module_id}/buckets.json`).then(result => {
+            this.http.get(`/babel/modules/${this.module_id}/buckets.json`).then(result => {
                 this.buckets = result.data
             }).catch(error => {
                 console.log(error)
@@ -40,8 +40,8 @@ export default {
         },
 
         postBucket() {
-            this.http.post(`/babel/translation/modules/${this.module_id}/buckets.json`, {
-                translation_bucket: this.bucket
+            this.http.post(`/babel/modules/${this.module_id}/buckets.json`, {
+                bucket: this.bucket
             }).then(result => {
                 this.getBuckets()
                 this.alert("Bucket created")
