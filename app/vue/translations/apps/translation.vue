@@ -44,7 +44,7 @@ export default {
             searchString: null,
             options: {},
             pagination: {
-                per_page: 10,
+                per_page: 20,
                 total_count: 0,
                 current_page: 1,
                 range_before: 3,
@@ -280,10 +280,10 @@ export default {
             <div class="control">
                 <div class="select">
                     <select v-model="pagination.per_page">
-                        <option :value="10">10</option>
-                        <option :value="15">15</option>
-                        <option :value="30">30</option>
+                        <option :value="20">20</option>
                         <option :value="50">50</option>
+                        <option :value="75">75</option>
+                        <option :value="100">100</option>
                     </select>
                 </div>
             </div>
