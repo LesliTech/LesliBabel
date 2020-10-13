@@ -6,7 +6,7 @@ module CloudBabel
             translation_folder_path = Rails.root.join("public", "tmp", "locales")
 
             # get all rails engines
-            engines = Translation::Module.where(:module_type => "android").map do |engine|
+            engines = Module.where(:id => engine_id).map do |engine|
                 engine[:id]
             end
 

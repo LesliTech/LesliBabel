@@ -1,10 +1,10 @@
 module CloudBabel
     class TranslationsIosService
 
-        def self.build 
+        def self.build(engine_id = nil)
 
             # get all rails engines
-            engines = Translation::Module.where(:module_type => "ios").map do |engine|
+            engines = Module.where(:id => engine_id).map do |engine|
                 engine[:id]
             end
 
@@ -47,10 +47,15 @@ module CloudBabel
 
             end
 
+            translation_files = []
+
+
             translations.each do |translation|
 
                 file_path = translation[0]
                 strings = translation[1]
+
+                translation_files.push(file_path)
 
                 # creates folder and subfolders
                 FileUtils.makedirs(File.dirname(file_path))
@@ -66,7 +71,7 @@ module CloudBabel
 
             end
 
-            LC::Response.service true, translations
+            LC::Response.service true, translation_files
 
         end
 

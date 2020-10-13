@@ -105,10 +105,10 @@ module CloudBabel
             engine = params[:engine_id]
             platform = params[:platform]
 
-            
-            translations_result = TranslationsAndroidService.build(engine) if platform == "android" #).payload 
+            translations_result = TranslationsAndroidService.build(engine) if platform == "android"
+            translations_result = TranslationsIosService.build(engine) if platform == "ios"
 
-            LC::System::IO.zip("translations.zip", translations_path)
+            LC::System::IO.zip("translations.zip", translations_result.payload)
 
             redirect_to "/tmp/translations.zip"
 

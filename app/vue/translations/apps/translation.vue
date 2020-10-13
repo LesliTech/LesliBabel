@@ -1,25 +1,16 @@
 <script>
 /*
-Lesli
+Copyright (c) 2020, all rights reserved.
 
-Copyright (c) 2020, Lesli Technologies, S. A.
+All the information provided by this platform is protected by international laws related  to 
+industrial property, intellectual property, copyright and relative international laws. 
+All intellectual or industrial property rights of the code, texts, trade mark, design, 
+pictures and any other information belongs to the owner of this platform.
 
-All the information provided by this website is protected by laws of Guatemala related 
-to industrial property, intellectual property, copyright and relative international laws. 
-Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
-rights of the code, texts, trade mark, design, pictures and any other information.
-Without the written permission of Lesli Technologies, S. A., any replication, modification,
+Without the written permission of the owner, any replication, modification,
 transmission, publication is strictly forbidden.
+
 For more information read the license file including with this software.
-
-Lesli - Your Smart Business Assistant
-
-Powered by https://www.lesli.tech
-Building a better future, one line of code at a time.
-
-@contact  <hello@lesli.tech>
-@website  <https://lesli.tech>
-@license  Propietary - all rights reserved.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
@@ -53,7 +44,7 @@ export default {
             searchString: null,
             options: {},
             pagination: {
-                per_page: 10,
+                per_page: 20,
                 total_count: 0,
                 current_page: 1,
                 range_before: 3,
@@ -195,8 +186,8 @@ export default {
             })
         },
 
-        getDownloadTranslation() {
-            
+        getDownloadTranslation(platform) {
+            return "/babel/translations/resources/download.json?engine_id="+this.selection.module.id+"&platform="+platform
         },
 
         reloadData(){
@@ -262,24 +253,25 @@ export default {
                 </button>
 
                 <template v-if="selection.module">
-                    <button 
+                    <a
+                        target="blank"
                         class="button" 
-                        v-if="selection.module.type == 'android'"
-                        @click="getDownloadTranslation()">
+                        v-if="['android', 'standard'].includes(selection.module.platform)"
+                        :href="getDownloadTranslation('android')">
                         <span class="icon">
                             <i class="fab fa-android"></i>
                         </span>
-                        <span>download Android translations</span>
-                    </button>
-                    <button 
+                        <span>download for Android</span>
+                    </a>
+                    <a 
                         class="button" 
-                        v-if="selection.module.type == 'ios'"
-                        @click="getDownloadTranslation()">
+                        v-if="['ios', 'standard'].includes(selection.module.platform)"
+                        :href="getDownloadTranslation('ios')">
                         <span class="icon">
                             <i class="fab fa-swift"></i>
                         </span>
-                        <span>download iOS translations</span>
-                    </button>
+                        <span>download for iOS</span>
+                    </a>
                 </template>
             </div>
         </component-header>
@@ -288,10 +280,10 @@ export default {
             <div class="control">
                 <div class="select">
                     <select v-model="pagination.per_page">
-                        <option :value="10">10</option>
-                        <option :value="15">15</option>
-                        <option :value="30">30</option>
+                        <option :value="20">20</option>
                         <option :value="50">50</option>
+                        <option :value="75">75</option>
+                        <option :value="100">100</option>
                     </select>
                 </div>
             </div>
