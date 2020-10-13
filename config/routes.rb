@@ -44,45 +44,11 @@ CloudBabel::Engine.routes.draw do
         collection do
             get :options
             scope :resources do
-                post :synchronization
-                get  :download
-            end
-        end
-    end
-
-=begin
-    resource :translation do
-        scope module: :translation do
-            resources :strings do
-                member do
-                    scope :resources do
-                        put "need-help"
-                        put "need-translation"
-                    end
-                end
-            end
-            resources :modules do
-                resources :strings, only: [:index]
-                resources :buckets do
-                    resources :strings
-                end
-            end
-        end
-
-        collection do
-            get :search
-            get :options
-            scope :resources do
-                get  :stats
-                post :clean
                 post :deploy
                 post :synchronization
                 get  :download
             end
         end
-
     end
 
-    
-=end
 end

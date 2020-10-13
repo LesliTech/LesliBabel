@@ -19,10 +19,14 @@ For more information read the license file including with this software.
 
 // · import components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+import componentActions from "../../components/actions.vue"
 
 
 // · 
 export default {
+    components: {
+        "component-actions": componentActions
+    },
     data() {
         return {
             stats: {},
@@ -53,6 +57,7 @@ export default {
     <section class="application-component">
 
         <component-header :title="'Registered ' + stats.total_strings + ' labels '">
+            <component-actions></component-actions>
         </component-header>
 
         <div class="columns">

@@ -24,16 +24,7 @@ For more information read the license file including with this software.
         <span>Dashboard</span>
     <% end %>
 
-    <%= nav_link(translations_path) do %>
-        <i class="fas fa-language"></i>
-        <span>Translations</span>
-    <% end %>
-    
-    <%= nav_link(modules_path) do %>
-        <i class="fas fa-laptop"></i>
-        <span>Modules &amp; devices</span>
-    <% end %>
-
+    <!-- 
     <% if not current_page?(root_url) %>
         <p class="menu-label">Languages</p>
         <% Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |language| %>
@@ -43,10 +34,11 @@ For more information read the license file including with this software.
             <% end %>
         <% end %>
     <% end %>
-
+    -->
+    
     <p class="menu-label">Modules</p>
 
-    <% CloudBabel::Module.where.not(:platform => ["rails_engine", "rails_core"]).each do |engine| %>
+    <% CloudBabel::Module.all.order(:name).each do |engine| %>
         <%= navigation_item(modules_path + "/" + engine.id.to_s) do %>
             <i class="far fa-folder-open"></i>
             <span><%= engine.name.gsub("Cloud", "") %></span>
