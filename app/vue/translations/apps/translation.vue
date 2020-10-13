@@ -315,23 +315,20 @@ export default {
                             </b-select>
                         </div>
 
-                        <div class="control" v-if="selection.module && selection.bucket && selection.bucket.id">
-                            <button class="button is-text" @click="sendPathToClipboard()">
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
-
                     </div>
+                    <small v-if="selection.module && selection.bucket && selection.bucket.id" >
+                        <i>path: {{ selection.module.code }}.{{ selection.bucket.name }}</i>
+                    </small>
                 </div>
             </div>
         </template>
 
         <component-form-label-new
-            v-if="selection.module" 
+            v-if="selection.module && selection.bucket && selection.bucket.id" 
             :module="selection.module" 
             :bucket="bucket">
         </component-form-label-new>
-        <br>
+
         <component-form-label-editor
             :selected-string-id.sync="selected_string_id"
             :strings="strings"

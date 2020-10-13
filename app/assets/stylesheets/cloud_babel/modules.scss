@@ -24,45 +24,9 @@ For more information read the license file including with this software.
 
 // · 
 .card {
-    //background-color: red;
     margin-bottom: 1.2rem;
 }
 
-.card2 {
-
-    button.button.is-text {
-        text-decoration: none;
-        &:hover {
-            background-color: transparent;
-        }
-    }
-
-    table.table {
-    
-        td.chevron-cell {
-            padding-left: 0;
-            padding-right: 0;
-            text-align: center;
-        }
-
-        // disable arrow by default due there is no context
-        tr {
-            .chevron-cell a i {
-                color: lesli-css-get-color(silver);
-            }
-            &.has-context {
-                .chevron-cell a i {
-                    color: lesli-css-get-color(blue);
-                }
-            }
-            &.has-need-help-translation {
-                background-color: lesli-css-get-color(banana, 100);
-            }
-        }
-
-    }
-
-}
 
 .pagination-link {
     justify-content: center;

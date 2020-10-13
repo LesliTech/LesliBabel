@@ -6,15 +6,6 @@ export default {
         },
         options: {
             required: true
-        },
-        pagination: {
-            required: true
-        },
-        quickviewToggleFunction: {
-            required: true
-        },
-        selectedStringId: {
-            required: true
         }
     },
     data() {
@@ -148,11 +139,6 @@ export default {
             this.alert("Copied to clipboard")
         },
 
-        toggleQuickview(string){
-            this.$emit('update:selected-string-id', string.id)
-            this.quickviewToggleFunction()
-        },
-
         getRowClass(row) {
 
             var row_class = []
@@ -189,7 +175,8 @@ export default {
                 <b-table-column field="label" label="Label">
                     <button 
                         class="button is-text is-paddingless" 
-                        @click="sendToClipboard(props.row.label)">
+                        @click="sendToClipboard(props.row.label)"
+                        v-on:dblclick="sendToClipboard(props.row.path)">
                         {{ props.row.label }}
                     </button>
                 </b-table-column>
@@ -251,16 +238,6 @@ export default {
                                         </b-tooltip>
                                     </button>
                                     <button 
-                                        :class="['button', {'is-outlined': !props.row.need_help}]" 
-                                        @click="toggleQuickview(props.row)"
-                                    >
-                                        <b-tooltip label="Open Discussions/Activities" type="is-white">
-                                            <span class="icon">
-                                                <i class="fas fa-info-circle"></i>
-                                            </span>
-                                        </b-tooltip>
-                                    </button>
-                                    <button 
                                         class="button is-danger is-pulled-right" 
                                         @click="deleteTranslationString(props.row)">
                                         <b-tooltip label="Delete label" type="is-danger">
@@ -276,24 +253,5 @@ export default {
                 </div>
             </template>
         </b-table>
-        <hr>
-        <section class="container pb-5">
-            <b-pagination
-                :simple="false"
-                :total="pagination.total_count"
-                :current.sync="pagination.current_page"
-                :range-before="pagination.range_before"
-                :range-after="pagination.range_after"
-                :per-page="pagination.per_page"
-                order="is-centered"
-                icon-prev="chevron-left"
-                icon-next="chevron-right"
-                aria-next-label="Next page"
-                aria-previous-label="Previous page"
-                aria-page-label="Page"
-                aria-current-label="Current page"
-            >
-            </b-pagination>
-        </section>
     </div>
 </template>
