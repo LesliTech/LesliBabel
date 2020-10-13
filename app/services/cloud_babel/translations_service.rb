@@ -56,8 +56,6 @@ module CloudBabel
 
             # get strings with bucket and module information
             strings = String
-#            .joins("inner join cloud_babel_string_details on cloud_babel_string_details.cloud_babel_strings_id = cloud_babel_strings.id")
-#            .joins("inner join cloud_babel_string_translations on cloud_babel_string_translations.cloud_babel_strings_id = cloud_babel_strings.id")
             .joins("inner join cloud_babel_buckets on cloud_babel_buckets.id = cloud_babel_strings.cloud_babel_buckets_id")
             .joins("inner join cloud_babel_modules on cloud_babel_modules.id = cloud_babel_buckets.cloud_babel_modules_id")
 

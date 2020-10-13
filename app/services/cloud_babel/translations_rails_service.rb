@@ -3,8 +3,15 @@ module CloudBabel
 
         def self.build
 
-            # get all rails engines
-            engines = Translation::Module.where("module_type in ('rails_engine', 'rails_core')").map do |engine|
+            engines_installed = Rails.application.config.lesli_settings["engines"].map do |engine|
+                engine["name"]
+            end
+
+            # get all rails engines to buil
+            engines = Module
+                .where("platform in ('rails_core', 'rails_builder', 'rails_engine')")
+                .where("name in (?)", engines_installed.push("Core"))
+                .map do |engine|
                 engine[:id]
             end
 
@@ -24,21 +31,18 @@ module CloudBabel
 
                 module_name = string[:engine_name].downcase.sub("cloud", "")
                 engine_name = string[:engine_name]
-                module_type = string[:module_type]
                 bucket_name = string[:bucket_name]
+                platform = string[:platform]
+
+                
 
                 available_locales.each do |lang|
 
                     # translations path for lesli core
                     file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
 
-                    # translations path for Android & iOS apps
-                    if module_type == "android" 
-                        file_path = Rails.root.join("public", "locales", engine_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.xml")
-                    end
-
                     # translations path for translations for engines
-                    if module_type == "rails_engine"
+                    if platform == "rails_builder" || platform == "rails_engine"
                         file_path = Rails.root.join("engines", engine_name, "config", "locales", bucket_name, "#{ bucket_name }.#{ lang }.yml")
                     end
 

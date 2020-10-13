@@ -22,11 +22,13 @@ For more information read the license file including with this software.
 // · Components
 import componentFormLabelEditor from "../../translations/components/form-label-editor.vue"
 import componentFormLabelNew from "../../translations/components/form-label-new.vue"
+import componentActions from "../../components/actions.vue"
 
 
 // · 
 export default {
     components: {
+        "component-actions": componentActions,
         "component-form-label-new": componentFormLabelNew,
         "component-form-label-editor": componentFormLabelEditor
     },
@@ -136,22 +138,7 @@ export default {
                         {{ bucket.name }}
                     </option>
                 </b-select>
-                <button class="button is-primary">
-                    <b-icon icon="rocket" size="is-small" />
-                </button>
-                <button class="button is-primary">
-                    <b-icon icon="sync" size="is-small" />
-                </button>
-                <button class="button is-primary">
-                    <span class="icon">
-                        <i class="fab fa-android"></i>
-                    </span>
-                </button>
-                <button class="button is-primary">
-                    <span class="icon">
-                        <i class="fab fa-swift"></i>
-                    </span>
-                </button>
+                <component-actions :all_actions="true" :module_id="id"></component-actions>
             </div>
         </component-header>
 

@@ -166,6 +166,16 @@ module CloudBabel
             )
         end
 
+        def path
+            self[:engine_name]
+            .downcase
+            .sub("cloud", "")
+            .concat(".")
+            .concat(self[:bucket_name])
+            .concat(".")
+            .concat(self[:label])
+        end
+
         private
 
         def clean_label_string
@@ -181,17 +191,6 @@ module CloudBabel
 
             self.reference_module_bucket = "#{self.bucket.reference_module}-#{self.bucket.name}"
 
-        end
-
-
-        def path
-            self[:engine_name]
-            .downcase
-            .sub("cloud", "")
-            .concat(".")
-            .concat(self[:bucket_name])
-            .concat(".")
-            .concat(self[:label])
         end
 
     end
