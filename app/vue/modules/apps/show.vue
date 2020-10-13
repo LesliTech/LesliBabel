@@ -124,9 +124,10 @@ export default {
 </script>
 <template>
     <section class="application-component">
-        <component-header :title="'Translations for: ' + module.name">
-            <b-field>
+        <component-header :title="module.name">
+            <div class="buttons">
                 <b-select 
+                    class="mr-2"
                     icon="box"
                     icon-pack="fas"
                     placeholder="Select a bucket" 
@@ -135,7 +136,23 @@ export default {
                         {{ bucket.name }}
                     </option>
                 </b-select>
-            </b-field>
+                <button class="button is-primary">
+                    <b-icon icon="rocket" size="is-small" />
+                </button>
+                <button class="button is-primary">
+                    <b-icon icon="sync" size="is-small" />
+                </button>
+                <button class="button is-primary">
+                    <span class="icon">
+                        <i class="fab fa-android"></i>
+                    </span>
+                </button>
+                <button class="button is-primary">
+                    <span class="icon">
+                        <i class="fab fa-swift"></i>
+                    </span>
+                </button>
+            </div>
         </component-header>
 
         <component-toolbar>

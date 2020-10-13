@@ -53,6 +53,16 @@ export default {
     <section class="application-component">
 
         <component-header :title="'Registered ' + stats.total_strings + ' labels '">
+            <div class="is-grouped">
+                <button class="button is-primary">
+                    <b-icon icon="rocket" size="is-small" />
+                    <span>deploy</span>
+                </button>
+                <button class="button is-primary">
+                    <b-icon icon="sync" size="is-small" />
+                    <span>sync</span>
+                </button>
+            </div>
         </component-header>
 
         <div class="columns">
