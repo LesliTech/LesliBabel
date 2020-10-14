@@ -3,18 +3,17 @@ export default {
     props: {
         strings: {
             required: true
-        },
-        options: {
-            required: true
         }
     },
     data() {
         return {
+            options: {},
             locales_available: {}
         }
     },
     mounted() {
         document.addEventListener("keyup", this.nextItem);
+        this.getOptions()
     },
     methods: {
 
@@ -53,6 +52,17 @@ export default {
             }
 
             this.$refs[ref_input][0].focus()
+
+        },
+
+        getOptions() {
+
+            this.options = {}
+            this.http.get("/babel/translations/options.json").then(result => {
+                this.options = result.data
+            }).catch(error => {
+                console.log(error)
+            })
 
         },
 

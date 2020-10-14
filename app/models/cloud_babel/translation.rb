@@ -17,7 +17,7 @@ module CloudBabel
             sql_where_condition.push("LOWER(label) like :search_string")
             sql_where_condition.push("LOWER(context) like :search_string")
 
-            strings = Translation::String.where(sql_where_condition.join(" OR "), { 
+            strings = String.where(sql_where_condition.join(" OR "), { 
                 search_string: "%#{search_string}%" 
             })
 

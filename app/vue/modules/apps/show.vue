@@ -20,8 +20,8 @@ For more information read the license file including with this software.
 
 
 // · Components
-import componentFormLabelEditor from "../../translations/components/form-label-editor.vue"
-import componentFormLabelNew from "../../translations/components/form-label-new.vue"
+import componentFormLabelEditor from "../../components/form-label-editor.vue"
+import componentFormLabelNew from "../../components/form-label-new.vue"
 import componentActions from "../../components/actions.vue"
 
 
@@ -39,6 +39,7 @@ export default {
             bucket: null,
             buckets: [],
             loading: false,
+            searching: false,
             pagination: {
                 per_page: 15,
                 total_count: 0,
@@ -111,6 +112,21 @@ export default {
                 this.loading = false
             })
            
+        },
+
+        getSearch(search) {
+            this.searching = true
+            if (search == "") {
+                this.strings = {}
+                this.searching = false
+                this.getStrings()
+                return
+            }
+            this.http.get("/babel/translations/resources/search.json?search_string="+search).then(result => {
+                this.strings = result.data
+            }).catch(error => {
+                console.log(error)
+            })
         }
 
     },
@@ -142,7 +158,7 @@ export default {
             </div>
         </component-header>
 
-        <component-toolbar>
+        <component-toolbar @search="getSearch">
             <div class="control">
                 <div class="select">
                     <select v-model="pagination.per_page">
