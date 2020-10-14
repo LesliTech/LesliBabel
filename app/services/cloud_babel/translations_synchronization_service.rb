@@ -182,7 +182,7 @@ module CloudBabel
                 local_string.save!
 
             end
-            return
+
             # delete all the strings with deleted date
             CloudBabel::String.where("deleted_at is not null").destroy_all
 
