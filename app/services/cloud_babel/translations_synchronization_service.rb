@@ -45,7 +45,7 @@ module CloudBabel
                 CloudBabel::Module
                 .create_with({
                     created_at: babel_module["created_at"],
-                    platform: babel_module["module_type"]
+                    platform: babel_module["platform"]
                 }).find_or_create_by({ name: babel_module["name"] })
             end
 
