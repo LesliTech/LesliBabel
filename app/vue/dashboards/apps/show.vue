@@ -20,15 +20,19 @@ For more information read the license file including with this software.
 // · import components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 import componentActions from "../../components/actions.vue"
+import componentFormLabelEditor from "../../components/form-label-editor.vue"
 
 
 // · 
 export default {
     components: {
-        "component-actions": componentActions
+        "component-actions": componentActions,
+        "component-form-label-editor": componentFormLabelEditor
     },
     data() {
         return {
+            searching: false,
+            strings: [],
             stats: {},
         }
     },
@@ -47,6 +51,20 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+        },
+
+        getSearch(search) {
+            this.searching = true
+            if (search == "") {
+                this.strings = {}
+                this.searching = false
+                return
+            }
+            this.http.get("/babel/translations/resources/search.json?search_string="+search).then(result => {
+                this.strings = result.data
+            }).catch(error => {
+                console.log(error)
+            })
         }
 
     }
@@ -60,45 +78,53 @@ export default {
             <component-actions></component-actions>
         </component-header>
 
-        <div class="columns">
-            <div class="column" v-for="locale in stats.total_strings_translations" :key="locale.code">
-                <div class="card">
-                    <div class="card-content has-text-centered">
-                        <span :class="['is-size-2','flag-icon', 'flag-icon-'+(locale.code == 'en' ? 'gb':locale.code)]"></span>
-                        <p class="is-size-5">
-                            {{ locale.name }}: {{ locale.total }}
-                        </p>
-                        <small>
-                            missing: {{ stats.total_strings - locale.total }} translations
-                        </small>
+        <component-toolbar @search="getSearch"></component-toolbar>
+
+        <component-form-label-editor v-if="searching" :strings="strings"></component-form-label-editor>
+
+        <template v-if="!searching">
+    
+            <div class="columns">
+                <div class="column" v-for="locale in stats.total_strings_translations" :key="locale.code">
+                    <div class="card">
+                        <div class="card-content has-text-centered">
+                            <span :class="['is-size-2','flag-icon', 'flag-icon-'+(locale.code == 'en' ? 'gb':locale.code)]"></span>
+                            <p class="is-size-5">
+                                {{ locale.name }}: {{ locale.total }}
+                            </p>
+                            <small>
+                                missing: {{ stats.total_strings - locale.total }} translations
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card mb-3">
-            <div class="card-header">
-                <h2 class="card-header-title">
-                    {{ stats.total_strings_waiting_for_help }} labels waiting for help
-                </h2>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h2 class="card-header-title">
+                        {{ stats.total_strings_waiting_for_help }} labels waiting for help
+                    </h2>
+                </div>
             </div>
-        </div>
 
-        <div class="card mb-3">
-            <div class="card-header">
-                <h2 class="card-header-title">
-                    {{ stats.total_strings_waiting_for_translation }} labels waiting for translation
-                </h2>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h2 class="card-header-title">
+                        {{ stats.total_strings_waiting_for_translation }} labels waiting for translation
+                    </h2>
+                </div>
             </div>
-        </div>
 
-        <div class="card mb-3">
-            <div class="card-header">
-                <h2 class="card-header-title">
-                    Last synchronization: {{ stats.last_synchronization_at }}
-                </h2>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h2 class="card-header-title">
+                        Last synchronization: {{ stats.last_synchronization_at }}
+                    </h2>
+                </div>
             </div>
-        </div>
+
+        </template>
 
     </section>
 </template>
