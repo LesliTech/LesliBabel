@@ -42,11 +42,15 @@ module CloudBabel
                 # fix module type for core
                 babel_module["module_type"] = "rails_core" if babel_module["name"] == "Core"
                 
-                CloudBabel::Module
+                local_module = CloudBabel::Module
                 .create_with({
                     created_at: babel_module["created_at"],
                     platform: babel_module["platform"]
                 }).find_or_create_by({ name: babel_module["name"] })
+
+                local_module.updated_at = DateTime.now
+                local_module.save
+
             end
 
             # working with buckets
@@ -99,7 +103,7 @@ module CloudBabel
                 remote_string_reference = "#{babel_reference_buckets[remote_string["reference_bucket"]].reference_module}-#{babel_reference_buckets[remote_string["reference_bucket"]].name}"
 
                 # add new string if it does not exist
-                local_string = CloudBabel::String.create_with({
+                local_string = CloudBabel::String.with_deleted.create_with({
                     context: remote_string["context"],
                     es: remote_string["es"],
                     en: remote_string["en"],
@@ -179,12 +183,9 @@ module CloudBabel
                     
                 end
 
-                local_string.save!
+                local_string.save
 
             end
-
-            # delete all the strings with deleted date
-            CloudBabel::String.where("deleted_at is not null").destroy_all
 
             # · Collect modules, buckets and strings for syncronization
 
@@ -199,7 +200,7 @@ module CloudBabel
             end
 
             # get and parse strings including the deleted ones
-            strings = CloudBabel::String.all.map do |babel_string|
+            strings = CloudBabel::String.with_deleted.all.map do |babel_string|
                 babel_string.as_json
             end
 

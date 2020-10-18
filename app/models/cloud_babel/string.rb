@@ -72,7 +72,7 @@ module CloudBabel
             total_strings_waiting_for_translation = String.where(:need_translation => true).count
             
             last_synchronization_at = "Not synchronized"
-            last_synchronization_at = "" #LC::Date.to_string_datetime(Translation.first.updated_at) if not Translation.first.blank?
+            last_synchronization_at = LC::Date.to_string_datetime(Module.first.updated_at) if not Module.first.blank?
 
             {
                 total_strings: total_strings,
