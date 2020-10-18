@@ -13,19 +13,32 @@ export default {
     },
     methods: {
 
-        postDeploy() {
-            this.loading = true
+        loadingIndicator(el, state=true) {
+
+            if (state === true) {
+                el.classList.add("fa-spin")
+                return
+            }
+
+            el.classList.remove("fa-spin")
+
+        },
+
+        postDeploy(e) {
+            this.loadingIndicator(e.target)
             this.http.post("/babel/translations/resources/deploy.json").then(result => {
                 if (!result.successful) { this.alert("Error", "danger")}
                 this.alert("Translations deploy process done successfully")
-                this.loading = false
             }).catch(error => {
                 console.log(error)
+            }).finally(() => {
+                console.log(r)
+                this.loadingIndicator(e.target, false)
             })
         },
 
-        postSync() {
-            this.loading = true
+        postSync(e) {
+            this.loadingIndicator(e.target)
             this.http.post("/babel/translations/resources/synchronization.json").then(result => {
                 if (!result.successful) {
                     this.alert("Error", "danger")
@@ -33,9 +46,11 @@ export default {
                 }
                 this.getModules()
                 this.alert("Synchronization successfully")
-                this.loading = false
             }).catch(error => {
                 console.log(error)
+            }).finally(() => {
+                console.log(r)
+                this.loadingIndicator(e.target, false)
             })
         },
 
