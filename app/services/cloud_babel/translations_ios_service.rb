@@ -45,10 +45,11 @@ module CloudBabel
 
                 end
 
+                LC::Debug.msgc string
+
             end
 
             translation_files = []
-
 
             translations.each do |translation|
 
