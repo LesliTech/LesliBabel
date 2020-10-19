@@ -21,7 +21,6 @@ For more information read the license file including with this software.
 
 // · Components
 import componentFormLabelEditor from "../../components/form-label-editor.vue"
-import componentFormLabelNew from "../../components/form-label-new.vue"
 import componentActions from "../../components/actions.vue"
 
 
@@ -29,7 +28,6 @@ import componentActions from "../../components/actions.vue"
 export default {
     components: {
         "component-actions": componentActions,
-        "component-form-label-new": componentFormLabelNew,
         "component-form-label-editor": componentFormLabelEditor
     },
     data() {
@@ -52,29 +50,10 @@ export default {
         }
     },
     mounted() {
-        this.id = this.$route.params.id
-        this.getModule()
         this.getOptions()
-        this.getBuckets()
-        this.getStrings()
+        this.getRelevantStrings()
     },
     methods: {
-
-        getModule() {
-            this.http.get(`/babel/modules/${this.id}.json`).then(result => {
-                this.module = result.data
-            }).catch(error => {
-                console.log(error)
-            })
-        },
-
-        getBuckets() {
-            this.http.get(`/babel/modules/${this.id}/buckets.json`).then(result => {
-                this.buckets = result.data
-            }).catch(error => {
-                console.log(error)
-            })
-        },
 
         getOptions() {
 
@@ -87,22 +66,11 @@ export default {
 
         },
 
-        getStrings() {
+        getRelevantStrings() {
             this.strings = []
             this.loading = true
 
-            // get strings for module (default)
-            let url = `/babel/modules/${this.id}/strings.json`
-
-            // if user selects bucket
-            if (this.bucket) {
-                url = `/babel/modules/${this.id}/buckets/${this.bucket.id}/strings.json`
-            }
-
-            //url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
-            url += `?page=${this.pagination.current_page}&perPage=15`
-
-            this.http.get(url).then(result => {
+            this.http.get("/babel/strings.json?page=1&perPage=50").then(result => {
                 if (!result.successful) return 
                 this.strings = result.data
                 this.pagination = result.data.pagination
@@ -119,7 +87,7 @@ export default {
             if (search == "") {
                 this.strings = {}
                 this.searching = false
-                this.getStrings()
+                this.getRelevantStrings()
                 return
             }
             this.http.get("/babel/strings/resources/search.json?search_string="+search).then(result => {
@@ -129,46 +97,19 @@ export default {
             })
         }
 
-    },
-
-    watch: {
-
-        bucket: function() {
-            this.getStrings()
-        }
-
     }
+
 }
 </script>
 <template>
     <section class="application-component">
-        <component-header :title="module.name">
+        <component-header title="Relevant translations">
             <div class="buttons">
-                <b-select 
-                    class="mr-2"
-                    icon="box"
-                    icon-pack="fas"
-                    placeholder="Select a bucket" 
-                    v-model="bucket">
-                    <option v-for="bucket in buckets" :key="bucket.id" :value="bucket">
-                        {{ bucket.name }}
-                    </option>
-                </b-select>
                 <component-actions :all_actions="true" :module_id="id"></component-actions>
             </div>
         </component-header>
 
         <component-toolbar @search="getSearch">
-            <div class="control">
-                <div class="select">
-                    <select v-model="pagination.per_page">
-                        <option :value="20">20</option>
-                        <option :value="50">50</option>
-                        <option :value="75">75</option>
-                        <option :value="100">100</option>
-                    </select>
-                </div>
-            </div>
         </component-toolbar>
 
         <component-form-label-new
@@ -182,22 +123,6 @@ export default {
             :options="options"
             :pagination="pagination">
         </component-form-label-editor>
-
-        <b-pagination
-            :simple="false"
-            :total="pagination.count_total"
-            :current.sync="pagination.current_page"
-            :per-page="pagination.per_page"
-            :range-before="5"
-            :range-after="5"
-            order="is-centered"
-            icon-prev="chevron-left"
-            icon-next="chevron-right"
-            aria-next-label="Next page"
-            aria-previous-label="Previous page"
-            aria-page-label="Page"
-            aria-current-label="Current page">
-        </b-pagination>
         
     </section>
 </template>
