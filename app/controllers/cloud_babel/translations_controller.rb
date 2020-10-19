@@ -79,14 +79,6 @@ module CloudBabel
             responseWithSuccessful()
         end
 
-        def search
-            respond_with_successful(Translation.search(current_user, @query, params))
-        end
-
-        def stats
-            respond_with_successful(Translation.stats)
-        end
-
         def deploy
             TranslationsService.clean
             TranslationsRailsService.build

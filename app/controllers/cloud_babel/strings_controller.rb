@@ -111,6 +111,10 @@ module CloudBabel
             end
         end
 
+        def search
+            respond_with_successful(String.search(current_user, @query, params))
+        end
+
         def stats
             respond_with_successful(String.stats)
         end

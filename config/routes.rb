@@ -31,8 +31,9 @@ CloudBabel::Engine.routes.draw do
     resources :strings, only: [:index, :create, :update, :destroy] do 
         collection do
             scope :resources do
+                get  :relevant
+                get  :search
                 get  :stats
-                
             end
         end
         scope module: :string do
@@ -45,7 +46,7 @@ CloudBabel::Engine.routes.draw do
         collection do
             get :options
             scope :resources do
-                get  :search
+                
                 post :deploy
                 post :synchronization
                 get  :download
