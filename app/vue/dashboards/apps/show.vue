@@ -60,7 +60,7 @@ export default {
                 this.searching = false
                 return
             }
-            this.http.get("/babel/translations/resources/search.json?search_string="+search).then(result => {
+            this.http.get("/babel/strings/resources/search.json?search_string="+search).then(result => {
                 this.strings = result.data
             }).catch(error => {
                 console.log(error)

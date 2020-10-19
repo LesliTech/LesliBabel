@@ -230,7 +230,7 @@ export default {
                             <div class="control has-text-center">
                                 <div class="buttons">
                                     <button 
-                                        :class="['button', 'is-warning', {'is-outlined': !props.row.need_help}]" 
+                                        :class="['button', 'is-warning']" 
                                         @click="putTranslationStringNeedHelp(props.row)">
                                         <b-tooltip label="Need help" type="is-warning">
                                             <span class="icon">
@@ -239,7 +239,7 @@ export default {
                                         </b-tooltip>
                                     </button>
                                     <button 
-                                        :class="['button', 'is-info', {'is-outlined': !props.row.need_translation}]" 
+                                        :class="['button', 'is-info']" 
                                         @click="putTranslationStringNeedTranslation(props.row)">
                                         <b-tooltip label="Need translation">
                                             <span class="icon">
