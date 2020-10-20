@@ -32,7 +32,6 @@ export default {
             }).catch(error => {
                 console.log(error)
             }).finally(() => {
-                console.log(r)
                 this.loadingIndicator(e.target, false)
             })
         },

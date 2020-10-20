@@ -32,6 +32,9 @@ module CloudBabel
             # store full path to translation files for every language
             files_to_delete = []
 
+            # remove javascript translation cache
+            files_to_delete.push(Rails.root.join("public", "javascripts", "translations.js"))
+
             # get translation files for engines only
             Lesli::engines.each do |engine|
                 files_to_delete.push(Rails.root.join("engines", engine["name"], "config", "locales"))
