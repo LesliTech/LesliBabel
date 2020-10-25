@@ -39,15 +39,18 @@ module CloudBabel
             response["modules"].each do |babel_module|
                 next if babel_module["name"].blank?
 
-                # fix module type for core
-                babel_module["module_type"] = "rails_core" if babel_module["name"] == "Core"
-                
                 local_module = CloudBabel::Module
                 .create_with({
                     created_at: babel_module["created_at"],
                     platform: babel_module["platform"]
                 }).find_or_create_by({ name: babel_module["name"] })
 
+                platform = babel_module["platform"]
+                platform = "rails_engine"   if babel_module["name"].start_with?("Cloud")
+                platform = "rails_core"     if babel_module["name"] == "Core"
+                platform = "rails_builder"  if ["MitwerkenCloud", "DeutscheLeibrenten", "LesliCloud"].include?(babel_module["name"])
+
+                local_module.platform = platform
                 local_module.updated_at = DateTime.now
                 local_module.save
 
