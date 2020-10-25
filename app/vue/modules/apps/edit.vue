@@ -1,11 +1,7 @@
 <script>
 
-import componentFormLabelEditor from "../../translations/components/form-label-editor.vue"
 
 export default {
-    components: {
-        "component-form-label-editor": componentFormLabelEditor
-    },
     data() {
         return {
             module_id: null,
@@ -60,18 +56,8 @@ export default {
 </script>
 <template>
     <section class="application-component">
-        <component-header :title="module.module_type + ': ' + module.name "></component-header>
+        <component-header :title="module.name "></component-header>
 
-        <component-form-label-editor
-            :selected-string-id.sync="selected_string_id"
-            :strings="strings"
-            :options="options"
-            :pagination="pagination"
-            :quickview-toggle-function="quickviewToggleFunction"
-        >
-        </component-form-label-editor>
-
-        <!--
         <div class="card">
             <div class="card-content">
                 <form @submit.prevent="postBucket()">
@@ -97,6 +83,6 @@ export default {
                 </b-table>
             </div>
         </div>
-        -->
+
     </section>
 </template>

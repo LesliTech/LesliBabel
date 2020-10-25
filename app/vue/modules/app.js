@@ -33,6 +33,7 @@ import app from "LesliCoreVue/app"
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 import appIndex from "./apps/index.vue"
 import appShow from "./apps/show.vue"
+import appEdit from "./apps/edit.vue"
 import appNew from "./apps/new.vue"
 
 
@@ -47,4 +48,7 @@ app("CloudBabel", "[index]", "/babel/modules", [{
 }, {
     path: "/:id",
     component: appShow
+}, {
+    path: "/:id/edit",
+    component: appEdit
 }])
