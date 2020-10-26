@@ -1,5 +1,4 @@
 <%#
-
 Copyright (c) 2020, all rights reserved.
 
 All the information provided by this platform is protected by international laws related  to 
@@ -14,7 +13,6 @@ For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-
 %>
 
 <template>
@@ -43,7 +41,16 @@ For more information read the license file including with this software.
     
     <p class="menu-label">Modules</p>
 
-    <% CloudBabel::Module.all.order(:name).each do |engine| %>
+    <% CloudBabel::Module.where.not(:platform => ["rails_core", "rails_builder", "rails_engine"]).order(:name).each do |engine| %>
+        <%= navigation_item(modules_path + "/" + engine.id.to_s) do %>
+            <i class="far fa-folder-open"></i>
+            <span><%= engine.name %></span>
+        <% end %>
+    <% end %>
+
+    <% babel_modules = Rails.application.config.lesli_settings["engines"].map { |engine| engine["name"] } %>
+    <% babel_modules.push("Core") %>
+    <% CloudBabel::Module.where(:name => babel_modules).order(:platform, :name).each do |engine| %>
         <%= navigation_item(modules_path + "/" + engine.id.to_s) do %>
             <i class="far fa-folder-open"></i>
             <span><%= engine.name.gsub("Cloud", "") %></span>

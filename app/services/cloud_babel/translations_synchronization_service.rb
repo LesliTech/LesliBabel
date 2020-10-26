@@ -45,9 +45,10 @@ module CloudBabel
                     platform: babel_module["platform"]
                 }).find_or_create_by({ name: babel_module["name"] })
 
-                platform = "rails_engine"
-                platform = "rails_core" if babel_module["name"] == "Core"
-                platform = "rails_builder" if ["MitwerkenCloud", "DeutscheLeibrenten", "LesliCloud"].include?(babel_module["name"])
+                platform = babel_module["platform"]
+                platform = "rails_engine"   if babel_module["name"].start_with?("Cloud")
+                platform = "rails_core"     if babel_module["name"] == "Core"
+                platform = "rails_builder"  if ["MitwerkenCloud", "DeutscheLeibrenten", "LesliCloud"].include?(babel_module["name"])
 
                 local_module.platform = platform
                 local_module.updated_at = DateTime.now

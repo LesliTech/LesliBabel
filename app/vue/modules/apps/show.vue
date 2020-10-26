@@ -155,6 +155,11 @@ export default {
                     </option>
                 </b-select>
                 <component-actions :all_actions="true" :module_id="id"></component-actions>
+                <router-link :to="`/${id}/edit`" class="button is-primary ml-3">
+                    <span class="icon">
+                        <i class="far fa-edit"></i>
+                    </span>
+                </router-link>
             </div>
         </component-header>
 
