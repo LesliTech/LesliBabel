@@ -57,6 +57,7 @@ export default {
         this.getOptions()
         this.getBuckets()
         this.getStrings()
+        this.data.label.getStrings = () => this.getStrings()
     },
     methods: {
 
