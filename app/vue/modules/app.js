@@ -51,4 +51,6 @@ app("CloudBabel", "[index]", "/babel/modules", [{
 }, {
     path: "/:id/edit",
     component: appEdit
-}])
+}], {
+    label: {}
+})

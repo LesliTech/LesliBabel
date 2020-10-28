@@ -79,13 +79,10 @@ export default {
                     this.alert("Error adding label", "danger")
                     return
                 }
-                this.bus.publish('post:/babel/translation/strings.json')
-                this.alert("Label successfully added", "success")
                 this.label = ''
-            }).catch(error => {
-                console.log(error)
+                this.data.label.getStrings()
+                this.alert("Label successfully added", "success")
             })
-
         }
 
     }
