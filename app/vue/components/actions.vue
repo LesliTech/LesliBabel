@@ -52,6 +52,22 @@ export default {
             })
         },
 
+        postUpdate(e) {
+            this.loadingIndicator(e.target)
+            this.http.post("/babel/translations/resources/renovate.json").then(result => {
+                if (!result.successful) {
+                    this.alert("Error", "danger")
+                    return 
+                }
+                this.getModules()
+                this.alert("Update successfully")
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => {
+                this.loadingIndicator(e.target, false)
+            })
+        },
+
         getDownloadTranslation(platform) {
             return "/babel/translations/resources/download.json?engine_id="+this.module_id+"&platform="+platform
         }
@@ -72,12 +88,27 @@ export default {
             <span>sync</span>
         </button>
 
+        <button v-if="!all_actions" @click="postUpdate" class="button is-primary">
+            <span class="icon">
+                <i class="fas fa-download"></i>
+            </span>
+            <span>update</span>
+        </button>
+
+
+
         <button v-if="all_actions" @click="postDeploy" class="button is-primary">
             <b-icon icon="rocket" size="is-small" />
         </button>
 
         <button v-if="all_actions" @click="postSync" class="button is-primary">
             <b-icon icon="sync" size="is-small" />
+        </button>
+
+        <button v-if="all_actions" @click="postUpdate" class="button is-primary">
+            <span class="icon">
+                <i class="fas fa-download"></i>
+            </span>
         </button>
 
         <a v-if="all_actions && module_id" :href="getDownloadTranslation('android')" class="button is-primary">

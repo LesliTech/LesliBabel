@@ -21,7 +21,7 @@ For more information read the license file including with this software.
 module CloudBabel
     class TranslationsSynchronizationService
 
-        def self.remote_sync
+        def self.remote_sync double_way_sync=false
 
             host = "http://localhost:8080"
             host = "https://server.raven.dev.gt"
@@ -190,6 +190,8 @@ module CloudBabel
 
             end
 
+            return LC::Response.service(true) if double_way_sync == false
+
             # · Collect modules, buckets and strings for syncronization
 
             # get and parse modules
@@ -212,11 +214,6 @@ module CloudBabel
                 ({ modules: modules, buckets: buckets, strings: strings }).to_json,
                 "Content-Type" => "application/json"
             )
-
-            # Update last synchronization time
-            #translation = Translation.find_or_create_by(:id => 1)
-            #translation.updated_at = Time.now
-            #translation.save!
 
             LC::Response.service true
 

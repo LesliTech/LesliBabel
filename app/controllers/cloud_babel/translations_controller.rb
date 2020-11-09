@@ -86,8 +86,14 @@ module CloudBabel
             respond_with_successful
         end
 
-        def synchronization
+        def renovate
             result = TranslationsSynchronizationService.remote_sync
+            respond_with_successful if result.success?
+            respond_with_error if not result.success?
+        end
+
+        def synchronization
+            result = TranslationsSynchronizationService.remote_sync true
             respond_with_successful if result.success?
             respond_with_error if not result.success?
         end

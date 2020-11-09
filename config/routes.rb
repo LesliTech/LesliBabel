@@ -37,8 +37,8 @@ CloudBabel::Engine.routes.draw do
             end
         end
         scope module: :string do
-            resources :discussions
-            resources :activities
+            resources :discussions, only: []
+            resources :activities,  only: []
         end
     end
 
@@ -46,8 +46,8 @@ CloudBabel::Engine.routes.draw do
         collection do
             get :options
             scope :resources do
-                
                 post :deploy
+                post :renovate
                 post :synchronization
                 get  :download
             end
