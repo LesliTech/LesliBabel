@@ -41,8 +41,8 @@ export default {
             loading: false,
             searching: false,
             pagination: {
-                per_page: 15,
-                total_count: 0,
+                per_page: 20,
+                count_total: 0,
                 current_page: 1,
                 range_before: 3,
                 range_after: 3,
@@ -100,13 +100,12 @@ export default {
                 url = `/babel/modules/${this.id}/buckets/${this.bucket.id}/strings.json`
             }
 
-            //url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
-            url += `?page=${this.pagination.current_page}&perPage=15`
+            url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
 
             this.http.get(url).then(result => {
                 if (!result.successful) return 
                 this.strings = result.data
-                this.pagination = result.data.pagination
+                this.pagination.count_total = result.data.pagination.count_total
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -136,7 +135,20 @@ export default {
 
         bucket: function() {
             this.getStrings()
-        }
+        },
+
+        'pagination.current_page': function() {
+            if (!this.loading) {
+                this.getStrings()
+            }
+        },
+
+        'pagination.per_page': function() {
+            if (!this.loading) {
+                this.pagination.current_page = 1
+                this.getStrings()
+            }
+        },
 
     }
 }
@@ -193,9 +205,9 @@ export default {
             :simple="false"
             :total="pagination.count_total"
             :current.sync="pagination.current_page"
+            :range-before="pagination.range_before"
+            :range-after="pagination.range_after"
             :per-page="pagination.per_page"
-            :range-before="5"
-            :range-after="5"
             order="is-centered"
             icon-prev="chevron-left"
             icon-next="chevron-right"
@@ -204,6 +216,6 @@ export default {
             aria-page-label="Page"
             aria-current-label="Current page">
         </b-pagination>
-        
+
     </section>
 </template>
