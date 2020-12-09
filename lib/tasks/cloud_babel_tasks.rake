@@ -42,7 +42,7 @@ namespace :cloud_babel do
         LC::System::Routes.scan.each do |t|
 
             # add object to the translation workflow
-            translation_module = CloudBabel::Module.find_or_create_by({ name: t[:module], platform: t[:module_type] })
+            translation_module = CloudBabel::Module.find_or_create_by({ name: t[:module], platform: t[:platform] })
             translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: t[:controller], module: translation_module, reference_module: translation_module.name })
             translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
 
