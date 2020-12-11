@@ -30,7 +30,7 @@ module CloudBabel
 
         # register templates path in the core
         config.generators do |g|
-            g.templates.unshift File::expand_path('../../../../../lib/templates', __FILE__)
+            g.templates.unshift Pathname.new(LESLI_ROOT).join("lib", "templates")
         end
     end
 end
