@@ -59,8 +59,9 @@ module CloudBabel
 
             # get strings with bucket and module information
             strings = String
-            .joins("inner join cloud_babel_buckets on cloud_babel_buckets.id = cloud_babel_strings.cloud_babel_buckets_id")
-            .joins("inner join cloud_babel_modules on cloud_babel_modules.id = cloud_babel_buckets.cloud_babel_modules_id")
+            .joins("inner join cloud_babel_buckets on cloud_babel_buckets.id = cloud_babel_strings.cloud_babel_buckets_id and cloud_babel_buckets.deleted_at is NULL")
+            .joins("inner join cloud_babel_modules on cloud_babel_modules.id = cloud_babel_buckets.cloud_babel_modules_id and cloud_babel_modules.deleted_at is NULL")
+            .where("cloud_babel_modules.name in (?)", Rails.application.config.lesli_settings["engines"].map { |engine| engine["name"]})
 
             # filter by specific engines
             if engines_id
