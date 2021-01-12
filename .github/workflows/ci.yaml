@@ -17,7 +17,7 @@ jobs:
       with:
         repository: leitfaden/github_actions
         ref: master
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         path: .github/actions/
     - name: Bump version and push tag
       uses: ./.github/actions/github_tag_action
