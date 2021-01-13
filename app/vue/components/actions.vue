@@ -43,7 +43,6 @@ export default {
                     this.alert("Error", "danger")
                     return 
                 }
-                this.getModules()
                 this.alert("Synchronization successfully")
             }).catch(error => {
                 console.log(error)
@@ -59,7 +58,6 @@ export default {
                     this.alert("Error", "danger")
                     return 
                 }
-                this.getModules()
                 this.alert("Update successfully")
             }).catch(error => {
                 console.log(error)
