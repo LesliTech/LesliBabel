@@ -4,7 +4,7 @@ module CloudBabel
         def self.build
 
             engines_installed = Rails.application.config.lesli_settings["engines"].map do |engine|
-                engine["name"]
+                engine[:name]
             end
 
             # get all rails engines to buil
@@ -30,11 +30,10 @@ module CloudBabel
             strings.each do |string|
 
                 module_name = string[:engine_name].downcase.sub("cloud", "")
+                engine_code = string[:engine_name].underscore
                 engine_name = string[:engine_name]
                 bucket_name = string[:bucket_name]
                 platform = string[:platform]
-
-                
 
                 available_locales.each do |lang|
 
@@ -44,6 +43,7 @@ module CloudBabel
                     # translations path for translations for engines
                     if platform == "rails_builder" || platform == "rails_engine"
                         file_path = Rails.root.join("engines", engine_name, "config", "locales", bucket_name, "#{ bucket_name }.#{ lang }.yml")
+                        file_path = Rails.root.join("config", "locales", engine_code, bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
                     end
 
                     file_id = file_path.to_s.to_sym

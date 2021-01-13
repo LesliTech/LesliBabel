@@ -80,7 +80,7 @@ module CloudBabel
         end
 
         def deploy
-            TranslationsService.clean
+            #TranslationsService.clean
             TranslationsRailsService.build
             TranslationsService.restart_server
             respond_with_successful
