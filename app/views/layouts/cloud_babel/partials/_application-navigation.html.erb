@@ -39,7 +39,7 @@ For more information read the license file including with this software.
     <% end %>
     -->
     
-    <p class="menu-label">Modules</p>
+    <p class="menu-label">Apps</p>
 
     <% CloudBabel::Module.where.not(:platform => ["rails_core", "rails_builder", "rails_engine"]).order(:name).each do |engine| %>
         <%= navigation_item(modules_path + "/" + engine.id.to_s) do %>
@@ -48,7 +48,9 @@ For more information read the license file including with this software.
         <% end %>
     <% end %>
 
-    <% babel_modules = Rails.application.config.lesli_settings["engines"].map { |engine| engine["name"] } %>
+    <p class="menu-label">Modules</p>
+
+    <% babel_modules = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] } %>
     <% babel_modules.push("Core") %>
     <% CloudBabel::Module.where(:name => babel_modules).order(:platform, :name).each do |engine| %>
         <%= navigation_item(modules_path + "/" + engine.id.to_s) do %>
