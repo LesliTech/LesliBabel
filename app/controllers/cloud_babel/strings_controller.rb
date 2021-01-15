@@ -119,6 +119,11 @@ module CloudBabel
             respond_with_successful(String.stats)
         end
 
+        def relevant
+            params[:language] = I18n.locale if params[:language].blank?
+            respond_with_successful(String.relevant(current_user, @query, params))
+        end
+
         private
 
         # Use callbacks to share common setup or constraints between actions.

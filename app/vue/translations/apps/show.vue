@@ -39,8 +39,8 @@ export default {
             loading: false,
             searching: false,
             pagination: {
-                per_page: 15,
-                total_count: 0,
+                per_page: 20,
+                count_total: 0,
                 current_page: 1,
                 range_before: 3,
                 range_after: 3,
@@ -50,13 +50,19 @@ export default {
         }
     },
     mounted() {
+        this.defineLanguage()
         this.getOptions()
         this.getRelevantStrings()
     },
     methods: {
 
-        getOptions() {
+        defineLanguage() {
+            if (this.$route.query.language) {
+                this.data.language = this.$route.query.language
+            }
+        },
 
+        getOptions() {
             this.options = {}
             this.http.get("/babel/translations/options.json").then(result => {
                 this.options = result.data
@@ -70,10 +76,17 @@ export default {
             this.strings = []
             this.loading = true
 
-            this.http.get("/babel/strings.json?page=1&perPage=50").then(result => {
+            let url = `/babel/strings/resources/relevant.json?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
+
+            if (this.data.language) {
+                url += `&language=${this.data.language}`
+            }
+
+            this.http.get(url).then(result => {
                 if (!result.successful) return 
                 this.strings = result.data
-                this.pagination = result.data.pagination
+                this.pagination.count_total = result.data.pagination.count_total
+                this.pagination.current_page = result.data.pagination.current_page
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -97,19 +110,52 @@ export default {
             })
         }
 
+    },
+
+    watch: {
+
+        'pagination.current_page': function() {
+            if (!this.loading) {
+                this.getRelevantStrings()
+            }
+        },
+
+        'pagination.per_page': function() {
+            if (!this.loading) {
+                this.pagination.current_page = 1
+                this.getRelevantStrings()
+            }
+        },
+
+    },
+
+    computed: {
+        title() {
+            return `Relevant translations: ${this.data.language || I18n.locale}`
+        }
     }
 
 }
 </script>
 <template>
     <section class="application-component">
-        <component-header title="Relevant translations">
+        <component-header :title="title">
             <div class="buttons">
                 <component-actions :all_actions="true" :module_id="id"></component-actions>
             </div>
         </component-header>
 
         <component-toolbar @search="getSearch">
+            <div class="control">
+                <div class="select">
+                    <select v-model="pagination.per_page">
+                        <option :value="20">20</option>
+                        <option :value="50">50</option>
+                        <option :value="75">75</option>
+                        <option :value="100">100</option>
+                    </select>
+                </div>
+            </div>
         </component-toolbar>
 
         <component-form-label-new
@@ -123,6 +169,22 @@ export default {
             :options="options"
             :pagination="pagination">
         </component-form-label-editor>
+
+        <b-pagination
+            :simple="true"
+            :total="pagination.count_total"
+            :current.sync="pagination.current_page"
+            :range-before="pagination.range_before"
+            :range-after="pagination.range_after"
+            :per-page="pagination.per_page"
+            order="is-centered"
+            icon-prev="chevron-left"
+            icon-next="chevron-right"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page">
+        </b-pagination>
         
     </section>
 </template>

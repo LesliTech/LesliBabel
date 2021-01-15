@@ -142,6 +142,41 @@ module CloudBabel
 
         end
 
+        def self.relevant current_user, query, params
+            # relevant strings:
+            #   - missing translation for available language
+            #   - need help
+            #   - need translation
+
+            strings = []
+            sql_where_condition = []
+
+            # add filter to select if is available language
+            language = params[:language]
+            if Rails.application.config.lesli_settings["configuration"]["locales"].include? language.to_s
+                sql_where_condition.push("#{language.to_s} is NULL")
+                sql_where_condition.push("#{language.to_s} = ''")
+            end
+
+            sql_where_condition.push("need_help = TRUE")
+            sql_where_condition.push("need_translation = TRUE")
+
+            strings = TranslationsService.strings().where(sql_where_condition.join(" OR "))
+
+            strings = strings
+            .page(query[:pagination][:page])
+            .per(query[:pagination][:perPage])
+            .order(:updated_at)
+
+            LC::Response.pagination(
+                strings.current_page,
+                strings.total_pages,
+                strings.total_count,
+                strings.length,
+                strings
+            )
+        end
+
 
         #######################################################################################
         ##############################  Activities Log Methods   ##############################
