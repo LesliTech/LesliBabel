@@ -2,7 +2,7 @@ name: publish gem
 on:
   push:
     branches:
-      - master
+      - production
 jobs:
   publish:
     name: release ruby gem
@@ -16,11 +16,11 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: leitfaden/github_actions
-        ref: master
+        ref: production
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
-        path: .github/actions/
-    - name: Bump version and push tag
-      uses: ./.github/actions/github_tag_action
+        path: ./.github/
+    - name: New tag version
+      uses: ./.github/actions/new_tag_version
       id: bumVersion
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
