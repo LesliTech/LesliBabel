@@ -1,11 +1,11 @@
-name: publish gem
+name: Build and Publish GEM
 on:
   push:
     branches:
       - production
 jobs:
-  publish:
-    name: release ruby gem
+  build_publish:
+    name: Build and Publish
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout Repo
@@ -20,7 +20,7 @@ jobs:
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         path: ./.github/
     - name: New tag version
-      uses: ./.github/actions/new_tag_version
+      uses: ./.github/actions/git_tag_new_version
       id: bumVersion
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
         cp --verbose --archive --recursive --force ./Lesli/engines/cloud_babel/app/assets/* ./app/assets/
         rm -r  ./Lesli/
     - name: Build and publish gem
-      uses: ./.github/actions/publish_gem
+      uses: ./.github/actions/rails_gem_build_and_publish
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         owner: leitfaden
