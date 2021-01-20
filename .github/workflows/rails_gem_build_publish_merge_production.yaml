@@ -1,0 +1,66 @@
+name: Build and Publish GEM
+on:
+  push:
+    branches:
+      - production
+jobs:
+  build_publish:
+    name: Build and Publish
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Checkout GitHub Actions Repo
+      uses: actions/checkout@v2
+      with:
+        repository: leitfaden/github_actions
+        ref: production
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+        path: ./.github/
+    - name: New tag version
+      uses: ./.github/actions/git_tag_new_version
+      id: bumVersion
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        DEFAULT_BUMP: patch
+    - name: Checkout Core Repo
+      uses: actions/checkout@v2
+      with:
+        repository: leitfaden/Lesli
+        ref: production
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+        path: ./Lesli
+    - name: Checkout Engine Repo
+      uses: actions/checkout@v2
+      with:
+        path: ./Lesli/engines/cloud_babel/
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ./Lesli/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: NPM install
+      run: |
+        cd ./Lesli
+        npm install
+        cd ..
+    - name: Compile Js to Production
+      run: |
+        cd ./Lesli/
+        npm run webpack:production
+        cd ..
+        echo "#####################################"
+        echo "Copying compiled assets"
+        cp --verbose --archive --recursive --force ./Lesli/engines/cloud_babel/app/assets/* ./app/assets/
+        rm -r  ./Lesli/
+    - name: Build and publish gem
+      uses: ./.github/actions/rails_gem_build_and_publish
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        owner: leitfaden
+        version: ${{ steps.bumVersion.outputs.new_tag}}

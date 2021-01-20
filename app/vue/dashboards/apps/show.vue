@@ -65,6 +65,10 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
+        },
+
+        showTranslations(locale) {
+            this.url.go(`/babel/translations?language=${locale}`)
         }
 
     }
@@ -86,7 +90,7 @@ export default {
     
             <div class="columns">
                 <div class="column" v-for="locale in stats.total_strings_translations" :key="locale.code">
-                    <div class="card">
+                    <div class="card" @click="showTranslations(locale.code)">
                         <div class="card-content has-text-centered">
                             <span :class="['is-size-2','flag-icon', 'flag-icon-'+(locale.code == 'en' ? 'gb':locale.code)]"></span>
                             <p class="is-size-5">

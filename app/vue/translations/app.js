@@ -33,4 +33,6 @@ import appShow from './apps/show.vue'
 app("CloudBabel", "[]", "/babel/translations", [{
     path: "/",
     component: appShow,
-}])
+}], {
+    language: null
+})

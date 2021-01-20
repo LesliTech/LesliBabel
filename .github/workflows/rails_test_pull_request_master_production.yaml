@@ -1,0 +1,104 @@
+name: Test
+on:
+  pull_request:
+    branches:
+      - master
+      - production
+
+jobs:
+  test:
+    name: Test RSpec and Playwright
+    runs-on: ubuntu-20.04
+    services:
+      postgres:
+        image: postgres:11.5
+        env:
+          POSTGRES_USER: leslicloud_test
+          POSTGRES_DB: leslicloud_test
+          POSTGRES_PASSWORD: "leslicloud_test"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+    - name: Checkout Core Repo
+      uses: actions/checkout@v2
+      with:
+        repository: leitfaden/Lesli
+        ref: production
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+        path: ./Lesli
+    - name: Checkout Build Engine
+      uses: actions/checkout@v2
+      with:
+        repository: leitfaden/lesli_cloud
+        ref: production
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+        path: ./Lesli/engines/lesli_cloud/
+    - name: Checkout Engine Repo
+      uses: actions/checkout@v2
+      with:
+        path: ./Lesli/engines/cloud_babel/
+    - name: Cache gems
+      uses: actions/cache@v2
+      with:
+        path: ./Lesli/vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ./Lesli/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.2
+    - name: Install dependencies of Rails
+      run: |
+        cd ./Lesli
+        bundle config https://rubygems.pkg.github.com/leitfaden ${GEM_HOST_API_KEY}
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+        bundle list
+        cd ..
+      env:
+        RAILS_ENV: test
+        GEM_HOST_API_KEY: "sagastume:${{secrets.READ_GEM_BY_ACTIONS}}"
+    - name: NPM install
+      run: |
+        cd ./Lesli
+        npm install
+        cd ..
+    - name: Setup test database
+      run: |
+        cp ./Lesli/config/credentials/testci.yml.enc ./Lesli/config/credentials/test.yml.enc
+        cd ./Lesli
+        bundle list
+        bundle exec rake db:drop
+        bundle exec rake db:create
+        bundle exec rake db:migrate
+        bundle exec rake db:setup
+        cd ..
+      env:
+        RAILS_ENV: test
+        RAILS_MASTER_KEY: ${{ secrets.CORE_RAILS_MASTER_KEY_TEST }}
+    - name: Run RSpec tests
+      run: |
+        cp ./Lesli/config/credentials/testci.yml.enc ./Lesli/config/credentials/test.yml.enc
+        cd ./Lesli
+        bundle exec rspec ./spec/controllers
+        cd ..
+      env:
+        RAILS_ENV: test
+        RAILS_MASTER_KEY: ${{ secrets.CORE_RAILS_MASTER_KEY_TEST }}
