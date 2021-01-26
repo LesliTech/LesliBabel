@@ -35,13 +35,6 @@ jobs:
         ref: production
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         path: ./Lesli
-    - name: Checkout Build Engine
-      uses: actions/checkout@v2
-      with:
-        repository: leitfaden/lesli_cloud
-        ref: production
-        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
-        path: ./Lesli/engines/lesli_cloud/
     - name: Checkout Engine Repo
       uses: actions/checkout@v2
       with:
@@ -50,16 +43,16 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./Lesli/vendor/bundle
-        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        key: ${{ runner.os }}-cloud_babel-gems-${{ hashFiles('./Lesli/Gemfile') }}
         restore-keys: |
-          ${{ runner.os }}-gems-
+          ${{ runner.os }}-cloud_babel-gems-
     - name: Cache node modules
       uses: actions/cache@v2
       with:
         path: ./Lesli/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-cloud_babel-node-${{ hashFiles('./Lesli/package.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-cloud_babel-node-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:

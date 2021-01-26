@@ -41,9 +41,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./Lesli/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-cloud_babel-node-${{ hashFiles('./Lesli/package.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-cloud_babel-node-
     - name: NPM install
       run: |
         cd ./Lesli
@@ -54,9 +54,12 @@ jobs:
         cd ./Lesli/
         npm run webpack:production
         cd ..
-        echo "#####################################"
-        echo "Copying compiled assets"
-        cp --verbose --archive --recursive --force ./Lesli/engines/cloud_babel/app/assets/* ./app/assets/
+        if [ -d "./Lesli/engines/cloud_babel/app/assets/" ]
+        then
+          echo "#####################################"
+          echo "Copying compiled assets"
+          cp --verbose --archive --recursive --force ./Lesli/engines/cloud_babel/app/assets/* ./app/assets/
+        fi
         rm -r  ./Lesli/
     - name: Build and publish gem
       uses: ./.github/actions/rails_gem_build_and_publish
