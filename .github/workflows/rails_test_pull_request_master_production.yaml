@@ -28,6 +28,13 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: ${{ github.event.pull_request.head.ref }}
+    - name: Checkout GitHub Actions Repo
+      uses: actions/checkout@v2
+      with:
+        repository: leitfaden/github_actions
+        ref: production
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+        path: ./.github/
     - name: Checkout Core Repo
       uses: actions/checkout@v2
       with:
