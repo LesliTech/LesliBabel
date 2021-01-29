@@ -95,3 +95,10 @@ jobs:
       env:
         RAILS_ENV: test
         RAILS_MASTER_KEY: ${{ secrets.CORE_RAILS_MASTER_KEY_TEST }}
+    - name: Notify by slack
+      if: always()
+      uses: ./.github/actions/slack_job_status
+      with:
+        job-status: ${{ job.status }}
+        slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+        channel: alerts
