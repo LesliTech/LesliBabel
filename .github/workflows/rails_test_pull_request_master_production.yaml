@@ -28,6 +28,13 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: ${{ github.event.pull_request.head.ref }}
+    - name: Checkout GitHub Actions Repo
+      uses: actions/checkout@v2
+      with:
+        repository: leitfaden/github_actions
+        ref: production
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+        path: ./.github/
     - name: Checkout Core Repo
       uses: actions/checkout@v2
       with:
@@ -95,3 +102,10 @@ jobs:
       env:
         RAILS_ENV: test
         RAILS_MASTER_KEY: ${{ secrets.CORE_RAILS_MASTER_KEY_TEST }}
+    - name: Notify by slack
+      if: always()
+      uses: ./.github/actions/slack_job_status
+      with:
+        job-status: ${{ job.status }}
+        slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+        channel: alerts
