@@ -23,7 +23,7 @@ module CloudBabel
         def self.remote_sync double_way_sync=false
 
             host = "http://localhost:8080"
-            host = "https://server.raven.dev.gt"
+            #host = "https://server.raven.dev.gt"
             instance_code = Rails.application.config.lesli_settings["instance"][:code].gsub("_","-")
             api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
 
@@ -94,12 +94,12 @@ module CloudBabel
                 # reference to modules that buckets belongs to
                 # this reference as string is necessary because the id of the module or bucket can change
                 # between synchronizations, thats why we search for the id of the module every time
-                if babel_reference_buckets[remote_string["reference_bucket"]].blank?
-                    remote_string["reference_bucket"] ||= remote_string["reference_module_bucket"]
-                    babel_reference_buckets[remote_string["reference_bucket"]] = 
+                if babel_reference_buckets[remote_string[:reference_bucket]].blank?
+                    remote_string[:reference_bucket] ||= remote_string[:reference_module_bucket]
+                    babel_reference_buckets[remote_string[:reference_bucket]] = 
                     CloudBabel::Bucket.find_by(
-                        name: remote_string["reference_bucket"].split("-")[1],
-                        reference_module: remote_string["reference_bucket"].split("-")[0]
+                        name: remote_string[:reference_bucket].split("-")[1],
+                        reference_module: remote_string[:reference_bucket].split("-")[0]
                     )
                 end
 
