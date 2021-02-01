@@ -1,7 +1,5 @@
 =begin
 
-Lesli
-
 Copyright (c) 2020, all rights reserved.
 
 All the information provided by this platform is protected by international laws related  to 
@@ -18,25 +16,30 @@ For more information read the license file including with this software.
 // · 
 
 =end
+
 module CloudBabel
     class TranslationsSynchronizationService
 
         def self.remote_sync double_way_sync=false
 
             host = "http://localhost:8080"
-            host = "https://server.raven.dev.gt"
-            api_endpoint = "#{host}/api/bucket/lesli-babel-dl/documents"
+            #host = "https://server.raven.dev.gt"
+            instance_code = Rails.application.config.lesli_settings["instance"][:code].gsub("_","-")
+            api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
+
 
             # get last sync data
             response = Faraday.get(api_endpoint+"?last=1")
-            response = JSON.parse(response.body)
-            response = response["data"]["documents"][0]
+            response = FastJsonparser.parse(response.body)
+            response = response[:data][:documents][0]
+
 
             # if first time sync
-            response = JSON.parse({modules: [], buckets: [], strings: [] }.to_json) if response.blank?
+            response = FastJsonparser.parse({ modules: [], buckets: [], strings: [] }.to_json) if response.blank?
+
 
             # add new modules
-            response["modules"].each do |babel_module|
+            response[:modules].each do |babel_module|
                 next if babel_module["name"].blank?
 
                 local_module = CloudBabel::Module
@@ -59,7 +62,7 @@ module CloudBabel
             # working with buckets
             babel_reference_modules = {}
 
-            response["buckets"].each do |babel_bucket|
+            response[:buckets].each do |babel_bucket|
 
                 next if babel_bucket["name"].blank?
 
@@ -86,17 +89,17 @@ module CloudBabel
             # · working with strings
             babel_reference_buckets = {}
 
-            response["strings"].each do |remote_string|
+            response[:strings].each do |remote_string|
 
                 # reference to modules that buckets belongs to
                 # this reference as string is necessary because the id of the module or bucket can change
                 # between synchronizations, thats why we search for the id of the module every time
-                if babel_reference_buckets[remote_string["reference_bucket"]].blank?
-                    remote_string["reference_bucket"] ||= remote_string["reference_module_bucket"]
-                    babel_reference_buckets[remote_string["reference_bucket"]] = 
+                if babel_reference_buckets[remote_string[:reference_bucket]].blank?
+                    remote_string[:reference_bucket] ||= remote_string[:reference_module_bucket]
+                    babel_reference_buckets[remote_string[:reference_bucket]] = 
                     CloudBabel::Bucket.find_by(
-                        name: remote_string["reference_bucket"].split("-")[1],
-                        reference_module: remote_string["reference_bucket"].split("-")[0]
+                        name: remote_string[:reference_bucket].split("-")[1],
+                        reference_module: remote_string[:reference_bucket].split("-")[0]
                     )
                 end
 
