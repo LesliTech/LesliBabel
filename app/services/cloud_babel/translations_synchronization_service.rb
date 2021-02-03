@@ -23,7 +23,7 @@ module CloudBabel
         def self.remote_sync double_way_sync=false
 
             host = "http://localhost:8080"
-            #host = "https://server.raven.dev.gt"
+            host = "https://server.raven.dev.gt"
             instance_code = Rails.application.config.lesli_settings["instance"][:code].gsub("_","-")
             api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
 
