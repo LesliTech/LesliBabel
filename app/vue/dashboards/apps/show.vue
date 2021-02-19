@@ -90,7 +90,7 @@ export default {
     
             <div class="columns">
                 <div class="column" v-for="locale in stats.total_strings_translations" :key="locale.code">
-                    <div class="card" @click="showTranslations(locale.code)">
+                    <div class="card translations-stats" @click="showTranslations(locale.code)">
                         <div class="card-content has-text-centered">
                             <span :class="['is-size-2','flag-icon', 'flag-icon-'+(locale.code == 'en' ? 'gb':locale.code)]"></span>
                             <p class="is-size-5">

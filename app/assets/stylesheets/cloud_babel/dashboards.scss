@@ -23,7 +23,11 @@ For more information read the license file including with this software.
 .header-translation-options button {
     flex-direction: column;
     height: auto;
-    span {
-        //display: block;
+}
+
+.translations-stats {
+    &:hover {
+        cursor: pointer;
+        color: lesli-css-get-color(blue, 900);
     }
 }
