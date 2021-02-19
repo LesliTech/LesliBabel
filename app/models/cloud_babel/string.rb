@@ -161,7 +161,9 @@ module CloudBabel
             sql_where_condition.push("need_help = TRUE")
             sql_where_condition.push("need_translation = TRUE")
 
-            strings = TranslationsService.strings().where(sql_where_condition.join(" OR "))
+            strings = TranslationsService.strings(
+                engines_id = TranslationsService.installed_engines_id
+            ).where(sql_where_condition.join(" OR "))
 
             strings = strings
             .page(query[:pagination][:page])

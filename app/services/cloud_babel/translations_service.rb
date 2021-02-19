@@ -91,5 +91,12 @@ module CloudBabel
 
         end
 
+        def self.installed_engines_id
+            babel_modules_names = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] }
+            babel_modules_names.push("Core")
+
+            CloudBabel::Module.where(:name => babel_modules_names).map { |engine| engine.id }
+        end
+
     end
 end
