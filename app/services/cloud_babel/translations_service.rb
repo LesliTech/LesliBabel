@@ -61,6 +61,7 @@ module CloudBabel
             strings = String
             .joins("inner join cloud_babel_buckets on cloud_babel_buckets.id = cloud_babel_strings.cloud_babel_buckets_id and cloud_babel_buckets.deleted_at is NULL")
             .joins("inner join cloud_babel_modules on cloud_babel_modules.id = cloud_babel_buckets.cloud_babel_modules_id and cloud_babel_modules.deleted_at is NULL")
+            .where("cloud_babel_modules.id in (?)", TranslationsService.installed_engines_id)
 
             # filter by specific engines
             if engines_id
@@ -72,29 +73,13 @@ module CloudBabel
                 strings = strings.where("cloud_babel_buckets.id in (?)", buckets_id)
             end
 
-            strings.select(
-                :id,
-                :label,
-                :status,
-                :context,
-                :priority,
-                :need_help,
-                :need_translation,
-                Rails.application.config.lesli_settings["configuration"]["locales"],
-                "cloud_babel_modules.id as engine_id",
-                "cloud_babel_buckets.id as bucket_id",
-                "cloud_babel_buckets.name as bucket_name",
-                "cloud_babel_modules.name as engine_name",
-                "cloud_babel_modules.platform as platform",
-                "'' as path"
-            )
+            strings
 
         end
 
         def self.installed_engines_id
             babel_modules_names = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] }
             babel_modules_names.push("Core")
-
             CloudBabel::Module.where(:name => babel_modules_names).map { |engine| engine.id }
         end
 
