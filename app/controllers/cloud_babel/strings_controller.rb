@@ -120,8 +120,11 @@ module CloudBabel
         end
 
         def relevant
-            params[:language] = I18n.locale if params[:language].blank?
             respond_with_successful(String.relevant(current_user, @query, params))
+        end
+
+        def available_locales
+            respond_with_successful(Rails.application.config.lesli_settings["configuration"]["locales_available"])
         end
 
         private

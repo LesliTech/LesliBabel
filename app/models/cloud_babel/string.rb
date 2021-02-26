@@ -170,9 +170,16 @@ module CloudBabel
 
             # add filter to select if is available language
             language = params[:language]
-            if Rails.application.config.lesli_settings["configuration"]["locales"].include? language.to_s
-                sql_where_condition.push("#{language.to_s} is NULL")
-                sql_where_condition.push("#{language.to_s} = ''")
+            if language
+                if Rails.application.config.lesli_settings["configuration"]["locales"].include? language.to_s
+                    sql_where_condition.push("#{language.to_s} is NULL")
+                    sql_where_condition.push("#{language.to_s} = ''")
+                end
+            else
+                Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                    sql_where_condition.push("#{locale} is NULL")
+                    sql_where_condition.push("#{locale} = ''")
+                end
             end
 
             sql_where_condition.push("need_help = TRUE")
