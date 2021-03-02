@@ -18,6 +18,23 @@ module CloudBabel
             # get strings filtered by module (only rails translations)
             strings = TranslationsService.strings(engines)
 
+            strings = strings.select(
+                :id,
+                :label,
+                :status,
+                :context,
+                :priority,
+                :need_help,
+                :need_translation,
+                Rails.application.config.lesli_settings["configuration"]["locales"],
+                "cloud_babel_modules.id as engine_id",
+                "cloud_babel_buckets.id as bucket_id",
+                "cloud_babel_buckets.name as bucket_name",
+                "cloud_babel_modules.name as engine_name",
+                "cloud_babel_modules.platform as platform",
+                "'' as path"
+            )
+
             translations = {}
 
             available_locales = Rails.application.config.lesli_settings["configuration"]["locales"]
@@ -28,7 +45,6 @@ module CloudBabel
             end
 
             strings.each do |string|
-
                 module_name = string[:engine_name].downcase.sub("cloud", "")
                 engine_code = string[:engine_name].underscore
                 engine_name = string[:engine_name]

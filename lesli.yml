@@ -7,6 +7,6 @@ info:
     name: "CloudBabel"
     code: "cloud_babel"
     github:
-        url: "https://github.com/leitfaden/CloudBabel"
-        ssh: "git@github.com:leitfaden/CloudBabel.git"
-        ssh_backup: "git@github.com:LesliTech/CloudBabel.git"
+        url: "https://github.com/leitfaden/cloud_babel"
+        ssh: "git@github.com:leitfaden/cloud_babel.git"
+        ssh_backup: "git@github.com:LesliTech/cloud_babel.git"

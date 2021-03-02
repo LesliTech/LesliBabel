@@ -38,6 +38,23 @@ module CloudBabel
                 strings = TranslationsService.strings(params[:module_id], params[:bucket_id])
             end
 
+            strings = strings.select(
+                :id,
+                :label,
+                :status,
+                :context,
+                :priority,
+                :need_help,
+                :need_translation,
+                Rails.application.config.lesli_settings["configuration"]["locales"],
+                "cloud_babel_modules.id as engine_id",
+                "cloud_babel_buckets.id as bucket_id",
+                "cloud_babel_buckets.name as bucket_name",
+                "cloud_babel_modules.name as engine_name",
+                "cloud_babel_modules.platform as platform",
+                "'' as path"
+            )
+
             strings = strings
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
@@ -69,9 +86,7 @@ module CloudBabel
             sql_where_condition.push("LOWER(context) like :search_string")
 
             # get strings with bucket and module information
-            strings = String
-            .joins("inner join cloud_babel_buckets on cloud_babel_buckets.id = cloud_babel_strings.cloud_babel_buckets_id")
-            .joins("inner join cloud_babel_modules on cloud_babel_modules.id = cloud_babel_buckets.cloud_babel_modules_id")
+            strings = TranslationsService.strings
             .where(sql_where_condition.join(" OR "), { search_string: "%#{search_string}%" })
 
             strings = strings.select(
@@ -90,6 +105,7 @@ module CloudBabel
                 "cloud_babel_modules.platform as platform",
                 "'' as path"
             )
+
 
             strings = strings
             .page(query[:pagination][:page])
@@ -110,7 +126,8 @@ module CloudBabel
         def self.stats
 
             # total translations registered in babel
-            total_strings = String.all.count
+            total_strings = TranslationsService.strings.count
+            
 
             # total translations by language
             total_strings_translations = []
@@ -119,15 +136,15 @@ module CloudBabel
                 total_strings_translations.push({
                     code: locale[0],
                     name: locale[1],
-                    total: String.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
+                    total: TranslationsService.strings.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
                 })
             end
 
             # total translations that needs help
-            total_strings_waiting_for_help = String.where(:need_help => true).count
+            total_strings_waiting_for_help = TranslationsService.strings.where(:need_help => true).count
 
             # total translations that needs translation
-            total_strings_waiting_for_translation = String.where(:need_translation => true).count
+            total_strings_waiting_for_translation = TranslationsService.strings.where(:need_translation => true).count
             
             last_synchronization_at = "Not synchronized"
             last_synchronization_at = LC::Date.to_string_datetime(Module.first.updated_at) if not Module.first.blank?
@@ -153,17 +170,22 @@ module CloudBabel
 
             # add filter to select if is available language
             language = params[:language]
-            if Rails.application.config.lesli_settings["configuration"]["locales"].include? language.to_s
-                sql_where_condition.push("#{language.to_s} is NULL")
-                sql_where_condition.push("#{language.to_s} = ''")
+            if language
+                if Rails.application.config.lesli_settings["configuration"]["locales"].include? language.to_s
+                    sql_where_condition.push("#{language.to_s} is NULL")
+                    sql_where_condition.push("#{language.to_s} = ''")
+                end
+            else
+                Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                    sql_where_condition.push("#{locale} is NULL")
+                    sql_where_condition.push("#{locale} = ''")
+                end
             end
 
             sql_where_condition.push("need_help = TRUE")
             sql_where_condition.push("need_translation = TRUE")
 
-            strings = TranslationsService.strings(
-                engines_id = TranslationsService.installed_engines_id
-            ).where(sql_where_condition.join(" OR "))
+            strings = TranslationsService.strings.where(sql_where_condition.join(" OR "))
 
             strings = strings
             .page(query[:pagination][:page])

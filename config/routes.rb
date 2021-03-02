@@ -34,6 +34,7 @@ CloudBabel::Engine.routes.draw do
                 get  :relevant
                 get  :search
                 get  :stats
+                get  :available_locales
             end
         end
         scope module: :string do

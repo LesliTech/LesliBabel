@@ -46,12 +46,14 @@ export default {
                 range_after: 3,
             },
             strings: [],
-            options: {}
+            options: {},
+            availableLocales: {}
         }
     },
     mounted() {
         this.defineLanguage()
         this.getOptions()
+        this.getAvailableLocales()
         this.getRelevantStrings()
     },
     methods: {
@@ -60,6 +62,19 @@ export default {
             if (this.$route.query.language) {
                 this.data.language = this.$route.query.language
             }
+        },
+
+        getAvailableLocales() {
+            const url = `/babel/strings/resources/available_locales.json`
+
+            this.http.get(url).then(result => {
+                if (!result.successful) return
+                this.availableLocales = result.data
+            }).catch(error => {
+                console.error(error)
+            }).finally(() => {
+                this.loading = false
+            })
         },
 
         getOptions() {
@@ -83,7 +98,7 @@ export default {
             }
 
             this.http.get(url).then(result => {
-                if (!result.successful) return 
+                if (!result.successful) return
                 this.strings = result.data
                 this.pagination.count_total = result.data.pagination.count_total
                 this.pagination.current_page = result.data.pagination.current_page
@@ -92,7 +107,7 @@ export default {
             }).finally(() => {
                 this.loading = false
             })
-           
+
         },
 
         getSearch(search) {
@@ -127,19 +142,19 @@ export default {
             }
         },
 
-    },
+        'data.language': function() {
+            if (!this.loading) {
+                this.getRelevantStrings()
+            }
+        },
 
-    computed: {
-        title() {
-            return `Relevant translations: ${this.data.language || I18n.locale}`
-        }
-    }
+    },
 
 }
 </script>
 <template>
     <section class="application-component">
-        <component-header :title="title">
+        <component-header title="Relevant translations">
             <div class="buttons">
                 <component-actions :all_actions="true" :module_id="id"></component-actions>
             </div>
@@ -147,6 +162,13 @@ export default {
 
         <component-toolbar @search="getSearch">
             <div class="control">
+                <div class="select">
+                    <select v-model="data.language">
+                        <option :value="null">All</option>
+                        <option v-for="(language, locale) in availableLocales" :key="locale" :value="locale">{{ language }}</option>
+                    </select>
+                </div>
+
                 <div class="select">
                     <select v-model="pagination.per_page">
                         <option :value="20">20</option>
@@ -171,7 +193,7 @@ export default {
         </component-form-label-editor>
 
         <b-pagination
-            :simple="true"
+            :simple="false"
             :total="pagination.count_total"
             :current.sync="pagination.current_page"
             :range-before="pagination.range_before"
