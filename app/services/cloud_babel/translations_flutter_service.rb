@@ -1,5 +1,5 @@
 module CloudBabel
-    class TranslationsIosService
+    class TranslationsFlutterService
 
         def self.build(engine_id = nil)
 
@@ -13,7 +13,6 @@ module CloudBabel
 
             indexes = {}
             translations = {}
-
             available_locales = Rails.application.config.lesli_settings["configuration"]["locales"]
 
             strings.each do |string|
@@ -22,13 +21,13 @@ module CloudBabel
                 engine_name = string[:engine_name]
                 bucket_name = string[:bucket_name]
                 module_type = string[:platform]
+                
                 bucket_name_clean = bucket_name.gsub("/","_")
 
                 available_locales.each do |lang|
 
                     file_path = Rails.root.join(
-                        "public", "tmp", "locales", engine_name, "Resources",
-                        "#{lang}.lproj", "Localizable.strings"
+                        "public", "tmp", "babel", "flutter","l10n", "intl_#{lang}.arb"
                     )
 
                     file_id = file_path.to_s
@@ -41,7 +40,7 @@ module CloudBabel
                     string[lang] = ":" + string.path + ":" if string[lang].blank?
 
                     translations[file_id].push({
-                        label: "#{bucket_name_clean}_#{string.label}".upcase, 
+                        label: "#{bucket_name_clean}_#{string.label}".camelcase, 
                         translation: string[lang]
                     })
 
@@ -75,41 +74,15 @@ module CloudBabel
                 # creates translation file for every available language
                 translation_file = File.new(file_path, "w+")
 
+                translation_file.write("{\n")
                 strings.each do |string|
-                    translation_file.write("\"#{string[:label]}\" = \"#{string[:translation]}\";\n")
+                    translation_file.write("\"#{string[:label]}\": \"#{string[:translation]}\",\n")
                 end
+                translation_file.write("}\n")
 
                 translation_file.close
 
             end
-
-            # Create global label index file
-            index_file_path = Rails.root.join("public", "tmp", "locales", "Translations.swift")
-
-            FileUtils.makedirs(File.dirname(index_file_path))
-
-            index_file = File.new(index_file_path, "w+")
-
-            index_file.write("\ enum Translations { \n")
-
-            indexes.each do |index_bucket|
-
-                index_file.write("\ enum #{index_bucket[0]} { \n")
-
-                index_bucket[1].each do |index_label|
-                    index_file.write("static let #{index_label[:k]} = \"#{index_label[:v]}\"\n")
-                end
-
-                index_file.write("\ } \n")
-
-            end
-
-            index_file.write("\ } \n")
-
-            index_file.close
-
-            # include index into translation files zip
-            translation_files.push(index_file_path)
 
             LC::Response.service true, translation_files
 

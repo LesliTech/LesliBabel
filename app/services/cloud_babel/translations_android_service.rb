@@ -11,7 +11,7 @@ module CloudBabel
             end
 
             # get strings filtered by module (only rails translations)
-            strings = TranslationsService.strings(engines)
+            strings = TranslationsService.strings_for_apps(engines)
 
             translations = {}
 
@@ -21,8 +21,8 @@ module CloudBabel
 
                 module_name = string[:engine_name].downcase.sub("cloud", "")
                 engine_name = string[:engine_name]
-                module_type = string[:module_type]
                 bucket_name = string[:bucket_name]
+                module_type = string[:platform]
 
                 available_locales.each do |lang|
 

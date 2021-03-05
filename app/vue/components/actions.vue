@@ -120,5 +120,11 @@ export default {
                 <i class="fab fa-swift"></i>
             </span>
         </a>
+
+        <a v-if="all_actions && module_id" :href="getDownloadTranslation('flutter')" class="button is-primary">
+            <span class="icon">
+                <i class="fas fa-ghost"></i>
+            </span>
+        </a>
     </div>
 </template>

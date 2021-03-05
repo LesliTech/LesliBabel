@@ -77,6 +77,22 @@ module CloudBabel
 
         end
 
+        def self.strings_for_apps engines_id=nil, buckets_id=nil
+
+            strings = strings(engines_id, buckets_id)
+            strings = strings.select(
+                :id, 
+                :label,
+                "cloud_babel_modules.name as engine_name",
+                "cloud_babel_buckets.name as bucket_name",
+                "cloud_babel_modules.platform",
+                Rails.application.config.lesli_settings["configuration"]["locales"]
+            )
+
+            strings
+
+        end
+
         def self.installed_engines_id
             babel_modules_names = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] }
             babel_modules_names.push("Core")
