@@ -24,7 +24,7 @@ import app from 'LesliVue/app'
 
 // · Import apps and components
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-import appShow from './apps/show.vue'
+import pageShow from './pages/show.vue'
 
 
 
@@ -32,7 +32,7 @@ import appShow from './apps/show.vue'
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 app("CloudBabel", "[]", "/babel/translations", [{
     path: "/",
-    component: appShow,
+    component: pageShow,
 }], {
     language: null
 })

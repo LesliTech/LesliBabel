@@ -104,7 +104,10 @@ module CloudBabel
             platform = params[:platform]
 
             translations_result = TranslationsAndroidService.build(engine) if platform == "android"
+            translations_result = TranslationsFlutterService.build(engine) if platform == "flutter"
             translations_result = TranslationsIosService.build(engine) if platform == "ios"
+
+            return respond_with_error if translations_result.blank?
 
             LC::System::IO.zip("translations.zip", translations_result.payload)
 
