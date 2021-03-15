@@ -214,7 +214,7 @@ export default {
 }
 </script>
 <template>
-    <div class="card table-container">
+    <div class="card is-shadowless table-container">
         <b-table 
             detailed 
             detail-key="id" 
