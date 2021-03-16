@@ -99,11 +99,12 @@ export default {
         },
 
         getStrings() {
-            let url = `/babel/strings/resources/search.json?search_string=${this.search_text}&search_mode=${this.search_mode}`
-            if(this.id){
+            let url = `/babel/strings/resources/search.json?search_string=${this.search_text}`
+
+            if(this.search_mode == 'module' && this.id){
                 url += `&module_id=${this.id}`
             }
-            if(this.bucket && this.bucket.id){
+            if(this.search_mode == 'bucket' && this.bucket && this.bucket.id){
                 url += `&bucket_id=${this.bucket.id}`
             }
             url += `&page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
@@ -183,7 +184,7 @@ export default {
                     <select v-model="search_mode">
                         <option :value="'global'">Search Globally</option>
                         <option :value="'module'">Only this Module</option>
-                        <option :value="'bucket'">Only this Bucket</option>
+                        <option :value="'bucket'" :disabled="! (bucket && bucket.id)">Only this Bucket</option>
                     </select>
                 </div>
             </div>

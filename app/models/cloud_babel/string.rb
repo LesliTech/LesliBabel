@@ -89,13 +89,8 @@ module CloudBabel
             strings = TranslationsService.strings
             .where(sql_where_condition.join(" OR "), { search_string: "%#{search_string}%" })
 
-            if params[:module_id] && (params[:search_mode] == "module" || params[:search_mode] == "bucket")
-                strings = strings.where("cloud_babel_modules.id = ?", params[:module_id])
-            end
-
-            if params[:bucket_id] && params[:search_mode] == "bucket"
-                strings = strings.where("cloud_babel_buckets.id = ?", params[:bucket_id])
-            end
+            strings = strings.where("cloud_babel_modules.id = ?", params[:module_id]) if params[:module_id]
+            strings = strings.where("cloud_babel_buckets.id = ?", params[:bucket_id]) if params[:bucket_id]
 
             strings = strings.select(
                 :id,
