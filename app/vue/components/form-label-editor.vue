@@ -12,7 +12,7 @@ export default {
         }
     },
     mounted() {
-        document.addEventListener("keyup", this.nextItem);
+        document.addEventListener("keydown", this.nextItem);
         this.getOptions()
     },
     methods: {
@@ -25,24 +25,36 @@ export default {
                 return
             }
 
+            let text_input = e.target
+
             let column_id = e.target.dataset.column_id
-            let row_id = e.target.dataset.row_id
+            let row_id = text_input.dataset.row_id
+
+            let cursor_position = this.cursorPosition(text_input)
+
+            if(cursor_position.at_start){
+                if (e.keyCode == '37') {
+                    // left arrow
+                    e.preventDefault()
+                    row_id--
+                }
+            }
+
+            if(cursor_position.at_end){
+                if (e.keyCode == '39') {
+                    // right arrow
+                    row_id++
+                }
+            }
 
             if (e.keyCode == '38') {
+                e.preventDefault()
                 // up arrow
                 column_id--
-            }
-            else if (e.keyCode == '40') {
+            } else if (e.keyCode == '40') {
+                e.preventDefault()
                 // down arrow
                 column_id++
-            }
-            else if (e.keyCode == '37') {
-                // left arrow
-                row_id--
-            }
-            else if (e.keyCode == '39') {
-                // right arrow
-                row_id++
             }
 
             let ref_input = `input-${column_id}-${row_id}`
@@ -53,6 +65,34 @@ export default {
 
             this.$refs[ref_input][0].focus()
 
+        },
+
+        //This method verifies if the cursor is at the start or end o a "text" type input
+        cursorPosition(text_input){
+            let input_value = text_input.value
+
+            let at_start = false
+            let at_end = false
+            
+            if (typeof text_input.selectionStart == "number") {
+                // Non-IE browsers
+                at_start = (text_input.selectionStart == 0);
+                at_end = (text_input.selectionEnd == input_value.length);
+            } else if (document.selection && document.selection.createRange) {
+                // IE <= 8 branch
+                text_input.focus();
+                let selRange = document.selection.createRange();
+                let inputRange = text_input.createTextRange();
+                let inputSelRange = inputRange.duplicate();
+                inputSelRange.moveToBookmark(selRange.getBookmark());
+                at_start = inputSelRange.compareEndPoints("StartToStart", inputRange) == 0;
+                at_end = inputSelRange.compareEndPoints("EndToEnd", inputRange) == 0;
+            }
+
+            return {
+                at_start: at_start,
+                at_end: at_end
+            }
         },
 
         getOptions() {
@@ -174,7 +214,7 @@ export default {
 }
 </script>
 <template>
-    <div class="card table-container">
+    <div class="card is-shadowless table-container">
         <b-table 
             detailed 
             detail-key="id" 
@@ -199,11 +239,11 @@ export default {
                     <input 
                         type="text" 
                         class="input" 
-                        :tabindex="props.row.id + (strings.records.length * index)"
-                        :data-column_id="props.row.id"
+                        :tabindex="strings.records.length + props.index + (strings.records.length * index)"
+                        :data-column_id="props.index"
                         :data-row_id="index"
                         :data-column_total="strings.records.length"
-                        :ref="`input-${props.row.id}-${index}`"
+                        :ref="`input-${props.index}-${index}`"
                         v-model="props.row[locale_code]"
                         v-on:input="patchTranslationString(props.row)"
                     />

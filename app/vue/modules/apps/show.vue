@@ -39,6 +39,7 @@ export default {
             bucket: null,
             buckets: [],
             loading: false,
+            search_text: '',
             searching: false,
             pagination: {
                 per_page: 20,
@@ -47,7 +48,9 @@ export default {
                 range_before: 3,
                 range_after: 3,
             },
-            strings: [],
+            strings: {
+                records: []
+            },
             options: {}
         }
     },
@@ -60,6 +63,12 @@ export default {
         this.data.label.getStrings = () => this.getStrings()
     },
     methods: {
+
+        setFilterText(search_text){
+            this.search_text = search_text
+            this.pagination.current_page = 1
+            this.getStrings()
+        },
 
         getModule() {
             this.http.get(`/babel/modules/${this.id}.json`).then(result => {
@@ -89,44 +98,31 @@ export default {
         },
 
         getStrings() {
-            this.strings = []
+            let url = `/babel/strings/resources/search.json?search_string=${this.search_text}`
+            if(this.id){
+                url += `&module_id=${this.id}`
+            }
+            if(this.bucket && this.bucket.id){
+                url += `&bucket_id=${this.bucket.id}`
+            }
+            url += `&page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
+
+            this.strings = {
+                records: []
+            }
             this.loading = true
 
-            // get strings for module (default)
-            let url = `/babel/modules/${this.id}/strings.json`
-
-            // if user selects bucket
-            if (this.bucket) {
-                url = `/babel/modules/${this.id}/buckets/${this.bucket.id}/strings.json`
-            }
-
-            url += `?page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
-
             this.http.get(url).then(result => {
-                if (!result.successful) return 
-                this.strings = result.data
-                this.pagination.count_total = result.data.pagination.count_total
+                if (result.successful) {
+                    this.strings = result.data
+                    this.pagination.count_total = result.data.pagination.count_total
+                }
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
                 this.loading = false
             })
            
-        },
-
-        getSearch(search) {
-            this.searching = true
-            if (search == "") {
-                this.strings = {}
-                this.searching = false
-                this.getStrings()
-                return
-            }
-            this.http.get("/babel/strings/resources/search.json?search_string="+search).then(result => {
-                this.strings = result.data
-            }).catch(error => {
-                console.log(error)
-            })
         }
 
     },
@@ -176,7 +172,7 @@ export default {
             </div>
         </component-header>
 
-        <component-toolbar @search="getSearch">
+        <component-toolbar @search="setFilterText">
             <div class="control">
                 <div class="select">
                     <select v-model="pagination.per_page">
@@ -195,27 +191,38 @@ export default {
             :bucket="this.bucket">
         </component-form-label-new>
 
-        <component-form-label-editor
-            :strings="strings"
-            :options="options"
-            :pagination="pagination">
-        </component-form-label-editor>
 
-        <b-pagination
-            :simple="false"
-            :total="pagination.count_total"
-            :current.sync="pagination.current_page"
-            :range-before="pagination.range_before"
-            :range-after="pagination.range_after"
-            :per-page="pagination.per_page"
-            order="is-centered"
-            icon-prev="chevron-left"
-            icon-next="chevron-right"
-            aria-next-label="Next page"
-            aria-previous-label="Previous page"
-            aria-page-label="Page"
-            aria-current-label="Current page">
-        </b-pagination>
+        <div class="card">
+            <div class="card-content">
+
+                <component-data-loading v-if="loading" />
+                <component-data-empty v-if="!loading && strings.records.length == 0" />
+
+                <div v-if="!loading && strings.records.length > 0">
+                    <component-form-label-editor
+                        :strings="strings"
+                        :options="options"
+                        :pagination="pagination">
+                    </component-form-label-editor>
+
+                    <b-pagination
+                        :simple="false"
+                        :total="pagination.count_total"
+                        :current.sync="pagination.current_page"
+                        :range-before="pagination.range_before"
+                        :range-after="pagination.range_after"
+                        :per-page="pagination.per_page"
+                        order="is-centered"
+                        icon-prev="chevron-left"
+                        icon-next="chevron-right"
+                        aria-next-label="Next page"
+                        aria-previous-label="Previous page"
+                        aria-page-label="Page"
+                        aria-current-label="Current page">
+                    </b-pagination>
+                </div>
+            </div>
+        </div>
 
     </section>
 </template>
