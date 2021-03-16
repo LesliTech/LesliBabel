@@ -41,6 +41,7 @@ export default {
             loading: false,
             search_text: '',
             searching: false,
+            search_mode: 'global',
             pagination: {
                 per_page: 20,
                 count_total: 0,
@@ -98,7 +99,7 @@ export default {
         },
 
         getStrings() {
-            let url = `/babel/strings/resources/search.json?search_string=${this.search_text}`
+            let url = `/babel/strings/resources/search.json?search_string=${this.search_text}&search_mode=${this.search_mode}`
             if(this.id){
                 url += `&module_id=${this.id}`
             }
@@ -130,6 +131,10 @@ export default {
     watch: {
 
         bucket: function() {
+            this.getStrings()
+        },
+
+        search_mode: function(){
             this.getStrings()
         },
 
@@ -173,6 +178,15 @@ export default {
         </component-header>
 
         <component-toolbar @search="setFilterText">
+            <div class="control">
+                <div class="select">
+                    <select v-model="search_mode">
+                        <option :value="'global'">Search Globally</option>
+                        <option :value="'module'">Only this Module</option>
+                        <option :value="'bucket'">Only this Bucket</option>
+                    </select>
+                </div>
+            </div>
             <div class="control">
                 <div class="select">
                     <select v-model="pagination.per_page">
