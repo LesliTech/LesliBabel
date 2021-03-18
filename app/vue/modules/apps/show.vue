@@ -41,6 +41,7 @@ export default {
             loading: false,
             search_text: '',
             searching: false,
+            search_mode: 'module',
             pagination: {
                 per_page: 20,
                 count_total: 0,
@@ -80,7 +81,10 @@ export default {
 
         getBuckets() {
             this.http.get(`/babel/modules/${this.id}/buckets.json`).then(result => {
-                this.buckets = result.data
+                this.buckets = [{
+                    id: null,
+                    name: 'All Buckets'
+                }].concat(result.data)
             }).catch(error => {
                 console.log(error)
             })
@@ -99,10 +103,11 @@ export default {
 
         getStrings() {
             let url = `/babel/strings/resources/search.json?search_string=${this.search_text}`
-            if(this.id){
+
+            if(this.search_mode == 'module' && this.id){
                 url += `&module_id=${this.id}`
             }
-            if(this.bucket && this.bucket.id){
+            if(this.search_mode == 'bucket' && this.bucket && this.bucket.id){
                 url += `&bucket_id=${this.bucket.id}`
             }
             url += `&page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
@@ -130,6 +135,21 @@ export default {
     watch: {
 
         bucket: function() {
+            this.pagination.current_page = 1
+            
+            if(this.search_mode == 'bucket' && this.bucket.id == null){
+                // Syncs the 'bucket' and 'search_mode' fields when a bucket is de-selected
+                this.search_mode = 'module'
+            }else if(this.search_mode != 'bucket' && this.bucket.id != null){
+                // Syncs the 'bucket' and 'search_mode' fields when a bucket is selected
+                this.search_mode = 'bucket'
+            }else{
+                // Normal watcher when a bucket is changed. No sync is needed here
+                this.getStrings()
+            }
+        },
+
+        search_mode: function(){
             this.getStrings()
         },
 
@@ -173,6 +193,15 @@ export default {
         </component-header>
 
         <component-toolbar @search="setFilterText">
+            <div class="control">
+                <div class="select">
+                    <select v-model="search_mode">
+                        <option :value="'global'">Search Globally</option>
+                        <option :value="'module'">Only this Module</option>
+                        <option v-if="bucket && bucket.id" :value="'bucket'">Only this Bucket</option>
+                    </select>
+                </div>
+            </div>
             <div class="control">
                 <div class="select">
                     <select v-model="pagination.per_page">
