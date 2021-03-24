@@ -147,7 +147,7 @@ export default {
         },
 
         putTranslationStringNeedHelp(string) {
-            this.http.put(`/babel/strings/${string.id}/resources/need-help.json`, {
+            this.http.put(`/babel/strings/${string.id}/resources/need_help.json`, {
             }).then(result => {
                 string.need_help = ! string.need_help
 
@@ -162,7 +162,7 @@ export default {
         },
 
         putTranslationStringNeedTranslation(string) {
-            this.http.put(`/babel/strings/${string.id}/resources/need-translation.json`, {
+            this.http.put(`/babel/strings/${string.id}/resources/need_translation.json`, {
             }).then(result => {
                 string.need_translation = ! string.need_translation
 

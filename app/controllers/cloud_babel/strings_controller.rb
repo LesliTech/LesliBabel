@@ -2,7 +2,7 @@ require_dependency "cloud_babel/application_controller"
 
 module CloudBabel
     class StringsController < ApplicationController
-        before_action :set_string, only: [:show, :edit, :update, :destroy]
+        before_action :set_string, only: [:show, :edit, :update, :destroy, :need_help, :need_translation]
 
         # GET /strings
         def index
@@ -108,6 +108,38 @@ module CloudBabel
                 String.log_activity_destroy(current_user, @string)
             else
                 respond_with_error(@string.errors.full_messages.to_sentence)
+            end
+        end
+
+        def need_help
+            return respond_with_not_found unless @string
+
+            if @string.need_help?
+                @string.update_attribute(:need_help, false)
+            else
+                @string.update_attribute(:need_help, true)
+            end
+
+            respond_to do |format|
+                format.json {
+                  respond_with_successful(@string)
+                }
+            end
+        end
+
+        def need_translation
+            return respond_with_not_found unless @string
+
+            if @string.need_translation?
+                @string.update_attribute(:need_translation, false)
+            else
+                @string.update_attribute(:need_translation, true)
+            end
+
+            respond_to do |format|
+                format.json {
+                  respond_with_successful(@string)
+                }
             end
         end
 

@@ -28,7 +28,13 @@ CloudBabel::Engine.routes.draw do
         end
     end
 
-    resources :strings, only: [:index, :create, :update, :destroy] do 
+    resources :strings, only: [:index, :create, :update, :destroy] do
+        member do
+            scope :resources do
+                put :need_help
+                put :need_translation
+          end
+        end
         collection do
             scope :resources do
                 get  :relevant
