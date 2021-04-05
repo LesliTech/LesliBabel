@@ -59,11 +59,10 @@ export default {
 
             let ref_input = `input-${column_id}-${row_id}`
 
-            if (!this.$refs[ref_input]) {
-                return
+            if(this.$refs[ref_input] && this.$refs[ref_input][0]){
+                this.$refs[ref_input][0].focus()
             }
 
-            this.$refs[ref_input][0].focus()
 
         },
 
