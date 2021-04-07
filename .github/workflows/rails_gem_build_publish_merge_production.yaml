@@ -7,11 +7,16 @@ jobs:
   build_publish:
     name: Build and Publish
     runs-on: ubuntu-20.04
+    if: "!contains(github.event.head_commit.message, 'release(gem):')"
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+    - run: |
+        git config user.name 'github-actions'
+        git config user.email 'github-actions@github.com'
     - name: Checkout GitHub Actions Repo
       uses: actions/checkout@v2
       with:
@@ -64,6 +69,6 @@ jobs:
     - name: Build and publish gem
       uses: ./.github/actions/rails_gem_build_and_publish
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         owner: leitfaden
         version: ${{ steps.bumVersion.outputs.new_tag}}
