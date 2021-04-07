@@ -18,15 +18,25 @@ For more information read the license file including with this software.
 =end
 
 module CloudBabel
-    class TranslationsSynchronizationService
+    class TranslationsCloneService
 
-        # IMPORTANT: If you modify this file please check the CloneService that contains a modified
-        # copy of this synchronization code
-        def self.remote_sync double_way_sync=false
 
+        # IMPORTANT: This is a modified copy of the SynchronizationService
+        # please be careful modifying this file
+        def self.remote_clone instance_code=nil
+
+            instance_name = instance_code.camelize
+            instance_code = instance_code.gsub("_","-")
+
+
+            # synchronization server url
             host = "http://localhost:8080"
             host = "https://server.raven.dev.gt"
-            instance_code = Rails.application.config.lesli_settings["instance"][:code].gsub("_","-")
+
+
+            return LC::Response.service(false, "no valid instance code provided") if instance_code.blank?
+
+
             api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
 
 
@@ -37,23 +47,25 @@ module CloudBabel
 
 
             # if first time sync
-            response = FastJsonparser.parse({ modules: [], buckets: [], strings: [] }.to_json) if response.blank?
+            return LC::Response.service(false, "no strings found") if response.blank?
 
 
             # add new modules
             response[:modules].each do |babel_module|
                 next if babel_module[:name].blank?
 
+                # we do not want to clone strings from builder engines
+                next if babel_module[:name] == instance_name
+
+                platform = babel_module[:platform]
+                platform = "rails_engine"   if babel_module[:name].start_with?("Cloud")
+                platform = "rails_core"     if babel_module[:name] == "Core"
+
                 local_module = CloudBabel::Module
                 .create_with({
                     created_at: babel_module[:created_at],
                     platform: babel_module[:platform]
                 }).find_or_create_by({ name: babel_module[:name] })
-
-                platform = babel_module[:platform]
-                platform = "rails_engine"   if babel_module[:name].start_with?("Cloud")
-                platform = "rails_core"     if babel_module[:name] == "Core"
-                platform = "rails_builder"  if ["MitwerkenCloud", "DeutscheLeibrenten", "LesliCloud"].include?(babel_module[:name])
 
                 local_module.platform = platform
                 local_module.updated_at = DateTime.now
@@ -67,6 +79,9 @@ module CloudBabel
             response[:buckets].each do |babel_bucket|
 
                 next if babel_bucket[:name].blank?
+
+                # we do not want to clone strings from builder engines
+                next if babel_bucket[:reference_module] == instance_name
 
                 # reference to modules that buckets belongs to
                 # this reference as string is necessary because the id of the module can change
@@ -106,6 +121,9 @@ module CloudBabel
 
                 # Do not sync labes that do not have a valid module and bucket reference
                 next if babel_reference_buckets[remote_string[:reference_bucket]].blank?
+
+                # we do not want to clone strings from builder engines
+                next if babel_reference_buckets[remote_string[:reference_bucket]].reference_module == instance_name
             
                 remote_string_reference = "#{babel_reference_buckets[remote_string[:reference_bucket]].reference_module}-#{babel_reference_buckets[remote_string[:reference_bucket]].name}"
 
@@ -133,91 +151,7 @@ module CloudBabel
                     reference_module_bucket: remote_string_reference
                 })
 
-                # if status changed
-                if remote_string[:status] != local_string["status"]
-
-                    remote_string[:last_update_status] = Time.now if remote_string[:last_update_status].blank?
-                    local_string["last_update_status"] = Time.now if local_string["last_update_status"].blank?
-
-                    # check if remote is newer than local
-                    if (remote_string[:last_update_status] > local_string["last_update_status"])
-
-                        # if so, update local translation with the incoming
-                        local_string["status"] = remote_string[:status]
-                        local_string["last_update_status"] = remote_string[:last_update_status]
-
-                    end
-
-                end
-
-                # if context changed
-                if remote_string[:context] != local_string["context"]
-
-                    remote_string[:last_update_context] = Time.now if remote_string[:last_update_context].blank?
-                    local_string["last_update_context"] = Time.now if local_string["last_update_context"].blank?
-
-                    # check if remote is newer than local
-                    if (remote_string[:last_update_context] > local_string["last_update_context"])
-
-                        # if so, update local translation with the incoming
-                        local_string["context"] = remote_string[:context]
-                        local_string["last_update_context"] = remote_string[:last_update_context]
-
-                    end
-
-                end
-
-                # check if necessary to update any translation
-                # due babel can work as client and server at the same time, we have to synchronize labels for all supported languages
-                ["es", "en", "de", "fr", "nl", "pl", "pt", "it", "tr", "ro", "bg"].each do |locale|
-
-                    remote_string[:"last_update_#{locale}"] = Time.now if remote_string[:"last_update_#{locale}"].blank?
-                    local_string["last_update_#{locale}"] = Time.now if local_string["last_update_#{locale}"].blank?
-
-                    # if translation changed
-                    if local_string[locale] != remote_string[:"#{locale}"]
-            
-                        # check if remote is newer than local
-                        if (remote_string[:"last_update_#{locale}"] > local_string["last_update_#{locale}"])
-            
-                            # if so, update local translation with the incoming
-                            local_string[locale] = remote_string[:"#{locale}"]
-                            local_string["last_update_#{locale}"] = remote_string[:"last_update_#{locale}"]
-
-                        end
-            
-                    end
-                    
-                end
-
-                local_string.save
-
             end
-
-            return LC::Response.service(true) if double_way_sync == false
-
-            # · Collect modules, buckets and strings for syncronization
-
-            # get and parse modules
-            modules = CloudBabel::Module.all.map do |babel_module|
-                babel_module.as_json
-            end
-
-            # get and parse buckets
-            buckets = CloudBabel::Bucket.all.map do |babel_bucket|
-                babel_bucket.as_json
-            end
-
-            # get and parse strings including the deleted ones
-            strings = CloudBabel::String.with_deleted.all.map do |babel_string|
-                babel_string.as_json
-            end
-
-            # send latest translation to raven
-            response = Faraday.post(api_endpoint, 
-                ({ modules: modules, buckets: buckets, strings: strings }).to_json,
-                "Content-Type" => "application/json"
-            )
 
             LC::Response.service true
 
