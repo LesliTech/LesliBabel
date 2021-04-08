@@ -21,6 +21,8 @@ CloudBabel::Engine.routes.draw do
 
     root to: "dashboards#show"
 
+    resource :clone
+
     resources :modules, only: [:index, :show, :new, :create, :edit] do
         resources :strings, only: [:index]
         resources :buckets, only: [:index, :create] do 
