@@ -72,3 +72,9 @@ jobs:
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         owner: leitfaden
         version: ${{ steps.bumVersion.outputs.new_tag}}
+    - name: Sync master branch with production branch
+      uses: ./.github/actions/git_branch_sync_branches
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        from_branch: production
+        to_branch: master
