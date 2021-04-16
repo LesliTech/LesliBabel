@@ -12,6 +12,7 @@ jobs:
   test:
     name: Test RSpec and Playwright
     runs-on: ubuntu-20.04
+    if: "!contains(github.event.head_commit.message, 'release(gem):')"
     services:
       postgres:
         image: postgres:11.5
