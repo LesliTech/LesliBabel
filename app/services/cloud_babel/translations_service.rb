@@ -98,16 +98,14 @@ module CloudBabel
             # get the list of installed engines, including: rails_core, rails_builder, rails_engine
             babel_modules_names = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] }
 
-            # get the list of available apps, custom translations for third-party apps
-            CloudBabel::Module.where.not(:platform => ["rails_core", "rails_builder", "rails_engine"]).each do |app| 
-                babel_modules_names.push(app.name)
-            end
-
             # always include the core
             babel_modules_names.push("Core")
 
-            # return only the engine/app id
-            CloudBabel::Module.where(:name => babel_modules_names).map { |engine| engine.id }
+            # get list of ids of installed engines and available third-party apps
+            CloudBabel::Module
+            .where(:name => babel_modules_names) # -> only installed engines
+            .or(CloudBabel::Module.where.not(:platform => ["rails_core", "rails_builder", "rails_engine"]))
+            .map { |engine| engine.id } 
             
         end
 
