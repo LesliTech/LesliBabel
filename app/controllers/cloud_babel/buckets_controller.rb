@@ -33,6 +33,7 @@ module CloudBabel
         def create
             bucket = Bucket.new(bucket_params)
             bucket.module = Module.find(params[:module_id])
+            bucket.reference_module = bucket.module.name
 
             if bucket.save
                 respond_with_successful bucket

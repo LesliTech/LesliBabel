@@ -44,6 +44,7 @@ export default {
                                 <div class="control">
                                     <div class="select">
                                         <select v-model="module.platform">
+                                            <option value="js">JS</option>
                                             <option value="standard">Standard</option>
                                             <option value="android">Android</option>
                                             <option value="ios">iOS</option>
