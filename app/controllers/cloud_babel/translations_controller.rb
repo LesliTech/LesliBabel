@@ -106,6 +106,7 @@ module CloudBabel
             translations_result = TranslationsAndroidService.build(engine) if platform == "android"
             translations_result = TranslationsFlutterService.build(engine) if platform == "flutter"
             translations_result = TranslationsIosService.build(engine) if platform == "ios"
+            translations_result = TranslationsJsService.build() if platform == "js"
 
             return respond_with_error if translations_result.blank?
 

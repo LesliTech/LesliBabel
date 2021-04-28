@@ -2,9 +2,9 @@
 /*
 Copyright (c) 2020, all rights reserved.
 
-All the information provided by this platform is protected by international laws related  to 
-industrial property, intellectual property, copyright and relative international laws. 
-All intellectual or industrial property rights of the code, texts, trade mark, design, 
+All the information provided by this platform is protected by international laws related  to
+industrial property, intellectual property, copyright and relative international laws.
+All intellectual or industrial property rights of the code, texts, trade mark, design,
 pictures and any other information belongs to the owner of this platform.
 
 Without the written permission of the owner, any replication, modification,
@@ -13,7 +13,7 @@ transmission, publication is strictly forbidden.
 For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-// · 
+// ·
 */
 
 
@@ -22,22 +22,40 @@ For more information read the license file including with this software.
 
 
 
-// · 
+// ·
 export default {
     data() {
         return {
-            instance_code: null
+            instance_code: null,
+            loading: false
         }
     },
     methods: {
 
-        postClone() {
+        loadingIndicator(el, state=true) {
+
+            if (state === true) {
+                el.classList.add("fa-spin")
+                return
+            }
+
+            el.classList.remove("fa-spin")
+            this.$router.go()
+
+        },
+
+        postClone(e) {
+            this.loading = true
+            this.loadingIndicator(e.target)
             this.http.post(this.url.babel("clone"), {
                 clone: {
                     instance_code: this.instance_code
                 }
             }).then(result => {
                 console.log(result)
+            }).finally(() => {
+                this.loadingIndicator(e.target, false)
+                this.loading = false
             })
         }
 
@@ -48,7 +66,6 @@ export default {
     <section class="application-component">
         <component-header title="Clone strings"></component-header>
         <div class="box">
-            {{ instance }}
             <div class="field">
                 <label class="label">Name</label>
                 <div class="control">
@@ -60,8 +77,9 @@ export default {
                         </select>
                     </div>
                 </div>
+                <span>Code: {{ instance_code }}</span>
             </div>
-            <button class="button is-primary" @click="postClone">clone</button>
+            <button class="button is-primary" @click="postClone" :disabled="loading">clone</button>
         </div>
     </section>
 </template>

@@ -45,6 +45,7 @@ export default {
             this.http.post(`/babel/modules/${this.module_id}/buckets.json`, {
                 bucket: this.bucket
             }).then(result => {
+                this.bucket = {}
                 this.getBuckets()
                 this.alert("Bucket created")
             }).catch(error => {

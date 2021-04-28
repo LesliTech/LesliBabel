@@ -78,7 +78,7 @@ export default {
         },
 
         getDownloadTranslation(platform) {
-            return "/babel/translations/resources/download.json?engine_id="+this.module_id+"&platform="+platform
+            return "/babel/translations/resources/download.json?platform="+platform
         }
 
     }
@@ -119,6 +119,12 @@ export default {
                 <i class="fas fa-download"></i>
             </span>
         </button>
+
+        <a v-if="all_actions && module_id" :href="getDownloadTranslation('js')" class="button is-primary"  :disabled="loading">
+            <span class="icon">
+                <i class="fab fa-js"></i>
+            </span>
+        </a>
 
         <a v-if="all_actions && module_id" :href="getDownloadTranslation('android')" class="button is-primary"  :disabled="loading">
             <span class="icon">
