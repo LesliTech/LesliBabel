@@ -9,8 +9,8 @@ module CloudBabel
 
             # get all rails engines to buil
             engines = Module
-                .where("platform in ('rails_core', 'rails_builder', 'rails_engine')")
-                .where("name in (?)", engines_installed.push("Core"))
+                .where("platform in ('rails_core', 'rails_builder', 'rails_engine', 'standard')")
+                .where("name in (?)", engines_installed.push("Core","LesliMails"))
                 .map do |engine|
                 engine[:id]
             end
@@ -57,7 +57,7 @@ module CloudBabel
                     file_path = Rails.root.join("config", "locales", bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
 
                     # translations path for translations for engines
-                    if platform == "rails_builder" || platform == "rails_engine"
+                    if platform == "rails_builder" || platform == "rails_engine" || platform == "standard"
                         file_path = Rails.root.join("engines", engine_name, "config", "locales", bucket_name, "#{ bucket_name }.#{ lang }.yml")
                         file_path = Rails.root.join("config", "locales", engine_code, bucket_name, "#{ bucket_name.gsub("/","_") }.#{ lang }.yml")
                     end
