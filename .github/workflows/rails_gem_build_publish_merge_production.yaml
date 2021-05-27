@@ -73,17 +73,17 @@ jobs:
         owner: leitfaden
         version: ${{ steps.bumVersion.outputs.new_tag}}
     - name: Delete Tag
-        if: "cancelled() || failure()"
-        run: |
-          # The newly created tag is deleted if a step fails or the workflow is cancelled.
-          git push --delete origin ${{ steps.bumVersion.outputs.new_tag}}
+      if: "cancelled() || failure()"
+      run: |
+        # The newly created tag is deleted if a step fails or the workflow is cancelled.
+        git push --delete origin ${{ steps.bumVersion.outputs.new_tag}}
     - name: Sync master branch with production branch
-        if: always()
-        uses: ./.github/actions/git_branch_sync_branches
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          from_branch: production
-          to_branch: master
+      if: always()
+      uses: ./.github/actions/git_branch_sync_branches
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        from_branch: production
+        to_branch: master
     - name: Notify by slack
       if: always()
       uses: ./.github/actions/slack_job_status
