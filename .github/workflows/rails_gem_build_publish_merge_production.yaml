@@ -72,9 +72,22 @@ jobs:
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         owner: leitfaden
         version: ${{ steps.bumVersion.outputs.new_tag}}
+    - name: Delete Tag
+      if: "cancelled() || failure()"
+      run: |
+        # The newly created tag is deleted if a step fails or the workflow is cancelled.
+        git push --delete origin ${{ steps.bumVersion.outputs.new_tag}}
     - name: Sync master branch with production branch
+      if: always()
       uses: ./.github/actions/git_branch_sync_branches
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         from_branch: production
         to_branch: master
+    - name: Notify by slack
+      if: always()
+      uses: ./.github/actions/slack_job_status
+      with:
+        job-status: ${{ job.status }}
+        slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+        channel: alerts
