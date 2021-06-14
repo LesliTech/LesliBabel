@@ -56,14 +56,18 @@ export default {
         }
     },
     mounted() {
-        this.id = this.$route.params.id
-        this.getModule()
-        this.getOptions()
-        this.getBuckets()
-        this.getStrings()
-        this.data.label.getStrings = () => this.getStrings()
+        this.initModule()        
     },
     methods: {
+
+        initModule() {
+            this.id = this.$route.params.id
+            this.getModule()
+            this.getOptions()
+            this.getBuckets()
+            this.getStrings()
+            this.data.label.getStrings = () => this.getStrings()
+        },
 
         setFilterText(search_text){
             this.search_text = search_text
@@ -134,6 +138,10 @@ export default {
 
     watch: {
 
+        '$route.params.id': function() {
+            this.initModule()
+        },
+
         bucket: function() {
             this.pagination.current_page = 1
             
@@ -164,7 +172,7 @@ export default {
                 this.pagination.current_page = 1
                 this.getStrings()
             }
-        },
+        }
 
     }
 }

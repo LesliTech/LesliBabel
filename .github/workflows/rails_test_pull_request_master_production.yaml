@@ -5,14 +5,14 @@ on:
       - master
       - production
   schedule:
-    - cron: '0 0 * * 3'
+    - cron: '0 0 * * 2'
   workflow_dispatch:
 
 jobs:
   test:
     name: Test RSpec and Playwright
     runs-on: self-hosted
-    if: "!contains(github.event.head_commit.message, 'release(gem):')"
+    if: "!contains(github.event.head_commit.message, 'release(gem):') && !contains(github.event.head_commit.message, 'assets(js):') && !contains(github.event.head_commit.message, 'ci(workflows):')"
     services:
       postgres:
         image: postgres:11.5
@@ -80,7 +80,7 @@ jobs:
         cd ..
       env:
         RAILS_ENV: test
-        GEM_HOST_API_KEY: "sagastume:${{secrets.READ_GEM_BY_ACTIONS}}"
+        GEM_HOST_API_KEY: "ldonis:${{secrets.READ_GEM_BY_ACTIONS}}"
     - name: NPM install
       run: |
         cd ./Lesli
