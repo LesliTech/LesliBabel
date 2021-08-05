@@ -47,6 +47,8 @@ export default {
 
                 'sidebar_nav',
 
+                'error',
+
                 'view',
                 'view_btn',
                 'view_chart_title',
@@ -58,8 +60,7 @@ export default {
                 'view_title',
                 'view_toolbar_filter',
                 'view_toolbar_filter_placeholder',
-                'view_toolbar_search_by_placeholder',
-
+                'view_toolbar_search_by_placeholder'
             ],
             timeout: null,
             loading: false,
