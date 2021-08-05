@@ -1,5 +1,6 @@
 .bundle/
 .Gemfile.lock
+.DS_Store
 log/
 pkg/
 config/locales
