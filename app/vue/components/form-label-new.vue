@@ -77,12 +77,12 @@ export default {
                 }
             }).then(result => {
                 if (!result) {
-                    this.alert("Error adding label", "danger")
+                    this.msg.error("Error adding label")
                     return
                 }
                 this.label = ''
                 this.data.label.getStrings()
-                this.alert("Label successfully added", "success")
+                this.msg.success("Label successfully added")
             })
         }
 
