@@ -33,8 +33,11 @@ export default {
             this.loading = true
             this.loadingIndicator(e.target)
             this.http.post("/babel/translations/resources/deploy.json").then(result => {
-                if (!result.successful) { this.alert("Error", "danger")}
-                this.alert("Translations deploy process done successfully")
+                if (!result.successful) {
+                    this.msg.error("Error")
+                    return
+                }
+                this.msg.success("Translations deploy process done successfully")
             }).catch(error => {
                 console.log(error)
             }).finally(() => {
@@ -48,10 +51,10 @@ export default {
             this.loadingIndicator(e.target)
             this.http.post("/babel/translations/resources/synchronization.json").then(result => {
                 if (!result.successful) {
-                    this.alert("Error", "danger")
+                    this.msg.error("Error")
                     return 
                 }
-                this.alert("Synchronization successfully")
+                this.msg.success("Synchronization successfully")
             }).catch(error => {
                 console.log(error)
             }).finally(() => {
@@ -65,10 +68,10 @@ export default {
             this.loadingIndicator(e.target)
             this.http.post("/babel/translations/resources/renovate.json").then(result => {
                 if (!result.successful) {
-                    this.alert("Error", "danger")
+                    this.msg.error("Error")
                     return 
                 }
-                this.alert("Update successfully")
+                this.msg.success("Update successfully")
             }).catch(error => {
                 console.log(error)
             }).finally(() => {

@@ -12,14 +12,14 @@ export default {
 
         postModule() {
             if (this.module.name == "" || this.module.module_type == "") {
-                this.alert("Please complete the form", "warning")
+                this.msg.warn("Please complete the form")
                 return
             }
             this.http.post("/babel/modules", {
                 module: this.module
             }).then(result => {
 
-                this.alert("New module created")
+                this.msg.success("New module created")
             }).catch(error => {
                 console.log(error)
             })
