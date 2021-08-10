@@ -47,7 +47,7 @@ export default {
             }).then(result => {
                 this.bucket = {}
                 this.getBuckets()
-                this.alert("Bucket created")
+                this.msg.info("Bucket created")
             }).catch(error => {
                 console.log(error)
             })

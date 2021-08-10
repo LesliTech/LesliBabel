@@ -111,7 +111,7 @@ export default {
                 this.http.patch(`/babel/strings/${string.id}.json`, {
                     string: string
                 }).then(result => {
-                    this.alert("Translation updated successfully", "success" )
+                    this.msg.success("Translation updated successfully")
                 }).catch(error => {
                     console.log(error)
                 })
@@ -134,9 +134,9 @@ export default {
                             this.strings.records = this.strings.records.filter((record)=>{
                                 return record.id != string.id
                             })
-                            this.alert("Translation deleted successfully", "success" )
+                            this.msg.success("Translation deleted successfully")
                         }else{
-                            this.alert(result.error.message,'danger')
+                            this.msg.error(result.error.message)
                         }
                     }).catch(error => {
                         console.log(error)
@@ -151,9 +151,9 @@ export default {
                 string.need_help = ! string.need_help
 
                 if(string.need_help){
-                    this.alert("Help requested successfully", "success" )
+                    this.msg.success("Help requested successfully")
                 }else{
-                    this.alert("Help request cleared", "success" )
+                    this.msg.success("Help request cleared")
                 }
             }).catch(error => {
                 console.log(error)
@@ -166,9 +166,9 @@ export default {
                 string.need_translation = ! string.need_translation
 
                 if(string.need_translation){
-                    this.alert("Translation requested successfully", "success" )
+                    this.msg.success("Translation requested successfully")
                 }else{
-                    this.alert("Translation request cleared", "success" )
+                    this.msg.success("Translation request cleared")
                 }
             }).catch(error => {
                 console.log(error)
@@ -185,7 +185,7 @@ export default {
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            this.alert("Copied to clipboard")
+            this.msg.info("Copied to clipboard")
         },
 
         getRowClass(row) {
