@@ -3,15 +3,9 @@ module CloudBabel
 
         def self.build
 
-            engines_installed = Rails.application.config.lesli_settings["engines"].map do |engine|
-                engine[:name]
-            end
-
-            # get all rails engines to buil
-            engines = Module
-                .where("platform in ('rails_core', 'rails_builder', 'rails_engine')")
-                .where("name in (?)", engines_installed.push("Core"))
-                .map do |engine|
+            # usually we download translations to use with other platforms like, flutter, reactnative, electron etc.
+            # so for these cases we need to include all the translations 
+            engines = Module.all.map do |engine|
                 engine[:id]
             end
 
