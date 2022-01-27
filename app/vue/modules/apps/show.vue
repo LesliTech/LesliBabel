@@ -97,6 +97,8 @@ export default {
 
                 if(this.bucket.id){
                     this.bucket = this.buckets.find(bucket => bucket.id == this.bucket.id)
+                }else{
+                    this.bucket = this.buckets.find(bucket => ! bucket.id)
                 }
             }).catch(error => {
                 console.log(error)
