@@ -34,6 +34,7 @@ export default {
             label: "",
             labelPrefix: "view_text",
             prefixes: [
+                'account_init',
                 'activity_description',
 
                 'column',
