@@ -36,7 +36,7 @@ export default {
         return {
             id: null,
             module: {},
-            bucket: null,
+            bucket: {id: null},
             buckets: [],
             loading: false,
             search_text: '',
@@ -62,6 +62,11 @@ export default {
 
         initModule() {
             this.id = this.$route.params.id
+            if(this.$route.query.bucket_id){
+                this.bucket.id = this.$route.query.bucket_id
+                this.search_mode = 'bucket'
+            }
+
             this.getModule()
             this.getOptions()
             this.getBuckets()
@@ -89,6 +94,12 @@ export default {
                     id: null,
                     name: 'All Buckets'
                 }].concat(result.data)
+
+                if(this.bucket.id){
+                    this.bucket = this.buckets.find(bucket => bucket.id == this.bucket.id)
+                }else{
+                    this.bucket = this.buckets.find(bucket => ! bucket.id)
+                }
             }).catch(error => {
                 console.log(error)
             })
@@ -128,7 +139,7 @@ export default {
                 }
             }).catch(error => {
                 console.error(error)
-            }).finally(() => {
+            }).finally(()=>{
                 this.loading = false
             })
            
@@ -144,6 +155,9 @@ export default {
 
         bucket: function() {
             this.pagination.current_page = 1
+            if(this.$route.query.bucket_id != this.bucket.id){
+                this.$router.replace({ query: { bucket_id: this.bucket.id } })
+            }
             
             if(this.search_mode == 'bucket' && this.bucket.id == null){
                 // Syncs the 'bucket' and 'search_mode' fields when a bucket is de-selected
