@@ -19,13 +19,15 @@ For more information read the license file including with this software.
 
 @import "lesli/templates/component";
 
-
 .header-translation-options button {
     flex-direction: column;
     height: auto;
 }
 
 .translations-stats {
+    .card-content {
+        padding: 2.4rem 0;
+    }
     &:hover {
         cursor: pointer;
         color: lesli-css-get-color(blue, 900);

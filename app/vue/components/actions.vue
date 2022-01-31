@@ -1,10 +1,7 @@
 <script>
 export default {
     props: {
-        all_actions: {
-            default: false
-        },
-        module_id: {
+        engineId: {
             default: null
         }
     },
@@ -81,7 +78,7 @@ export default {
         },
 
         getDownloadTranslation(platform) {
-            return "/babel/translations/resources/download.json?platform="+platform
+            return "/babel/translations/resources/download.json?platform="+platform+"&engine="+this.engineId
         }
 
     }
@@ -90,61 +87,56 @@ export default {
 <template>
     <div class="is-grouped">
 
-        <button v-if="!all_actions" @click="postDeploy" class="button is-primary" :disabled="loading">
+        <button @click="postDeploy" class="button is-primary" :disabled="loading">
             <b-icon icon="rocket" size="is-small" />
             <span>deploy</span>
         </button>
 
-        <button v-if="!all_actions" @click="postSync" class="button is-primary" :disabled="loading">
+        <button @click="postSync" class="button is-primary" :disabled="loading">
             <b-icon icon="sync" size="is-small" />
             <span>sync</span>
         </button>
 
-        <button v-if="!all_actions" @click="postUpdate" class="button is-primary" :disabled="loading">
+        <button @click="postUpdate" class="button is-primary" :disabled="loading">
             <span class="icon">
                 <i class="fas fa-download"></i>
             </span>
             <span>update</span>
         </button>
 
-
-
-        <button v-if="all_actions" @click="postDeploy" class="button is-primary"  :disabled="loading">
-            <b-icon icon="rocket" size="is-small" />
-        </button>
-
-        <button v-if="all_actions" @click="postSync" class="button is-primary"  :disabled="loading">
-            <b-icon icon="sync" size="is-small" />
-        </button>
-
-        <button v-if="all_actions" @click="postUpdate" class="button is-primary"  :disabled="loading">
-            <span class="icon">
-                <i class="fas fa-download"></i>
-            </span>
-        </button>
-
-        <a v-if="all_actions && module_id" :href="getDownloadTranslation('js')" class="button is-primary"  :disabled="loading">
+        <a v-if="engineId" :href="getDownloadTranslation('js')" class="button is-primary"  :disabled="loading">
             <span class="icon">
                 <i class="fab fa-js"></i>
             </span>
+            <span>JavaScript</span>
         </a>
 
-        <a v-if="all_actions && module_id" :href="getDownloadTranslation('android')" class="button is-primary"  :disabled="loading">
+        <a v-if="engineId" :href="getDownloadTranslation('android')" class="button is-primary"  :disabled="loading">
             <span class="icon">
                 <i class="fab fa-android"></i>
             </span>
+            <span>Android</span>
         </a>
 
-        <a v-if="all_actions && module_id" :href="getDownloadTranslation('ios')" class="button is-primary"  :disabled="loading">
+        <a v-if="engineId" :href="getDownloadTranslation('swift')" class="button is-primary"  :disabled="loading">
             <span class="icon">
                 <i class="fab fa-swift"></i>
             </span>
+            <span>Swift</span>
         </a>
 
-        <a v-if="all_actions && module_id" :href="getDownloadTranslation('flutter')" class="button is-primary"  :disabled="loading">
+        <a v-if="engineId" :href="getDownloadTranslation('flutter')" class="button is-primary"  :disabled="loading">
             <span class="icon">
                 <i class="fas fa-ghost"></i>
             </span>
+            <span>Flutter</span>
+        </a>
+
+        <a v-if="engineId" :href="getDownloadTranslation('middleman')" class="button is-primary"  :disabled="loading">
+            <span class="icon">
+                <i class="far fa-gem"></i>
+            </span>
+            <span>Middleman</span>
         </a>
     </div>
 </template>

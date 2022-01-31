@@ -54,7 +54,11 @@ export default {
         },
 
         showModule(module) {
-            this.$router.push(`/${module.id}`)
+            this.$router.push(`/babel/modules/${module.id}`)
+        },
+
+        editModule(module) {
+            this.$router.push(`/babel/modules/${module.id}/edit`)
         }
 
     }
@@ -64,7 +68,7 @@ export default {
     <section class="application-component">
         <component-header title="Modules & devices">
             <div class="is-grouped">
-                <router-link class="button" to="/new">
+                <router-link class="button" to="/babel/modules/new">
                     <span class="icon">
                         <i class="fas fa-plus"></i>
                     </span>
