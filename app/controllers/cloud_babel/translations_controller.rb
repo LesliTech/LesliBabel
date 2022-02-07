@@ -100,9 +100,10 @@ module CloudBabel
 
         def download
 
-            engine = params[:engine_id]
+            engine = params[:engine]
             platform = params[:platform]
 
+            translations_result = TranslationsMiddlemanService.build(engine) if platform == "middleman"
             translations_result = TranslationsAndroidService.build(engine) if platform == "android"
             translations_result = TranslationsFlutterService.build(engine) if platform == "flutter"
             translations_result = TranslationsIosService.build(engine) if platform == "ios"
@@ -110,9 +111,11 @@ module CloudBabel
 
             return respond_with_error if translations_result.blank?
 
-            LC::System::IO.zip("translations.zip", translations_result.payload)
+            zip_file = "#{platform}-#{engine}-translations.zip"
 
-            redirect_to "/tmp/translations.zip"
+            LC::System::IO.zip(zip_file, translations_result.payload)
+
+            redirect_to "/tmp/#{zip_file}"
 
         end
 

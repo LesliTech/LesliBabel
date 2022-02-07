@@ -45,9 +45,10 @@ export default {
                                     <div class="select">
                                         <select v-model="module.platform">
                                             <option value="js">JS</option>
-                                            <option value="standard">Standard</option>
-                                            <option value="android">Android</option>
-                                            <option value="ios">iOS</option>
+                                            <option value="Swift">Swift</option>
+                                            <option value="Kotlin">Kotlin</option>
+                                            <option value="flutter">Flutter</option>
+                                            <option value="middleman">Middleman</option>
                                         </select>
                                     </div>
                                 </div>

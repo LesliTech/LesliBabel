@@ -27,11 +27,6 @@ For more information read the license file including with this software.
         <span>Translations</span>
     <% end %>
 
-    <%= navigation_vue_item(clone_path) do %>
-        <i class="fas fa-clone"></i>
-        <span>Clone</span>
-    <% end %>
-
     <!-- 
     <% if not current_page?(root_url) %>
         <p class="menu-label">Languages</p>
@@ -51,6 +46,18 @@ For more information read the license file including with this software.
             <i class="far fa-folder-open"></i>
             <span><%= engine.name %></span>
         <% end %>
+    <% end %>
+
+    <p class="menu-label">Tools</p>
+
+    <%= navigation_vue_item(modules_path) do %>
+        <i class="fas fa-cubes"></i>
+        <span>Modules</span>
+    <% end %>
+
+    <%= navigation_vue_item(clone_path) do %>
+        <i class="fas fa-clone"></i>
+        <span>Clone</span>
     <% end %>
 
     <p class="menu-label">Modules</p>

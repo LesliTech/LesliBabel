@@ -5,7 +5,8 @@ module CloudBabel
         before_create :format_module_name
 
         def self.index 
-            Module.where("name is not null").map do |translation_module|
+            Module.where("name is not null")
+            order(id: :desc).map do |translation_module|
                 {
                     id: translation_module[:id],
                     name: translation_module[:name],
