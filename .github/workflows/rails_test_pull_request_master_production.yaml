@@ -1,4 +1,4 @@
-name: Test
+name: master & production prs
 on:
   pull_request:
     branches:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Test RSpec and Playwright
+    name: Running Tests
     runs-on: self-hosted
     if: "!contains(github.event.head_commit.message, 'release(gem):') && !contains(github.event.head_commit.message, 'assets(js):') && !contains(github.event.head_commit.message, 'ci(workflows):')"
     services:
