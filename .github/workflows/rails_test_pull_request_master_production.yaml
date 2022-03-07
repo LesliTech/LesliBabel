@@ -1,4 +1,4 @@
-name: master & production prs
+name: Pull request master/production
 on:
   pull_request:
     branches:
