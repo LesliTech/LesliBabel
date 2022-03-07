@@ -5,11 +5,11 @@ on:
       - production
 jobs:
   build_publish:
-    name: Build and Publish
+    name: Build and publish
     runs-on: ubuntu-20.04
     if: "!contains(github.event.head_commit.message, 'release(gem):')"
     steps:
-    - name: Checkout Repo
+    - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
@@ -17,13 +17,20 @@ jobs:
     - run: |
         git config user.name 'github-actions'
         git config user.email 'github-actions@github.com'
-    - name: Checkout GitHub Actions Repo
+    - name: Checkout gitHub actions repo
       uses: actions/checkout@v2
       with:
         repository: leitfaden/github_actions
         ref: production
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         path: ./.github/
+    - name: Notify slack github actions start 
+      uses: ./.github/actions/slack_job_status
+      with:
+        job-status: INFO
+        slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+        channel: alerts
+        msg: Generating gem for [${{ github.event.repository.name }}]
     - name: New tag version
       uses: ./.github/actions/git_tag_new_version
       id: bumVersion
@@ -31,39 +38,39 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DEFAULT_BUMP: patch
-    - name: Checkout Core Repo
+    - name: Checkout core repo
       uses: actions/checkout@v2
       with:
         repository: leitfaden/Lesli
         ref: production
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         path: ./Lesli
-    - name: Checkout Engine Repo
+    - name: "Checkout ${{ github.event.repository.name }} repo"
       uses: actions/checkout@v2
       with:
-        path: ./Lesli/engines/cloud_babel/
+        path: ./Lesli/engines/${{ github.event.repository.name }}/
     - name: Cache node modules
       uses: actions/cache@v2
       with:
         path: ./Lesli/node_modules
-        key: ${{ runner.os }}-cloud_babel-node-${{ hashFiles('./Lesli/package.json') }}
+        key: ${{ runner.os }}-${{ github.event.repository.name }}-node-${{ hashFiles('./Lesli/package.json') }}
         restore-keys: |
-          ${{ runner.os }}-cloud_babel-node-
+          ${{ runner.os }}-${{ github.event.repository.name }}-node-
     - name: NPM install
       run: |
         cd ./Lesli
         npm install
         cd ..
-    - name: Compile Js to Production
+    - name: Compile js to production
       run: |
         cd ./Lesli/
         npm run webpack:production
         cd ..
-        if [ -d "./Lesli/engines/cloud_babel/app/assets/" ]
+        if [ -d "./Lesli/engines/${{ github.event.repository.name }}/app/assets/" ]
         then
           echo "#####################################"
           echo "Copying compiled assets"
-          cp --verbose --archive --recursive --force ./Lesli/engines/cloud_babel/app/assets/* ./app/assets/
+          cp --verbose --archive --recursive --force ./Lesli/engines/${{ github.event.repository.name }}/app/assets/* ./app/assets/
         fi
         rm -r  ./Lesli/
     - name: Build and publish gem
@@ -72,7 +79,7 @@ jobs:
         token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
         owner: leitfaden
         version: ${{ steps.bumVersion.outputs.new_tag}}
-    - name: Delete Tag
+    - name: Delete tag
       if: "cancelled() || failure()"
       run: |
         # The newly created tag is deleted if a step fails or the workflow is cancelled.
