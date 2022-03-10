@@ -64,13 +64,6 @@ jobs:
         key: ${{ runner.os }}-${{ github.event.repository.name }}-gems-${{ hashFiles('./Lesli/Gemfile') }}
         restore-keys: |
           ${{ runner.os }}-${{ github.event.repository.name }}-gems-
-    - name: Cache node modules
-      uses: actions/cache@v2
-      with:
-        path: ./Lesli/node_modules
-        key: ${{ runner.os }}-${{ github.event.repository.name }}-node-${{ hashFiles('./Lesli/package.json') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ github.event.repository.name }}-node-
     - name: Setting up ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -88,11 +81,6 @@ jobs:
       env:
         RAILS_ENV: test
         GEM_HOST_API_KEY: "ldonis:${{secrets.READ_GEM_BY_ACTIONS}}"
-    - name: NPM install
-      run: |
-        cd ./Lesli
-        npm install
-        cd ..
     - name: Setup test database
       run: |
         cp ./Lesli/config/credentials/testci.yml.enc ./Lesli/config/credentials/test.yml.enc
