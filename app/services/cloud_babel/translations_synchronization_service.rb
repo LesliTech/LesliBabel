@@ -27,6 +27,12 @@ module CloudBabel
             host = "http://localhost:8080"
             host = "https://server.raven.dev.gt"
             instance_code = Rails.application.config.lesli_settings["instance"][:code].gsub("_","-")
+
+            # if special namespace is configured in the lesli.yml settings
+            # this is useful when we need install an instance and customize
+            # the translations for a client
+            instance_code = Rails.application.config.lesli.dig(:configuration, :babel, :namespace)
+
             api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
 
 
