@@ -10,8 +10,6 @@ export default {
             loading: false,
         }
     },
-    mounted() {
-    },
     methods: {
 
         loadingIndicator(el, state=true) {
@@ -85,58 +83,85 @@ export default {
 }
 </script>
 <template>
-    <div class="is-grouped">
-
-        <button @click="postDeploy" class="button is-primary" :disabled="loading">
-            <b-icon icon="rocket" size="is-small" />
-            <span>deploy</span>
-        </button>
-
-        <button @click="postSync" class="button is-primary" :disabled="loading">
-            <b-icon icon="sync" size="is-small" />
-            <span>sync</span>
-        </button>
-
-        <button @click="postUpdate" class="button is-primary" :disabled="loading">
-            <span class="icon">
-                <i class="fas fa-download"></i>
-            </span>
-            <span>update</span>
-        </button>
-
-        <a v-if="engineId" :href="getDownloadTranslation('js')" class="button is-primary"  :disabled="loading">
-            <span class="icon">
-                <i class="fab fa-js"></i>
-            </span>
-            <span>JavaScript</span>
-        </a>
-
-        <a v-if="engineId" :href="getDownloadTranslation('android')" class="button is-primary"  :disabled="loading">
-            <span class="icon">
-                <i class="fab fa-android"></i>
-            </span>
-            <span>Android</span>
-        </a>
-
-        <a v-if="engineId" :href="getDownloadTranslation('swift')" class="button is-primary"  :disabled="loading">
-            <span class="icon">
-                <i class="fab fa-swift"></i>
-            </span>
-            <span>Swift</span>
-        </a>
-
-        <a v-if="engineId" :href="getDownloadTranslation('flutter')" class="button is-primary"  :disabled="loading">
-            <span class="icon">
-                <i class="fas fa-ghost"></i>
-            </span>
-            <span>Flutter</span>
-        </a>
-
-        <a v-if="engineId" :href="getDownloadTranslation('middleman')" class="button is-primary"  :disabled="loading">
-            <span class="icon">
-                <i class="far fa-gem"></i>
-            </span>
-            <span>Middleman</span>
-        </a>
-    </div>
+    <b-dropdown
+        position="is-bottom-left"
+        append-to-body
+        aria-role="menu">
+        <template #trigger>
+            <a class="navbar-item" role="button">
+                <span>Options</span>
+                <span class="icon is-small">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                </span>
+            </a>
+        </template>
+        <b-dropdown-item>
+            <button @click="postDeploy" class="button is-white" :disabled="loading">
+                <b-icon icon="rocket" size="is-small" />
+                <span>deploy</span>
+            </button>
+        </b-dropdown-item>
+        <b-dropdown-item>
+            <button @click="postSync" class="button is-white" :disabled="loading">
+                <b-icon icon="sync" size="is-small" />
+                <span>sync</span>
+            </button>
+        </b-dropdown-item>
+        <b-dropdown-item>
+            <button @click="postUpdate" class="button is-white" :disabled="loading">
+                <span class="icon">
+                    <i class="fas fa-download"></i>
+                </span>
+                <span>update</span>
+            </button>
+        </b-dropdown-item>
+        <b-dropdown-item v-if="engineId" :to="`/babel/modules/${engineId}/edit`">
+            <router-link :to="`/babel/modules/${engineId}/edit`" class="button is-white">
+                <span class="icon">
+                    <i class="far fa-edit"></i>
+                </span>
+                <span>Add buckets</span>
+            </router-link>
+        </b-dropdown-item>
+        <b-dropdown-item>
+            <a :href="getDownloadTranslation('js')" class="button is-white"  :disabled="loading">
+                <span class="icon">
+                    <i class="fab fa-js"></i>
+                </span>
+                <span>JavaScript</span>
+            </a>
+        </b-dropdown-item>
+        <b-dropdown-item v-if="engineId">
+            <a :href="getDownloadTranslation('android')" class="button is-white"  :disabled="loading">
+                <span class="icon">
+                    <i class="fab fa-android"></i>
+                </span>
+                <span>Android</span>
+            </a>
+        </b-dropdown-item>
+        <b-dropdown-item v-if="engineId">
+            <a :href="getDownloadTranslation('swift')" class="button is-white"  :disabled="loading">
+                <span class="icon">
+                    <i class="fab fa-swift"></i>
+                </span>
+                <span>Swift</span>
+            </a>
+        </b-dropdown-item>
+        <b-dropdown-item v-if="engineId">
+            <a :href="getDownloadTranslation('flutter')" class="button is-white"  :disabled="loading">
+                <span class="icon">
+                    <i class="fas fa-ghost"></i>
+                </span>
+                <span>Flutter</span>
+            </a>
+        </b-dropdown-item>
+        <b-dropdown-item v-if="engineId">
+            <a :href="getDownloadTranslation('middleman')" class="button is-white"  :disabled="loading">
+                <span class="icon">
+                    <i class="far fa-gem"></i>
+                </span>
+                <span>Middleman</span>
+            </a>
+        </b-dropdown-item>
+    </b-dropdown>
 </template>
