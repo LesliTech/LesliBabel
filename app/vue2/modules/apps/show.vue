@@ -205,14 +205,13 @@ export default {
                         {{ bucket.name }}
                     </option>
                 </b-select>
-                <router-link :to="`/babel/modules/${id}/edit`" class="button is-primary ml-3">
-                    <span class="icon">
-                        <i class="far fa-edit"></i>
-                    </span>
-                    <span>Add buckets</span>
-                </router-link>
+
+                <component-actions engine-id="id"></component-actions>
+
             </div>
         </component-header>
+
+        <br>
 
         <component-toolbar @search="setFilterText">
             <div class="control">
