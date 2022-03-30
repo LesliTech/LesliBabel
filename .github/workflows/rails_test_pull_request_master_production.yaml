@@ -4,8 +4,6 @@ on:
     branches:
       - master
       - production
-  schedule:
-    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -98,7 +96,7 @@ jobs:
       run: |
         cp ./Lesli/config/credentials/testci.yml.enc ./Lesli/config/credentials/test.yml.enc
         cd ./Lesli
-        bundle exec rspec ./spec/controllers
+        bundle exec rspec spec
         cd ..
       env:
         RAILS_ENV: test
