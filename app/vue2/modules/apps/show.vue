@@ -206,7 +206,7 @@ export default {
                     </option>
                 </b-select>
 
-                <component-actions engine-id="id"></component-actions>
+                <component-actions :engine-id="id"></component-actions>
 
             </div>
         </component-header>
