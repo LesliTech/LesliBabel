@@ -27,7 +27,7 @@ module CloudBabel
                 available_locales.each do |lang|
 
                     file_path = Rails.root.join(
-                        "public", "tmp", "babel", "flutter","l10n", "intl_#{lang}.arb"
+                        "public", "tmp", "babel", "flutter","l10n", "app_#{lang}.arb"
                     )
 
                     file_id = file_path.to_s
@@ -40,7 +40,7 @@ module CloudBabel
                     string[lang] = ":" + string.path + ":" if string[lang].blank?
 
                     translations[file_id].push({
-                        label: "#{bucket_name_clean}_#{string.label}".camelcase, 
+                        label: "#{bucket_name_clean}_#{string.label}".camelize(:lower), 
                         translation: string[lang]
                     })
 
@@ -74,10 +74,20 @@ module CloudBabel
                 # creates translation file for every available language
                 translation_file = File.new(file_path, "w+")
 
+                # start the file with curlybraces as flutter requires
                 translation_file.write("{\n")
-                strings.each do |string|
-                    translation_file.write("\"#{string[:label]}\": \"#{string[:translation]}\",\n")
+
+                strings.each_with_index do |string,index|
+
+                    # writes the key value translations
+                    translation_file.write("\"#{string[:label]}\": \"#{string[:translation]}\"")
+
+                    # add comma and new line if not last string
+                    translation_file.write(",\n") if index != strings.size - 1
+
                 end
+
+                # ends the file with curlybraces
                 translation_file.write("}\n")
 
                 translation_file.close
