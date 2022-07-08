@@ -1,3 +1,4 @@
+<script setup>
 /*
 Copyright (c) 2022, all rights reserved.
 
@@ -16,23 +17,23 @@ For more information read the license file including with this software.
 */
 
 
-// · 
-import app from "LesliVue/app"
+// · import vue tools
+import { ref, reactive, onMounted, watch, computed, onUnmounted } from "vue"
+
+
+// · import lesli stores
+import { useStatistics } from "CloudBabel/stores/statistics"
+
+
+// · implement stores
+const storeStatistics = useStatistics()
 
 
 // · 
-import appDashboardShow from "CloudBabel/apps/dashboards/show.vue"
-import appTranslationsShow from "CloudBabel/apps/translations/show.vue"
+onMounted(() => {
+    storeStatistics.fetch()
+})
 
-
-// · 
-app("CloudBabel", [{
-    path: "/",
-    component: appDashboardShow
-}, {
-    path: "/translations",
-    component: appTranslationsShow
-}, {
-    path: "/modules/:id",
-    component: appDashboardShow
-}])
+</script>
+<template>
+</template>

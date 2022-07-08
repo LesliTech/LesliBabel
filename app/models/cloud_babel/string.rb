@@ -73,7 +73,7 @@ module CloudBabel
         
         def self.search(current_user, query, params)
             
-            search_string = params[:search_string].downcase.gsub(" ","%") if params[:search_string]
+            search_string = params[:search].downcase.gsub(" ","%") if params[:search]
 
             sql_where_condition = []
 
@@ -115,13 +115,7 @@ module CloudBabel
             .per(query[:pagination][:perPage])
             .order(:updated_at)
 
-            LC::Response.pagination(
-                strings.current_page,
-                strings.total_pages,
-                strings.total_count,
-                strings.length,
-                strings
-            )
+            strings
             
         end
 

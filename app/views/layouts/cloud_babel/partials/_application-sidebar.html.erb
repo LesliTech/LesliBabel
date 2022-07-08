@@ -15,60 +15,73 @@ For more information read the license file including with this software.
 // · 
 %>
 
-<template>
+<%= navigation_lesli_item(root_path, "Dashboard", "dashboard") %>
+<%= navigation_lesli_item(translations_path, "Translations", :rmi => "ri-earth-line") %>
 
-    <%= navigation_vue_item(root_path) do %>
-        <i class="fas fa-tachometer-alt"></i>
-        <span>Dashboard</span>
-    <% end %>
-
-    <%= navigation_vue_item(translations_path) do %>
-        <i class="fas fa-language"></i>
-        <span>Translations</span>
-    <% end %>
-
-    <!-- 
-    <% if not current_page?(root_url) %>
-        <p class="menu-label">Languages</p>
-        <% Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |language| %>
-            <%= navigation_item("?language=en") do %>
-                <i class="flag-icon flag-icon-<%= language[0] == "en" ? "gb": language[0] %>"></i>
-                <span><%= language[1] %></span>
-            <% end %>
-        <% end %>
-    <% end %>
-    -->
-    
-    <p class="menu-label">Apps</p>
-
-    <% CloudBabel::Module.where.not(:platform => ["rails_core", "rails_builder", "rails_engine"]).order(:name).each do |engine| %>
-        <%= navigation_vue_item(modules_path + "/" + engine.id.to_s) do %>
-            <i class="far fa-folder-open"></i>
-            <span><%= engine.name %></span>
-        <% end %>
-    <% end %>
-
-    <p class="menu-label">Tools</p>
-
-    <%= navigation_vue_item(modules_path) do %>
-        <i class="fas fa-cubes"></i>
-        <span>Modules</span>
-    <% end %>
-
-    <%= navigation_vue_item(clone_path) do %>
-        <i class="fas fa-clone"></i>
-        <span>Clone</span>
-    <% end %>
-
-    <p class="menu-label">Modules</p>
-
+<lesli-navigation-list label="Modules" rmi="ri-folder-settings-line">
     <% babel_modules = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] } %>
     <% babel_modules.push("Core") %>
     <% CloudBabel::Module.where(:name => babel_modules).order(:platform, :name).each do |engine| %>
-        <%= navigation_vue_item(modules_path + "/" + engine.id.to_s) do %>
-            <i class="far fa-folder-open"></i>
-            <span><%= engine.name.gsub("Cloud", "") %></span>
-        <% end %>
+        <%= navigation_lesli_item(modules_path + "/" + engine.id.to_s, engine.name.gsub("Cloud", ""), :rmi => "ri-folder-settings-line") %>
     <% end %>
+</lesli-navigation-list>
+
+<%#
+<template>
+
+    <%= navigation_vue_item(root_path) do % >
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+    <% end % >
+
+    <%= navigation_vue_item(translations_path) do % >
+        <i class="fas fa-language"></i>
+        <span>Translations</span>
+    <% end % >
+
+    < !-- 
+    <% if not current_page?(root_url) % >
+        <p class="menu-label">Languages</p>
+        <% Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |language| % >
+            <%= navigation_item("?language=en") do % >
+                <i class="flag-icon flag-icon-<%= language[0] == "en" ? "gb": language[0] % >"></i>
+                <span><%= language[1] % ></span>
+            <% end % >
+        <% end % >
+    <% end % >
+    -- >
+    
+    <p class="menu-label">Apps</p>
+
+    <% CloudBabel::Module.where.not(:platform => ["rails_core", "rails_builder", "rails_engine"]).order(:name).each do |engine| % >
+        <%= navigation_vue_item(modules_path + "/" + engine.id.to_s) do % >
+            <i class="far fa-folder-open"></i>
+            <span><%= engine.name % ></span>
+        <% end % >
+    <% end % >
+
+    <p class="menu-label">Tools</p>
+
+    <%= navigation_vue_item(modules_path) do % >
+        <i class="fas fa-cubes"></i>
+        <span>Modules</span>
+    <% end % >
+
+    <%= navigation_vue_item(clone_path) do % >
+        <i class="fas fa-clone"></i>
+        <span>Clone</span>
+    <% end % >
+
+    <p class="menu-label">Modules</p>
+
+    <% babel_modules = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] } % >
+    <% babel_modules.push("Core") % >
+    <% CloudBabel::Module.where(:name => babel_modules).order(:platform, :name).each do |engine| % >
+        <%= navigation_vue_item(modules_path + "/" + engine.id.to_s) do % >
+            <i class="far fa-folder-open"></i>
+            <span><%= engine.name.gsub("Cloud", "") % ></span>
+        <% end % >
+    <% end % >
 
 </template>
+%>

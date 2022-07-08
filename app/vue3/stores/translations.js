@@ -17,22 +17,23 @@ For more information read the license file including with this software.
 
 
 // · 
-import app from "LesliVue/app"
+import { defineStore } from "pinia"
 
 
 // · 
-import appDashboardShow from "CloudBabel/apps/dashboards/show.vue"
-import appTranslationsShow from "CloudBabel/apps/translations/show.vue"
-
-
-// · 
-app("CloudBabel", [{
-    path: "/",
-    component: appDashboardShow
-}, {
-    path: "/translations",
-    component: appTranslationsShow
-}, {
-    path: "/modules/:id",
-    component: appDashboardShow
-}])
+export const useTranslations = defineStore("babel.translations", {
+    state: () => {
+        return {
+            options: {}
+        }
+    },
+    actions: {
+        fetchOptions() {
+            this.http.get(this.url.babel("translations/options")).then(result => {
+                this.options = result
+            }).catch(error => {
+                console.log(error)
+            })
+        }
+    }
+})

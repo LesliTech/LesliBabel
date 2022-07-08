@@ -144,7 +144,7 @@ module CloudBabel
         end
 
         def search
-            respond_with_successful(String.search(current_user, @query, params))
+            respond_with_pagination(String.search(current_user, @query, params))
         end
 
         def stats
@@ -155,8 +155,9 @@ module CloudBabel
             respond_with_successful(String.relevant(current_user, @query, params))
         end
 
-        def available_locales
-            respond_with_successful(Rails.application.config.lesli_settings["configuration"]["locales_available"])
+        # return a list of the locales available
+        def locales
+            respond_with_successful(Rails.application.config.lesli.dig(:configuration, :locales))
         end
 
         private

@@ -17,22 +17,26 @@ For more information read the license file including with this software.
 
 
 // · 
-import app from "LesliVue/app"
+import { defineStore } from "pinia"
 
 
 // · 
-import appDashboardShow from "CloudBabel/apps/dashboards/show.vue"
-import appTranslationsShow from "CloudBabel/apps/translations/show.vue"
+export const useStatistics = defineStore("statistics", {
+    state: () => {
+        return {
+            lastSyncronizationAt: "",
+            totalStrings: 0,
+            languages: []
+        }
+    },
+    actions: {
+        fetch() {
+            this.http.get("/babel/strings/stats").then(result => {
+                this.lastSyncronizationAt = result.last_syncronization_at
+                this.totalStrings = result.total_strings
+                this.languages = result.total_strings_translations
+            })
+        },
 
-
-// · 
-app("CloudBabel", [{
-    path: "/",
-    component: appDashboardShow
-}, {
-    path: "/translations",
-    component: appTranslationsShow
-}, {
-    path: "/modules/:id",
-    component: appDashboardShow
-}])
+    }
+})
