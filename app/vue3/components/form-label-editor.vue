@@ -32,6 +32,15 @@ const storeTranslations = useTranslations()
 
 
 // · 
+const props = defineProps({
+    locale: {
+        type: String,
+        require: false
+    }
+})
+
+
+// · 
 onMounted(() => {
     storeStrings.fetchRelevant()
     storeTranslations.fetchOptions()
@@ -39,20 +48,56 @@ onMounted(() => {
 
 
 // · 
-const columns = ref([{
-    label: 'Label',
-    field: 'label'
-}])
+const columns = ref([])
 
-watch(() => storeTranslations.options.locales_available, () => {
+
+// · load only the necessary columns for the editor
+function initColumns() {
+    columns.value = []
+    columns.value.push({
+        label: 'Label',
+        field: 'label'
+    })
+}
+
+
+// · load all the columns available for the editor
+function resetColumns() {
+    initColumns()
     for(let locale in storeTranslations?.options?.locales_available) {
         columns.value.push({
             label: storeTranslations?.options?.locales_available[locale],
             field: locale
         })
     }
+}
+
+
+// · watch for the locales available to dynamically show language columns in the editor
+watch(() => storeTranslations.options.locales_available, () => {
+    resetColumns()
 })
 
+
+// · watch for the prop, so the editor show only one language at the time
+watch(() => props.locale, () => {
+
+    // reset means the user selected to work with all the languages
+    if (props.locale == 'reset') {
+        return resetColumns()
+    }
+
+    // show initial columns
+    initColumns()
+
+    // push the column with the language selected by the user
+    columns.value.push({
+        label: storeTranslations?.options?.locales_available[props.locale],
+        field: props.locale,
+        width: '100%'
+    })
+
+})
 
 
 // · 
@@ -69,9 +114,12 @@ function copyToClipboard(string) {
     this.msg.info("Copied to clipboard")
 }
 
+
+// · 
 function putString(string) {
     storeStrings.putString(string)
 }
+
 
 </script>
 <template>
@@ -86,14 +134,13 @@ function putString(string) {
                 {{ value }}
             </button>
         </template>
-        <template 
-            #[locale_code]="{ value, row }"
+        <template #[locale_code]="{ value, row }"
             v-for="(locale_name, locale_code, index) in storeTranslations.options.locales_available">
             <input 
+                type="text"
                 class="input"
                 @input="putString(row)"
                 v-model="row[locale_code]"
-                type="text" 
             />
         </template>
     </lesli-table>

@@ -24,13 +24,36 @@ import { defineStore } from "pinia"
 export const useTranslations = defineStore("babel.translations", {
     state: () => {
         return {
-            options: {}
+            locales: [],
+            options: {
+                locales_available: []
+            }
         }
     },
     actions: {
+        postRenovate() {
+            this.http.post(this.url.babel("translations/renovate")).then(result => {
+                this.msg.success("Translations updated")
+            })
+        },
+        postDeploy() {
+            this.http.post(this.url.babel("translations/deploy")).then(result => {
+                this.msg.success("Translations deployed")
+            })
+        },
         fetchOptions() {
             this.http.get(this.url.babel("translations/options")).then(result => {
-                this.options = result
+                
+                this.options = result 
+
+                this.locales = []
+                for(let locale in result.locales_available) {
+                    this.locales.push({
+                        label: result.locales_available[locale],
+                        value: locale
+                    })
+                }
+
             }).catch(error => {
                 console.log(error)
             })

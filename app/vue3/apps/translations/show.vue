@@ -28,17 +28,15 @@ import formLabelEditor from "CloudBabel/components/form-label-editor.vue"
 
 // · import lesli stores
 import { useStrings } from "CloudBabel/stores/strings"
+import { useTranslations } from "CloudBabel/stores/translations"
 
 
 // · implement stores
 const storeStrings = useStrings()
+const storeTranslations = useTranslations()
 
 const language = ref({})
 
-const languages = [{
-    label: 'english',
-    value: 'en'
-}]
 
 // · 
 onMounted(() => {
@@ -54,12 +52,10 @@ onMounted(() => {
             <lesli-select
                 icon="public"
                 v-model="language"
-                :options="languages">
+                :options="storeTranslations.locales">
             </lesli-select>
         </lesli-toolbar>
-
-        <formLabelEditor>
+        <formLabelEditor :locale="language.value">
         </formLabelEditor>
-
     </section>
 </template>
