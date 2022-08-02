@@ -35,13 +35,9 @@ import { useTranslations } from "CloudBabel/stores/translations"
 const storeStrings = useStrings()
 const storeTranslations = useTranslations()
 
-const language = ref({})
-
 
 // · 
-onMounted(() => {
-
-})
+const language = ref({})
 
 
 </script>

@@ -25,7 +25,8 @@ export const useStrings = defineStore("babel.strings", {
     state: () => {
         return {
             timer: null,
-            search: "",
+            module: 0,
+            bucket: 0,
             relevant: { 
                 loading:false, 
                 records:[], 
@@ -46,7 +47,6 @@ export const useStrings = defineStore("babel.strings", {
                 })
             }, 1500)
         },
-
         fetchRelevant() {
             this.relevant.loading = true
             this.http.get(this.url.babel("strings/relevant")).then(result => {
@@ -58,34 +58,43 @@ export const useStrings = defineStore("babel.strings", {
                 this.relevant.loading = false
             })
         },
+        fetchSearch(search) {
 
-        fetch(search) {
+            if (search == "") {
+                return this.fetch()
+            }
+
             this.loading = true
+
+            let params = {}
+
+            if (this.module > 0) { params['module'] = this.module }
+            if (this.bucket > 0) { params['bucket'] = this.bucket }
             
-            let url = this.url.babel("strings/search").search(search)
-
-            /*
-
-            let url = `/babel/strings/search.json?search_string=${this.search_text}`
-
-            if(this.search_mode == 'module' && this.id){
-                url += `&module_id=${this.id}`
-            }
-            if(this.search_mode == 'bucket' && this.bucket && this.bucket.id){
-                url += `&bucket_id=${this.bucket.id}`
-            }
-            url += `&page=${this.pagination.current_page}&perPage=${this.pagination.per_page}`
-
-            this.strings = {
-                records: []
-            }
-
-            */
+            let url = this.url.babel("strings/search", params).search(search)
 
             this.http.get(url).then(result => {
-                console.log(result)
+                this.relevant.records = result.records
+                this.relevant.pagination = result.pagination
             }).catch(error => {
-                console.error(error)
+            }).finally(()=>{
+                this.loading = false
+            })
+        },
+        fetch() {
+            this.loading = true
+
+            let params = {}
+
+            if (this.module > 0) { params['module'] = this.module }
+            if (this.bucket > 0) { params['bucket'] = this.bucket }
+            
+            let url = this.url.babel("strings", params)
+
+            this.http.get(url).then(result => {
+                this.relevant.records = result.records
+                this.relevant.pagination = result.pagination
+            }).catch(error => {
             }).finally(()=>{
                 this.loading = false
             })

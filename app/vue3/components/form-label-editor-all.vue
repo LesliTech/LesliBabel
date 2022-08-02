@@ -35,8 +35,7 @@ const storeTranslations = useTranslations()
 const props = defineProps({
     locale: {
         type: String,
-        require: false,
-        default: I18n.locale
+        require: false
     }, 
     module: {
         type: [Number, String],
@@ -46,7 +45,11 @@ const props = defineProps({
 
 
 // · 
-const columns = ref([])
+function fetch() {
+    storeStrings.module = props.module
+    if (props.module) { storeStrings.fetch() }
+    if (!props.module) { storeStrings.fetchRelevant() }
+}
 
 
 // · 
@@ -57,11 +60,7 @@ onMounted(() => {
 
 
 // · 
-function fetch() {
-    storeStrings.module = props.module
-    if (props.module) { storeStrings.fetch() }
-    if (!props.module) { storeStrings.fetchRelevant() }
-}
+const columns = ref([])
 
 
 // · load only the necessary columns for the editor
@@ -77,32 +76,12 @@ function initColumns() {
 // · load all the columns available for the editor
 function resetColumns() {
     initColumns()
-    columns.value.push({
-        label: storeTranslations?.options?.locales_available[props.locale],
-        field: props.locale,
-        width: '100%'
-    })
-}
-
-
-// · 
-function putString(string) {
-    console.log(string)
-    //storeStrings.putString(string)
-}
-
-
-// · 
-function copyToClipboard(string) {
-    const el = document.createElement('textarea');
-    el.value = string
-    el.setAttribute('readonly', '');
-    el.style.position = 'absolute';
-    el.style.left = '-9999px';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
+    for(let locale in storeTranslations?.options?.locales_available) {
+        columns.value.push({
+            label: storeTranslations?.options?.locales_available[locale],
+            field: locale
+        })
+    }
 }
 
 
@@ -137,6 +116,26 @@ watch(() => props.locale, () => {
 watch(() => props.module, () => fetch())
 
 
+// · 
+function copyToClipboard(string) {
+    const el = document.createElement('textarea');
+    el.value = string
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+}
+
+
+// · 
+function putString(string) {
+    storeStrings.putString(string)
+}
+
+
 </script>
 <template>
     <lesli-table
@@ -146,7 +145,7 @@ watch(() => props.module, () => fetch())
         <template #label="{ value }">
             <button 
                 class="button is-text is-paddingless" 
-                @click.stop="copyToClipboard(value)">
+                @click="copyToClipboard(value)">
                 {{ value }}
             </button>
         </template>
@@ -161,24 +160,3 @@ watch(() => props.module, () => fetch())
         </template>
     </lesli-table>
 </template>
-<style>
-
-table.lesli-table thead th, 
-table.lesli-table thead td,
-table.lesli-table tbody th,
-table.lesli-table tbody td {
-    padding: .8rem 1rem;
-}
-
-table.lesli-table thead th {
-    padding-left: 1.6rem;
-}
-
-table input.input {
-    border: none;
-    box-shadow: none;
-    border-radius: 3px;
-    background-color: transparent;
-}
-
-</style>

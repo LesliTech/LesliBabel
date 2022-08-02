@@ -19,21 +19,60 @@ For more information read the license file including with this software.
 
 // · import vue tools
 import { ref, reactive, onMounted, watch, computed, onUnmounted } from "vue"
+import { useRouter, useRoute } from 'vue-router'
+
+
+// · import components
+import formLabelNew from "CloudBabel/components/form-label-new.vue"
+import formLabelEditor from "CloudBabel/components/form-label-editor.vue"
 
 
 // · import lesli stores
-import { useStatistics } from "CloudBabel/stores/statistics"
+import { useModule } from "CloudBabel/stores/module"
+import { useStrings } from "CloudBabel/stores/strings"
+import { useTranslations } from "CloudBabel/stores/translations"
 
 
 // · implement stores
-const storeStatistics = useStatistics()
+const storeModule = useModule()
+const storeStrings = useStrings()
+const storeTranslations = useTranslations()
+const router = useRouter()
+const route = useRoute()
 
 
 // · 
+const language = ref({})
+
+
+// · 
+function getModule() {
+    return route.params?.id
+}
+
 onMounted(() => {
-    storeStatistics.fetch()
+    storeModule.fetchModule(route.params.id)
 })
+
+// · 
+watch(() => route.params.id, () => {
+    storeModule.fetchModule(route.params.id)
+})
+
 
 </script>
 <template>
+    <section class="application-component">
+        <lesli-header :title="storeModule.name"></lesli-header>
+        <lesli-toolbar @search="storeStrings.fetchSearch">
+            <lesli-select
+                reset="all"
+                icon="public"
+                v-model="language"
+                :options="storeTranslations.locales">
+            </lesli-select>
+        </lesli-toolbar>
+        <formLabelEditor :locale="language.value" :module="getModule()">
+        </formLabelEditor>
+    </section>
 </template>

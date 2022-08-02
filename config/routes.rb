@@ -22,9 +22,10 @@ CloudBabel::Engine.routes.draw do
     root to: "dashboards#show"
 
     # working with strings
-    resources :strings, only: [:update] do 
+    resources :strings, only: [:index, :update] do 
         collection do 
             get :stats
+            get :search
             get :locales
             get :relevant
         end 
@@ -40,10 +41,8 @@ CloudBabel::Engine.routes.draw do
     end 
 
     # working with modules
-    resources :modules, only: [:index, :show, :new, :create, :edit]
-
-
-
+    resources :modules, only: [:index, :show, :new, :create, :edit] do 
+    end
 
 
 =begin
