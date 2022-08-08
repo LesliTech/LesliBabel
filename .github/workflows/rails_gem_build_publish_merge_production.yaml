@@ -6,7 +6,7 @@ on:
 jobs:
   build_publish:
     name: Build and publish
-    runs-on: ubuntu-20.04
+    runs-on: lomax
     if: "!contains(github.event.head_commit.message, 'release(gem):')"
     steps:
     - name: Checkout repo
@@ -56,19 +56,30 @@ jobs:
         key: ${{ runner.os }}-${{ github.event.repository.name }}-node-${{ hashFiles('./Lesli/package.json') }}
         restore-keys: |
           ${{ runner.os }}-${{ github.event.repository.name }}-node-
-    - name: NPM install
+    - name: NPM install vue2
       run: |
         cd ./Lesli
         npm install --prefix ./lib/vue2
         cd ..
-    - name: Compile js to production
+    - name: Compile Js vue2 for Production
       run: |
         cd ./Lesli/
         npm run webpack:production
         cd ..
+    - name: NPM install vue3
+      run: |
+        cd ./Lesli
+        npm install 
+        cd ..
+    - name: Compile Js vue3 for Production
+      run: |
+        cd ./Lesli/
+        npm run webpack3:production
+        cd ..
+    - name: Commit compiled javascript app
+      run: |
         if [ -d "./Lesli/engines/${{ github.event.repository.name }}/app/assets/" ]
         then
-          echo "#####################################"
           echo "Copying compiled assets"
           cp --verbose --archive --recursive --force ./Lesli/engines/${{ github.event.repository.name }}/app/assets/* ./app/assets/
         fi
