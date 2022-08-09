@@ -106,6 +106,64 @@ function copyToClipboard(string) {
 }
 
 
+// · Navigate to the next translation using arrow keys
+function nextTranslation () {
+
+    var table = document.getElementById("babel-translations")
+    var inputs = table.getElementsByTagName("input")
+
+    for(var i = 0 ; i < inputs.length;i++) {
+
+        // add a listener for keydown
+        inputs[i].addEventListener('keydown', function(e){
+
+            // execute only for down/up arrow keys
+            if (e.keyCode == 38 || e.keyCode == 40) {
+            
+                // remove default behavior for arrow keys
+                e.preventDefault()
+
+                // get the index of the current index
+                var currentIndex = findElement(e.target)
+
+                // work only with valid index between 0 ~ n
+                if (currentIndex < 0 || currentIndex > inputs.length) {
+                    return 
+                }
+
+                // downkey
+                if (e.keyCode == 38) {
+                    if (inputs[currentIndex-1]) {
+                        inputs[currentIndex-1].focus();
+                    }
+                }
+                
+                // upkey
+                if (e.keyCode == 40) {
+                    if (inputs[currentIndex+1]) {
+                        inputs[currentIndex+1].focus();
+                    }
+                }
+
+            }
+
+        });
+    }
+
+    // get the current selected input
+    function findElement(element) {
+        var index = -1;
+        for(var i = 0; i < inputs.length; i++) {
+            if(inputs[i] == element) {
+                return i;
+            }
+        }
+        return index;
+    }
+    
+}
+
+
 // · watch for the locales available to dynamically show language columns in the editor
 watch(() => storeTranslations.options.locales_available, () => {
     resetColumns()
@@ -137,9 +195,17 @@ watch(() => props.locale, () => {
 watch(() => props.module, () => fetch())
 
 
+watch(() => storeStrings.relevant.records, () => {
+    setTimeout(() => { nextTranslation() }, 1000) 
+})
+
+
+
+
 </script>
 <template>
     <lesli-table
+        id="babel-translations"
         :loading="storeStrings.relevant.loading"
         :records="storeStrings.relevant.records"
         :columns="columns">
@@ -150,13 +216,13 @@ watch(() => props.module, () => fetch())
                 {{ value }}
             </button>
         </template>
-        <template #[locale_code]="{ value, row }"
+        <template #[locale_code]="{ value, record }"
             v-for="(locale_name, locale_code, index) in storeTranslations.options.locales_available">
             <input 
                 type="text"
                 class="input"
-                @input="putString(row)"
-                v-model="row[locale_code]"
+                @input="putString(record)"
+                v-model="record[locale_code]"
             />
         </template>
     </lesli-table>

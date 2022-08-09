@@ -15,15 +15,15 @@ For more information read the license file including with this software.
 // · 
 %>
 
-<%= navigation_lesli_item(root_path, "Dashboard", "dashboard") %>
-<%= navigation_lesli_item(translations_path, "Translations", :rmi => "ri-earth-line") %>
+<%= navigation_lesli_item(root_path, "Dashboard", "ri-dashboard-3-line") %>
+<%= navigation_lesli_item(translations_path, "Translations", "ri-earth-line") %>
 
 <p class="menu-label">Modules</p>
 
 <% babel_modules = Rails.application.config.lesli_settings["engines"].map { |engine| engine[:name] } %>
 <% babel_modules.push("Core") %>
 <% CloudBabel::Module.where(:name => babel_modules).order(:platform, :name).each do |engine| %>
-<%= navigation_lesli_item(modules_path + "/" + engine.id.to_s, engine.name.gsub("Cloud", ""), :rmi => "ri-folder-settings-line") %>
+<%= navigation_lesli_item(modules_path + "/" + engine.id.to_s, engine.name.gsub("Cloud", ""), "ri-folder-settings-line") %>
 <% end %>
 
 <%#
