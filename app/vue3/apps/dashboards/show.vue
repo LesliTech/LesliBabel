@@ -18,7 +18,14 @@ For more information read the license file including with this software.
 
 
 // · import vue tools
-import { ref, reactive, onMounted, watch, computed, onUnmounted } from "vue"
+import { ref, reactive, onMounted, watch, computed, inject } from "vue"
+import { useRouter, useRoute } from 'vue-router'
+
+
+// · initialize/inject plugins
+const router = useRouter()
+const msg = inject("msg")
+const url = inject("url")
 
 
 // · import lesli stores
@@ -86,17 +93,19 @@ function flag(language) {
 
         <div class="columns mt-2">
             <div class="column" v-for="locale in storeStatistics.languages" :key="locale.code">
-                <div class="card translations-stats pt-1" @click="showLanguage(locale.code)">
-                    <div class="card-content has-text-centered">
-                        <span :class="['mb-2', 'is-size-2','flag-icon', flag(locale.code)]"></span>
-                        <p class="is-size-5">
-                            {{ locale.name }}: {{ locale.total }}
-                        </p>
-                        <small>
-                            missing: {{ storeStatistics.totalStrings - locale.total }} translations
-                        </small>
+                <router-link :to="url.babel('translations', { locale: locale.code }).s">
+                    <div class="card translations-stats pt-1">
+                        <div class="card-content has-text-centered">
+                            <span :class="['mb-2', 'is-size-2','flag-icon', flag(locale.code)]"></span>
+                            <p class="is-size-5">
+                                {{ locale.name }}: {{ locale.total }}
+                            </p>
+                            <small>
+                                missing: {{ storeStatistics.totalStrings - locale.total }} translations
+                            </small>
+                        </div>
                     </div>
-                </div>
+                </router-link>
             </div>
         </div>
     </section>

@@ -18,7 +18,15 @@ For more information read the license file including with this software.
 
 
 // · import vue tools
-import { ref, reactive, onMounted, watch, computed, onUnmounted } from "vue"
+import { ref, reactive, onMounted, watch, computed, inject } from "vue"
+import { useRouter, useRoute } from 'vue-router'
+
+
+// · initialize/inject plugins
+const router = useRouter()
+const route = useRoute()
+const msg = inject("msg")
+const url = inject("url")
 
 
 // · import components
@@ -39,6 +47,15 @@ const storeTranslations = useTranslations()
 // · 
 const language = ref({})
 
+
+onMounted(() => {
+    if (route.query.locale) {
+        language.value = {
+            label: "",
+            value: route.query.locale
+        }
+    }
+})
 
 </script>
 <template>
