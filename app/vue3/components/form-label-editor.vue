@@ -50,9 +50,19 @@ const columns = ref([])
 
 
 // · 
+const language = ref({})
+
+
+// · 
+language.value = 'en' 
+
+
+// · 
 onMounted(() => {
     fetch()
     storeTranslations.fetchOptions()
+    setTimeout(() => renderColumns(), 1000)
+    
 })
 
 
@@ -78,8 +88,8 @@ function initColumns() {
 function resetColumns() {
     initColumns()
     columns.value.push({
-        label: storeTranslations?.options?.locales_available[props.locale],
-        field: props.locale,
+        label: storeTranslations?.options?.locales_available[language.value],
+        field: language.value,
         width: '100%'
     })
 }
@@ -90,6 +100,51 @@ function putString(string) {
     console.log(string)
     //storeStrings.putString(string)
 }
+
+
+// · 
+function renderColumns() {
+        // reset means the user selected to work with all the languages
+    if (language.value == 'reset') {
+        return resetColumns()
+    }
+
+    // show initial columns
+    initColumns()
+
+    // push the column with the language selected by the user
+    columns.value.push({
+        label: storeTranslations?.options?.locales_available[language.value],
+        field: language.value,
+        width: '100%'
+    })
+}
+
+
+// · 
+function languageHead(language) {
+    return 'head('+language+')'
+}
+
+
+// · watch for the locales available to dynamically show language columns in the editor
+watch(() => storeTranslations.options.locales_available, () => {
+    resetColumns()
+})
+
+
+// · 
+watch(() => props.module, () => fetch())
+
+
+// · 
+watch(() => storeStrings.relevant.records, () => {
+    setTimeout(() => { nextTranslation() }, 1000) 
+})
+
+
+// · 
+watch(() => language.value, () => renderColumns())
 
 
 // · 
@@ -163,45 +218,6 @@ function nextTranslation () {
     
 }
 
-
-// · watch for the locales available to dynamically show language columns in the editor
-watch(() => storeTranslations.options.locales_available, () => {
-    resetColumns()
-})
-
-
-// · watch for the prop, so the editor show only one language at the time
-watch(() => props.locale, () => {
-
-    // reset means the user selected to work with all the languages
-    if (props.locale == 'reset') {
-        return resetColumns()
-    }
-
-    // show initial columns
-    initColumns()
-
-    // push the column with the language selected by the user
-    columns.value.push({
-        label: storeTranslations?.options?.locales_available[props.locale],
-        field: props.locale,
-        width: '100%'
-    })
-
-})
-
-
-// · 
-watch(() => props.module, () => fetch())
-
-
-watch(() => storeStrings.relevant.records, () => {
-    setTimeout(() => { nextTranslation() }, 1000) 
-})
-
-
-
-
 </script>
 <template>
     <lesli-table
@@ -209,6 +225,16 @@ watch(() => storeStrings.relevant.records, () => {
         :loading="storeStrings.relevant.loading"
         :records="storeStrings.relevant.records"
         :columns="columns">
+        <template #[languageHead(locale_code)]="{ column }"
+            v-for="(locale_name, locale_code, index) in storeTranslations.options.locales_available">
+            <lesli-select
+                icon="public"
+                v-model="language"
+                :options="storeTranslations.locales">
+            </lesli-select>
+        </template>
+
+
         <template #label="{ value }">
             <button 
                 class="button is-text is-paddingless" 

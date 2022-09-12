@@ -44,31 +44,13 @@ const storeStrings = useStrings()
 const storeTranslations = useTranslations()
 
 
-// · 
-const language = ref({})
-
-
-onMounted(() => {
-    if (route.query.locale) {
-        language.value = {
-            label: "",
-            value: route.query.locale
-        }
-    }
-})
-
 </script>
 <template>
     <section class="application-component">
         <lesli-header title="Translations"></lesli-header>
         <lesli-toolbar @search="storeStrings.fetch">
-            <lesli-select
-                icon="public"
-                v-model="language"
-                :options="storeTranslations.locales">
-            </lesli-select>
         </lesli-toolbar>
-        <formLabelEditor :locale="language.value">
+        <formLabelEditor locale="en">
         </formLabelEditor>
     </section>
 </template>
