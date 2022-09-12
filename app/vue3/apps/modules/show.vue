@@ -30,19 +30,13 @@ import formLabelEditor from "CloudBabel/components/form-label-editor.vue"
 // · import lesli stores
 import { useModule } from "CloudBabel/stores/module"
 import { useStrings } from "CloudBabel/stores/strings"
-import { useTranslations } from "CloudBabel/stores/translations"
 
 
 // · implement stores
 const storeModule = useModule()
 const storeStrings = useStrings()
-const storeTranslations = useTranslations()
 const router = useRouter()
 const route = useRoute()
-
-
-// · 
-const language = ref({})
 
 
 // · 
@@ -65,14 +59,8 @@ watch(() => route.params.id, () => {
     <section class="application-component">
         <lesli-header :title="storeModule.name"></lesli-header>
         <lesli-toolbar @search="storeStrings.fetchSearch">
-            <lesli-select
-                reset="all"
-                icon="public"
-                v-model="language"
-                :options="storeTranslations.locales">
-            </lesli-select>
         </lesli-toolbar>
-        <formLabelEditor :locale="language.value" :module="getModule()">
+        <formLabelEditor :module="getModule()">
         </formLabelEditor>
     </section>
 </template>

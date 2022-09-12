@@ -50,7 +50,7 @@ const storeTranslations = useTranslations()
         <lesli-header title="Translations"></lesli-header>
         <lesli-toolbar @search="storeStrings.fetch">
         </lesli-toolbar>
-        <formLabelEditor locale="en">
+        <formLabelEditor>
         </formLabelEditor>
     </section>
 </template>
