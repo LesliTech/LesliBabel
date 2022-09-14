@@ -25,6 +25,12 @@ module CloudBabel
     class TranslationsController < ApplicationController
         before_action :set_translation, only: []
 
+        def privileges 
+            {
+                index: ['CloudBabel::StringsController#relevant', 'options']
+            }
+        end
+
         # GET /translations
         def index
             #@translations = Translation.all

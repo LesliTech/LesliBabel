@@ -61,10 +61,12 @@ function flag(language) {
             <div class="dropdown is-right is-hoverable">
                 <div class="dropdown-trigger">
                     <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                        <span>Options</span>
                         <span class="icon is-small">
-                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                            <span class="material-icons">
+                                settings_suggest
+                            </span>
                         </span>
+                        <span>Options</span>
                     </button>
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">

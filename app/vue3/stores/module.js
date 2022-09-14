@@ -18,6 +18,7 @@ For more information read the license file including with this software.
 
 // · 
 import { defineStore } from "pinia"
+import { registerRuntimeCompiler } from "vue"
 
 
 // · 
@@ -30,6 +31,7 @@ export const useModule = defineStore("babel.module", {
     },
     actions: {
         fetchModule(modulo) {
+            if (!modulo) return;
             this.http.get(this.url.babel("modules/:id", modulo)).then(result => {
                 this.name = result.name
                 this.platform = result.platform

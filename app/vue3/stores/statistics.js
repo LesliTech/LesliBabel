@@ -31,7 +31,7 @@ export const useStatistics = defineStore("statistics", {
     },
     actions: {
         fetch() {
-            this.http.get("/babel/strings/stats").then(result => {
+            this.http.get(this.url.babel('strings/stats')).then(result => {
                 this.lastSyncronizationAt = result.last_syncronization_at
                 this.totalStrings = result.total_strings
                 this.languages = result.total_strings_translations
