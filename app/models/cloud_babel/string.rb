@@ -8,7 +8,7 @@ module CloudBabel
 
         before_create :clean_label_string
 
-        def self.index current_user, query, params
+        def self.index(current_user, query, params)
 
             strings = []
 
@@ -17,7 +17,7 @@ module CloudBabel
             #   - missing translation for evailable language
             #   - need help
             #   - need translation
-            if params[:module_id].blank?
+            if params[:module].blank?
 
                 sql_where_condition = []
 
@@ -34,8 +34,8 @@ module CloudBabel
             end
 
             # returns strings for specif module with optional bucket
-            if not params[:module_id].blank?
-                strings = TranslationsService.strings(params[:module_id], params[:bucket_id])
+            if not params[:module].blank?
+                strings = TranslationsService.strings(params[:module], params[:bucket])
             end
 
             strings = strings.select(
@@ -73,24 +73,23 @@ module CloudBabel
         
         def self.search(current_user, query, params)
             
-            search_string = params[:search_string].downcase.gsub(" ","%") if params[:search_string]
+            search = params[:search].downcase.gsub(" ","%") if params[:search]
 
             sql_where_condition = []
 
             # add filter to select only available languages 
             Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                sql_where_condition.push("LOWER(#{locale}) like :search_string")
+                sql_where_condition.push("LOWER(#{locale}) like :search")
             end
 
-            sql_where_condition.push("LOWER(label) like :search_string")
-            sql_where_condition.push("LOWER(context) like :search_string")
+            sql_where_condition.push("LOWER(label) like :search")
+            sql_where_condition.push("LOWER(context) like :search")
 
             # get strings with bucket and module information
-            strings = TranslationsService.strings
-            .where(sql_where_condition.join(" OR "), { search_string: "%#{search_string}%" })
+            strings = TranslationsService.strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
 
-            strings = strings.where("cloud_babel_modules.id = ?", params[:module_id]) if params[:module_id]
-            strings = strings.where("cloud_babel_buckets.id = ?", params[:bucket_id]) if params[:bucket_id]
+            strings = strings.where("cloud_babel_modules.id = ?", params[:module]) if params[:module]
+            strings = strings.where("cloud_babel_buckets.id = ?", params[:bucket]) if params[:bucket]
 
             strings = strings.select(
                 :id,
@@ -115,13 +114,7 @@ module CloudBabel
             .per(query[:pagination][:perPage])
             .order(:updated_at)
 
-            LC::Response.pagination(
-                strings.current_page,
-                strings.total_pages,
-                strings.total_count,
-                strings.length,
-                strings
-            )
+            strings
             
         end
 

@@ -1,5 +1,4 @@
-=begin
-
+/*
 Copyright (c) 2022, all rights reserved.
 
 All the information provided by this platform is protected by international laws related  to 
@@ -14,24 +13,30 @@ For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-=end
+*/
 
-require_dependency "cloud_babel/application_controller"
 
-module CloudBabel
-    class DashboardsController < ApplicationController
+// · 
+import { defineStore } from "pinia"
+import { registerRuntimeCompiler } from "vue"
 
-        def privileges 
-            {
-                show: [
-                    'CloudBabel::StringsController#stats',
-                    'CloudBabel::TranslationsController#renovate'
-                ]
-            }
-        end
 
-        def show
-        end
+// · 
+export const useModule = defineStore("babel.module", {
+    state: () => {
+        return {
+            name: "",
+            platform: ""
+        }
+    },
+    actions: {
+        fetchModule(modulo) {
+            if (!modulo) return;
+            this.http.get(this.url.babel("modules/:id", modulo)).then(result => {
+                this.name = result.name
+                this.platform = result.platform
+            })
+        },
 
-    end
-end
+    }
+})

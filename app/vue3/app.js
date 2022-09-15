@@ -22,10 +22,18 @@ import app from "LesliVue/app"
 
 // · 
 import appDashboardShow from "CloudBabel/apps/dashboards/show.vue"
+import appTranslationsShow from "CloudBabel/apps/translations/show.vue"
+import appModulesShow from "CloudBabel/apps/modules/show.vue"
 
 
 // · 
 app("CloudBabel", [{
     path: "/",
     component: appDashboardShow
+}, {
+    path: "/translations",
+    component: appTranslationsShow
+}, {
+    path: "/modules/:id",
+    component: appModulesShow
 }])
