@@ -35,7 +35,6 @@ module CloudBabel
 
             api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
 
-
             # get last sync data
             response = Faraday.get(api_endpoint+"?last=1")
             response = FastJsonparser.parse(response.body)
