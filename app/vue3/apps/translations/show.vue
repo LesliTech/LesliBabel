@@ -30,7 +30,7 @@ const url = inject("url")
 
 
 // · import components
-import formLabelNew from "CloudBabel/components/form-label-new.vue"
+//import formLabelNew from "CloudBabel/components/form-label-new.vue"
 import formLabelEditor from "CloudBabel/components/form-label-editor.vue"
 
 

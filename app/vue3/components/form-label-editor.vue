@@ -97,8 +97,7 @@ function resetColumns() {
 
 // · 
 function putString(string) {
-    console.log(string)
-    //storeStrings.putString(string)
+    storeStrings.putString(string)
 }
 
 
@@ -172,8 +171,8 @@ function nextTranslation () {
         // add a listener for keydown
         inputs[i].addEventListener('keydown', function(e){
 
-            // execute only for down/up arrow keys
-            if (e.keyCode == 38 || e.keyCode == 40) {
+            // execute only for down/up/enter keys
+            if (e.keyCode == 38 || e.keyCode == 40 || e.keyCode == 13) {
             
                 // remove default behavior for arrow keys
                 e.preventDefault()
@@ -194,7 +193,7 @@ function nextTranslation () {
                 }
                 
                 // upkey
-                if (e.keyCode == 40) {
+                if (e.keyCode == 40 || e.keyCode == 13) {
                     if (inputs[currentIndex+1]) {
                         inputs[currentIndex+1].focus();
                     }

@@ -4,6 +4,13 @@ module CloudBabel
     class StringsController < ApplicationController
         before_action :set_string, only: [:show, :edit, :update, :destroy, :need_help, :need_translation]
 
+        def privileges 
+            {
+                new: [],
+                edit: []
+            }
+        end
+
         # GET /strings
         def index
             respond_to do |format|
