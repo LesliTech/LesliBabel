@@ -23,7 +23,7 @@ import { useRouter, useRoute } from 'vue-router'
 
 
 // · import components
-import formLabelNew from "CloudBabel/components/form-label-new.vue"
+import formStringNew from "CloudBabel/components/form-string-new.vue"
 import formLabelEditor from "CloudBabel/components/form-label-editor.vue"
 
 
@@ -57,10 +57,31 @@ watch(() => route.params.id, () => {
 </script>
 <template>
     <section class="application-component">
-        <lesli-header :title="storeModule.name"></lesli-header>
+        <lesli-header :title="storeModule.name">
+            <lesli-button icon="add" @click="storeStrings.showPanel = true">
+                add new string
+            </lesli-button>
+        </lesli-header>
+
         <lesli-toolbar @search="storeStrings.fetchSearch">
         </lesli-toolbar>
+        
         <formLabelEditor :module="getModule()">
         </formLabelEditor>
+
+        <lesli-panel v-model:open="storeStrings.showPanel">
+            <template #header>
+                <span class="icon">
+                    <span class="material-icons">
+                        translate
+                    </span>
+                </span>
+                Add new string to translate
+            </template>
+            <template #default>
+                <formStringNew v-if="storeModule.id" :module-id="storeModule.id">
+                </formStringNew>        
+            </template>
+        </lesli-panel>
     </section>
 </template>

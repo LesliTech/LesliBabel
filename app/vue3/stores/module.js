@@ -18,25 +18,32 @@ For more information read the license file including with this software.
 
 // · 
 import { defineStore } from "pinia"
-import { registerRuntimeCompiler } from "vue"
 
 
 // · 
 export const useModule = defineStore("babel.module", {
     state: () => {
         return {
+            id: 0,
             name: "",
-            platform: ""
+            platform: "",
+            buckets: []
         }
     },
     actions: {
         fetchModule(modulo) {
             if (!modulo) return;
             this.http.get(this.url.babel("modules/:id", modulo)).then(result => {
+                this.id = result.id
                 this.name = result.name
                 this.platform = result.platform
+                this.fetchBuckets()
             })
         },
-
+        fetchBuckets() {
+            this.http.get(this.url.babel("modules/:id/buckets", this.id)).then(result => {
+                this.buckets = result
+            })
+        }
     }
 })

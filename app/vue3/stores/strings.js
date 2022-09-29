@@ -24,6 +24,7 @@ import { defineStore } from "pinia"
 export const useStrings = defineStore("babel.strings", {
     state: () => {
         return {
+            showPanel: false,
             timer: null,
             module: 0,
             bucket: 0,
@@ -98,7 +99,17 @@ export const useStrings = defineStore("babel.strings", {
             }).finally(()=>{
                 this.loading = false
             })
-
+        },
+        post(string) {
+            this.http.post(this.url.babel('strings'), {
+                string: string
+            }).then(result => {
+                if (!result) {
+                    this.msg.error("Error adding label")
+                    return
+                }
+                this.msg.success("Label successfully added")
+            })
         }
     }
 })
