@@ -22,6 +22,10 @@ import { ref, reactive, onMounted, watch, computed, inject } from "vue"
 import { useRouter, useRoute } from 'vue-router'
 
 
+// · Import components
+import componentActions from "CloudBabel/components/actions.vue"
+
+
 // · initialize/inject plugins
 const router = useRouter()
 const msg = inject("msg")
@@ -29,13 +33,11 @@ const url = inject("url")
 
 
 // · import lesli stores
-import { useTranslations } from "CloudBabel/stores/translations"
 import { useStatistics } from "CloudBabel/stores/statistics"
 import { useStrings } from "CloudBabel/stores/strings"
 
 
 // · implement stores
-const storeTranslations = useTranslations()
 const storeStatistics = useStatistics()
 const storeStrings = useStrings()
 
@@ -58,39 +60,10 @@ function flag(language) {
 <template>
     <section class="application-component">
         <lesli-header :title="`Found ${ storeStatistics.totalStrings } registered labels`">
-            <div class="dropdown is-right is-hoverable">
-                <div class="dropdown-trigger">
-                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                        <span class="icon is-small">
-                            <span class="material-icons">
-                                settings_suggest
-                            </span>
-                        </span>
-                        <span>Options</span>
-                    </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                    <div class="dropdown-content">
-                        <a class="dropdown-item" @click="storeTranslations.postRenovate()">
-                            <span class="icon">
-                                <span class="material-icons">
-                                    download
-                                </span>
-                            </span>
-                            <span>Update translations</span>
-                        </a>
-                        <a class="dropdown-item" @click="storeTranslations.postDeploy()">
-                            <span class="icon">
-                                <span class="material-icons">
-                                    rocket_launch
-                                </span>
-                            </span>
-                            <span>Deploy to Rails</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </lesli-header>
+
+        <componentActions></componentActions>
+
         <lesli-toolbar @search="storeStrings.fetch"></lesli-toolbar>
 
         <div class="columns mt-2">

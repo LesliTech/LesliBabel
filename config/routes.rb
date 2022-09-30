@@ -37,6 +37,7 @@ CloudBabel::Engine.routes.draw do
             get :options
             post :renovate
             post :deploy 
+            post :sync
         end 
     end 
 

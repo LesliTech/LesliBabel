@@ -41,6 +41,11 @@ export const useTranslations = defineStore("babel.translations", {
                 this.msg.success("Translations deployed")
             })
         },
+        postSync() {
+            this.http.post(this.url.babel("translations/sync")).then(result => {
+                this.msg.success("Synchronization successfully")
+            })
+        },
         fetchOptions() {
             this.http.get(this.url.babel("translations/options")).then(result => {
                 
