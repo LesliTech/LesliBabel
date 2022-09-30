@@ -25,6 +25,7 @@ import { useRouter, useRoute } from 'vue-router'
 // · import components
 import formStringNew from "CloudBabel/components/form-string-new.vue"
 import formLabelEditor from "CloudBabel/components/form-label-editor.vue"
+import componentActions from "CloudBabel/components/actions.vue"
 
 
 // · import lesli stores
@@ -62,6 +63,8 @@ watch(() => route.params.id, () => {
                 add new string
             </lesli-button>
         </lesli-header>
+
+        <componentActions></componentActions>
 
         <lesli-toolbar @search="storeStrings.fetchSearch">
         </lesli-toolbar>

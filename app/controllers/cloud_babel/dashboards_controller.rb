@@ -25,6 +25,8 @@ module CloudBabel
             {
                 show: [
                     'CloudBabel::StringsController#stats',
+                    'CloudBabel::TranslationsController#sync',
+                    'CloudBabel::TranslationsController#deploy',
                     'CloudBabel::TranslationsController#renovate'
                 ]
             }

@@ -30,8 +30,8 @@ const url = inject("url")
 
 
 // · import components
-//import formLabelNew from "CloudBabel/components/form-label-new.vue"
 import formLabelEditor from "CloudBabel/components/form-label-editor.vue"
+import componentActions from "CloudBabel/components/actions.vue"
 
 
 // · import lesli stores
@@ -48,6 +48,7 @@ const storeTranslations = useTranslations()
 <template>
     <section class="application-component">
         <lesli-header title="Translations"></lesli-header>
+        <componentActions></componentActions>
         <lesli-toolbar @search="storeStrings.fetch">
         </lesli-toolbar>
         <formLabelEditor>
