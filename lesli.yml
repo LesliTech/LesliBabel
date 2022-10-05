@@ -3,10 +3,6 @@
 # For more information read the license file including with this software.
 
 info:
+    core: 3
     load: true
     name: "CloudBabel"
-    code: "cloud_babel"
-    github:
-        url: "https://github.com/leitfaden/cloud_babel"
-        ssh: "git@github.com:leitfaden/cloud_babel.git"
-        ssh_backup: "git@github.com:LesliTech/cloud_babel.git"

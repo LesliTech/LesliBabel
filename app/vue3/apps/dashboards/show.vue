@@ -16,9 +16,72 @@ For more information read the license file including with this software.
 // · 
 */
 
+
+// · import vue tools
+import { ref, reactive, onMounted, watch, computed, inject } from "vue"
+import { useRouter, useRoute } from 'vue-router'
+
+
+// · Import components
+import componentActions from "CloudBabel/components/actions.vue"
+
+
+// · initialize/inject plugins
+const router = useRouter()
+const msg = inject("msg")
+const url = inject("url")
+
+
+// · import lesli stores
+import { useStatistics } from "CloudBabel/stores/statistics"
+import { useStrings } from "CloudBabel/stores/strings"
+
+
+// · implement stores
+const storeStatistics = useStatistics()
+const storeStrings = useStrings()
+
+
+// · 
+onMounted(() => {
+    storeStatistics.fetch()
+})
+
+
+// · 
+function flag(language) {
+    if (language == 'en') { return 'flag-icon-gb' }
+    if (language == 'uk') { return 'flag-icon-ua' }
+    return 'flag-icon-'+language
+}
+
+
 </script>
 <template>
     <section class="application-component">
-        mi dashboard
+        <lesli-header :title="`Found ${ storeStatistics.totalStrings } registered labels`">
+        </lesli-header>
+
+        <componentActions></componentActions>
+
+        <lesli-toolbar @search="storeStrings.fetch"></lesli-toolbar>
+
+        <div class="columns mt-2">
+            <div class="column" v-for="locale in storeStatistics.languages" :key="locale.code">
+                <router-link :to="url.babel('translations', { locale: locale.code }).s">
+                    <div class="card translations-stats pt-1">
+                        <div class="card-content has-text-centered">
+                            <span :class="['mb-2', 'is-size-2','flag-icon', flag(locale.code)]"></span>
+                            <p class="is-size-5">
+                                {{ locale.name }}: {{ locale.total }}
+                            </p>
+                            <small>
+                                missing: {{ storeStatistics.totalStrings - locale.total }} translations
+                            </small>
+                        </div>
+                    </div>
+                </router-link>
+            </div>
+        </div>
     </section>
 </template>

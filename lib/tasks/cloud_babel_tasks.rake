@@ -16,7 +16,6 @@ For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-
 =end
 
 require "./lesli"
@@ -99,6 +98,28 @@ namespace :cloud_babel do
         puts "syncing translations"
         CloudBabel::TranslationsSynchronizationService.remote_sync
         puts ""; puts "";
+
+    end
+
+    desc "Scan for descriptors and register labels for translations for them"
+    task descriptors: [:environment] do 
+
+        puts "scan for descriptors"
+
+        translation_module = CloudBabel::Module.find_or_create_by({ name: "Core", platform: "rails_core" })
+        translation_bucket = CloudBabel::Bucket.find_or_create_by({ 
+            name: "descriptors", 
+            module: translation_module, 
+            reference_module: translation_module.name 
+        })
+
+        Descriptor.all.each do |descriptor|
+            CloudBabel::String.find_or_create_by({ 
+                :label => "descriptor_#{descriptor["name"]}", 
+                :bucket => translation_bucket 
+            })
+        end
+        
 
     end
     

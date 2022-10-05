@@ -1,5 +1,4 @@
-=begin
-
+/*
 Copyright (c) 2022, all rights reserved.
 
 All the information provided by this platform is protected by international laws related  to 
@@ -14,26 +13,30 @@ For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-=end
+*/
 
-require_dependency "cloud_babel/application_controller"
 
-module CloudBabel
-    class DashboardsController < ApplicationController
+// · 
+import { defineStore } from "pinia"
 
-        def privileges 
-            {
-                show: [
-                    'CloudBabel::StringsController#stats',
-                    'CloudBabel::TranslationsController#sync',
-                    'CloudBabel::TranslationsController#deploy',
-                    'CloudBabel::TranslationsController#renovate'
-                ]
-            }
-        end
 
-        def show
-        end
+// · 
+export const useStatistics = defineStore("statistics", {
+    state: () => {
+        return {
+            lastSyncronizationAt: "",
+            totalStrings: 0,
+            languages: []
+        }
+    },
+    actions: {
+        fetch() {
+            this.http.get(this.url.babel('strings/stats')).then(result => {
+                this.lastSyncronizationAt = result.last_syncronization_at
+                this.totalStrings = result.total_strings
+                this.languages = result.total_strings_translations
+            })
+        },
 
-    end
-end
+    }
+})

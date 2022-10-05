@@ -22,8 +22,8 @@ module CloudBabel
     class TranslationsService
 
         def self.restart_server
-            system "bundle exec rake i18n:js:export RAILS_ENV=production"
             return if Rails.env != "production"
+            system "bundle exec rake i18n:js:export RAILS_ENV=production"
             FileUtils.touch Rails.root.join("tmp", "restart.txt")
         end
 

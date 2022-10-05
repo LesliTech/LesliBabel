@@ -25,6 +25,12 @@ module CloudBabel
     class TranslationsController < ApplicationController
         before_action :set_translation, only: []
 
+        def privileges 
+            {
+                index: ['CloudBabel::StringsController#relevant', 'options']
+            }
+        end
+
         # GET /translations
         def index
             #@translations = Translation.all
@@ -92,7 +98,7 @@ module CloudBabel
             respond_with_error if not result.success?
         end
 
-        def synchronization
+        def sync
             result = TranslationsSynchronizationService.remote_sync true
             respond_with_successful if result.success?
             respond_with_error if not result.success?

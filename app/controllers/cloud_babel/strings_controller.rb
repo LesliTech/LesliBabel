@@ -4,6 +4,13 @@ module CloudBabel
     class StringsController < ApplicationController
         before_action :set_string, only: [:show, :edit, :update, :destroy, :need_help, :need_translation]
 
+        def privileges 
+            {
+                new: [],
+                edit: []
+            }
+        end
+
         # GET /strings
         def index
             respond_to do |format|
@@ -29,20 +36,14 @@ module CloudBabel
 
         # POST /strings
         def create
-            string = String.new(string_params)
-            #string.reference_bucket = "#{string.bucket.module.name}-#{string.bucket.name}"
-            #string.user = current_user
 
-            #string.last_update_status = Time.now
-            #string.last_update_context = Time.now
-            #string.last_update_priority = Time.now
-            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                #string["last_update_#{locale}"] = Time.now
+            if String.find_by(label: string_params[:label],cloud_babel_buckets_id: string_params[:cloud_babel_buckets_id])
+                return respond_with_error("Duplicated string")
             end
-            
+
+            string = String.new(string_params)
             if string.save
                 String.log_activity_create(current_user, string)
-
                 respond_with_successful(string)
             else
                 respond_with_error("Error on create translation string", string.errors)
@@ -144,7 +145,7 @@ module CloudBabel
         end
 
         def search
-            respond_with_successful(String.search(current_user, @query, params))
+            respond_with_pagination(String.search(current_user, @query, params))
         end
 
         def stats
@@ -155,8 +156,9 @@ module CloudBabel
             respond_with_successful(String.relevant(current_user, @query, params))
         end
 
-        def available_locales
-            respond_with_successful(Rails.application.config.lesli_settings["configuration"]["locales_available"])
+        # return a list of the locales available
+        def locales
+            respond_with_successful(Rails.application.config.lesli.dig(:configuration, :locales))
         end
 
         private
