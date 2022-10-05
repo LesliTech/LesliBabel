@@ -6,7 +6,7 @@
 
 <hr/>
 
-Version 1.0.2
+Version 3.0
 
 #### License
 -------
