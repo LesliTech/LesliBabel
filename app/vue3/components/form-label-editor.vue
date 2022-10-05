@@ -147,9 +147,9 @@ watch(() => language.value, () => renderColumns())
 
 
 // · 
-function copyToClipboard(string) {
+function copyToClipboard(button) {
     const el = document.createElement('textarea');
-    el.value = string
+    el.value = button.target.outerText; // text to copy
     el.setAttribute('readonly', '');
     el.style.position = 'absolute';
     el.style.left = '-9999px';
@@ -157,6 +157,8 @@ function copyToClipboard(string) {
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
+    button.target.classList.add('copied')
+    setTimeout(() => button.target.classList.remove('copied'), 1000)
 }
 
 
@@ -234,10 +236,10 @@ function nextTranslation () {
         </template>
 
 
-        <template #label="{ value }">
+        <template #label="{ record, value }">
             <button 
-                class="button is-text is-paddingless" 
-                @click.stop="copyToClipboard(value)">
+                class="button is-text px-2 py-0" 
+                @click.stop="copyToClipboard">
                 {{ value }}
             </button>
         </template>
@@ -265,11 +267,28 @@ table.lesli-table thead th {
     padding-left: 1.6rem;
 }
 
+table.lesli-table tbody .buttons {
+    flex-wrap: nowrap;
+}
+
 table input.input {
     border: none;
     box-shadow: none;
     border-radius: 3px;
     background-color: transparent;
+}
+
+.copied:after{
+    display: inline;
+    position: absolute;
+    content: "copied!";
+    animation: 1s ease-in-out 0s 1 normal forwards running copyit;
+    font-size: .8em;
+}
+
+@keyframes copyit{ 
+    0%{ bottom:2em;opacity:1;} 
+    100%{bottom:4em;opacity:0;} 
 }
 
 </style>
