@@ -6,6 +6,7 @@ module CloudBabel
 
         def privileges 
             {
+                index: [],
                 new: [],
                 edit: []
             }
