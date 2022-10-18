@@ -185,7 +185,22 @@ module CloudBabel
             sql_where_condition.push("need_help = TRUE")
             sql_where_condition.push("need_translation = TRUE")
 
-            strings = TranslationsService.strings.where(sql_where_condition.join(" OR "))
+            strings = TranslationsService.strings.where(sql_where_condition.join(" OR ")).select(
+                :id,
+                :label,
+                :status,
+                :context,
+                :priority,
+                :need_help,
+                :need_translation,
+                Rails.application.config.lesli_settings["configuration"]["locales"],
+                "cloud_babel_modules.id as engine_id",
+                "cloud_babel_buckets.id as bucket_id",
+                "cloud_babel_buckets.name as bucket_name",
+                "cloud_babel_modules.name as engine_name",
+                "cloud_babel_modules.platform as platform",
+                "'' as path"
+            )
 
             strings = strings
             .page(query[:pagination][:page])
