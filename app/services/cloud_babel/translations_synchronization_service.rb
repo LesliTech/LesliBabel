@@ -26,7 +26,7 @@ module CloudBabel
 
             host = "http://localhost:8080"
             host = "https://server.raven.dev.gt"
-            instance_code = Rails.application.config.lesli_settings["instance"][:code].gsub("_","-")
+            instance_code = LC::System::Info.instance[:code].gsub("_","-")
 
             # if special namespace is configured in the lesli.yml settings
             # this is useful when we need install an instance and customize
@@ -36,7 +36,7 @@ module CloudBabel
             api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
 
             # get last sync data
-            response = Faraday.get(api_endpoint+"?last=1")
+            response = Faraday.get("#{api_endpoint}?last=1")
             response = FastJsonparser.parse(response.body)
             response = response[:data][:documents][0]
 

@@ -147,9 +147,9 @@ watch(() => language.value, () => renderColumns())
 
 
 // · 
-function copyToClipboard(button) {
+function copyToClipboard(button, text) {
     const el = document.createElement('textarea');
-    el.value = button.target.outerText; // text to copy
+    el.value = text; // text to copy
     el.setAttribute('readonly', '');
     el.style.position = 'absolute';
     el.style.left = '-9999px';
@@ -216,6 +216,8 @@ function nextTranslation () {
         }
         return index;
     }
+
+
     
 }
 
@@ -236,11 +238,12 @@ function nextTranslation () {
         </template>
 
 
-        <template #label="{ record, value }">
+        <template #label="{ record }">
             <button 
                 class="button is-text px-2 py-0" 
-                @click.stop="copyToClipboard">
-                {{ value }}
+                @click.stop="copyToClipboard($event, record.label)"
+                @contextmenu.capture.prevent="copyToClipboard($event, record.path)">
+                {{ record.label }}
             </button>
         </template>
         <template #[locale_code]="{ value, record }"
