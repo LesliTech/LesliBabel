@@ -59,35 +59,70 @@ const prefixes = [{
 }, {
     label: 'activity_description',
     value: 'activity_description'
-}
-/*
-    'column',
-    'column_enum',
-
-    'mailer',
-    'messages_success',
-    'messages_info',
-    'messages_warning',
-    'messages_danger',
-
-    'sidebar_nav',
-
-    'error',
-
-    'view',
-    'view_btn',
-    'view_chart_title',
-    'view_placeholder',
-    'view_tab_title',
-    'view_table_action',
-    'view_table_header',
-    'view_text',
-    'view_title',
-    'view_toolbar_filter',
-    'view_toolbar_filter_placeholder',
-    'view_toolbar_search_by_placeholder'
-*/
-]
+}, {
+    label: "column",
+    value: "column"
+}, {
+    label: "column_enum",
+    value: "column_enum"
+}, {
+    label: "mailer",
+    value: "mailer"
+}, {
+    label: "messages_success",
+    value: "messages_success"
+}, {
+    label: "messages_info",
+    value: "messages_info"
+}, {
+    label: "messages_warning",
+    value: "messages_warning"
+}, {
+    label: "messages_danger",
+    value: "messages_danger"
+}, {
+    label: "sidebar_nav",
+    value: "sidebar_nav"
+}, {
+    label: "error",
+    value: "error"
+}, {
+    label: "view",
+    value: "view"
+}, {
+    label: "view_btn",
+    value: "view_btn"
+}, {
+    label: "view_chart_title",
+    value: "view_chart_title"
+}, {
+    label: "view_placeholder",
+    value: "view_placeholder"
+}, {
+    label: "view_tab_title",
+    value: "view_tab_title"
+}, {
+    label: "view_table_action",
+    value: "view_table_action"
+}, {
+    label: "view_table_header",
+    value: "view_table_header"
+}, {
+    label: "view_text",
+    value: "view_text"
+}, {
+    label: "view_title",
+    value: "view_title"
+}, {
+    label: "view_toolbar_filter",
+    value: "view_toolbar_filter"
+}, {
+    label: "view_toolbar_filter_placeholder",
+    value: "view_toolbar_filter_placeholder"
+}, {
+    label: "view_toolbar_search_by_placeholder",
+    value: "view_toolbar_search_by_placeholder"
+}]
 
 
 function postString() {
