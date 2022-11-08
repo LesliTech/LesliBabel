@@ -168,8 +168,6 @@ module CloudBabel
             strings = []
             sql_where_condition = []
 
-            L2.info query, query.dig(:order, :by)
-
             # add filter to select if is available language
             language = params[:language]
             if language
