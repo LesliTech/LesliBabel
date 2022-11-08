@@ -168,6 +168,8 @@ module CloudBabel
             strings = []
             sql_where_condition = []
 
+            L2.info query, query.dig(:order, :by)
+
             # add filter to select if is available language
             language = params[:language]
             if language
@@ -205,7 +207,7 @@ module CloudBabel
             strings = strings
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
-            .order(:updated_at)
+            .order(query.dig(:order, :by))
 
             LC::Response.pagination(
                 strings.current_page,
