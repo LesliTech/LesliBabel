@@ -103,7 +103,8 @@ function putString(string) {
 
 // · 
 function renderColumns() {
-        // reset means the user selected to work with all the languages
+
+    // reset means the user selected to work with all the languages
     if (language.value == 'reset') {
         return resetColumns()
     }
@@ -142,8 +143,12 @@ watch(() => storeStrings.relevant.records, () => {
 })
 
 
-// · 
-watch(() => language.value, () => renderColumns())
+// · changin the working language
+watch(() => language.value, (language) => {
+    storeStrings.language = language
+    fetch()
+    resetColumns()
+})
 
 
 // · 
@@ -216,8 +221,6 @@ function nextTranslation () {
         }
         return index;
     }
-
-
     
 }
 

@@ -205,7 +205,7 @@ module CloudBabel
             strings = strings
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
-            .order(:updated_at)
+            .order(query.dig(:order, :by))
 
             LC::Response.pagination(
                 strings.current_page,
