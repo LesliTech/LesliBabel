@@ -25,6 +25,7 @@ export const useStrings = defineStore("babel.strings", {
     state: () => {
         return {
             showPanel: false,
+            language: 'en',     // working language
             timer: null,
             module: 0,
             bucket: 0,
@@ -50,7 +51,7 @@ export const useStrings = defineStore("babel.strings", {
         },
         fetchRelevant() {
             this.relevant.loading = true
-            this.http.get(this.url.babel("strings/relevant")).then(result => {
+            this.http.get(this.url.babel("strings/relevant").order(this.language)).then(result => {
                 this.relevant.records = result.records
                 this.relevant.pagination = result.pagination
             }).catch(error => {
