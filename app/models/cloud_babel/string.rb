@@ -165,7 +165,7 @@ module CloudBabel
             #   - need help
             #   - need translation
 
-            locale = query.dig(:order, :by) || "en"
+            locale = query.dig(:order, :by)
             strings = []
             sql_where_condition = []
 
