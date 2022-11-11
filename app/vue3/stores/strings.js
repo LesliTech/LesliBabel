@@ -51,7 +51,12 @@ export const useStrings = defineStore("babel.strings", {
         },
         fetchRelevant() {
             this.relevant.loading = true
-            this.http.get(this.url.babel("strings/relevant").order(this.language)).then(result => {
+            this.relevant.records = []
+            this.http.get(
+                this.url.babel("strings/relevant")
+                .paginate(this.relevant.pagination.page, 100) // get the first 100 missing translations
+                .order(this.language)
+            ).then(result => {
                 this.relevant.records = result.records
                 this.relevant.pagination = result.pagination
             }).catch(error => {
