@@ -50,11 +50,15 @@ const columns = ref([])
 
 
 // · 
-const language = ref({})
+const language = ref('de')
 
 
 // · 
-language.value = 'en' 
+const languageSource = ref('label')
+
+
+// · 
+
 
 
 // · 
@@ -103,7 +107,8 @@ function putString(string) {
 
 // · 
 function renderColumns() {
-        // reset means the user selected to work with all the languages
+
+    // reset means the user selected to work with all the languages
     if (language.value == 'reset') {
         return resetColumns()
     }
@@ -142,14 +147,18 @@ watch(() => storeStrings.relevant.records, () => {
 })
 
 
-// · 
-watch(() => language.value, () => renderColumns())
+// · changin the working language
+watch(() => language.value, (language) => {
+    storeStrings.language = language
+    fetch()
+    resetColumns()
+})
 
 
 // · 
-function copyToClipboard(button) {
+function copyToClipboard(button, text) {
     const el = document.createElement('textarea');
-    el.value = button.target.outerText; // text to copy
+    el.value = text; // text to copy
     el.setAttribute('readonly', '');
     el.style.position = 'absolute';
     el.style.left = '-9999px';
@@ -216,7 +225,7 @@ function nextTranslation () {
         }
         return index;
     }
-    
+
 }
 
 </script>
@@ -226,8 +235,19 @@ function nextTranslation () {
         :loading="storeStrings.relevant.loading"
         :records="storeStrings.relevant.records"
         :columns="columns">
-        <template #[languageHead(locale_code)]="{ column }"
-            v-for="(locale_name, locale_code, index) in storeTranslations.options.locales_available">
+
+        <!-- 
+            Table custom header
+        -->
+        <template #head(label)="{ column }">
+            <lesli-select
+                icon="public"
+                v-model="languageSource"
+                :options="storeTranslations.localeSource">
+            </lesli-select>
+        </template>
+        
+        <template #[languageHead(language)]="{ column }">
             <lesli-select
                 icon="public"
                 v-model="language"
@@ -236,21 +256,42 @@ function nextTranslation () {
         </template>
 
 
-        <template #label="{ record, value }">
+        <!-- 
+            Table custom cells
+        -->
+        <template #label="{ record }">
             <button 
-                class="button is-text px-2 py-0" 
-                @click.stop="copyToClipboard">
-                {{ value }}
+                class="button is-white px-2 py-0" 
+                @click.stop="copyToClipboard($event, record.label)"
+                @contextmenu.capture.prevent="copyToClipboard($event, record.path)">
+                {{ record[languageSource] }}
             </button>
         </template>
-        <template #[locale_code]="{ value, record }"
-            v-for="(locale_name, locale_code, index) in storeTranslations.options.locales_available">
+        
+        <template #[language]="{ value, record }">
             <input 
                 type="text"
                 class="input"
                 @input="putString(record)"
-                v-model="record[locale_code]"
+                v-model="record[language]"
             />
+        </template>
+
+        <template #detail="{ record }">
+
+            <button 
+                class="button is-ghost px-0 mb-2" 
+                @click.stop="copyToClipboard($event, record.path)">
+                path: {{ record.path }}
+            </button>
+            <div class="message mb-4">
+                <div class="message-body">
+                    <p v-for="(locale_name, locale_code) in storeTranslations.options.locales_available">
+                        {{locale_name}}: {{ record[locale_code] }}
+                    </p>
+                </div>
+            </div>
+            <p v-if="record.context">context: {{ record.context }}</p>
         </template>
     </lesli-table>
 </template>
@@ -281,7 +322,7 @@ table input.input {
 .copied:after{
     display: inline;
     position: absolute;
-    content: "copied!";
+    content: "Label copied to clipboard!";
     animation: 1s ease-in-out 0s 1 normal forwards running copyit;
     font-size: .8em;
 }
