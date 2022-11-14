@@ -13,3 +13,6 @@ gemspec
 
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
+
+# Generator needs this gem to scaffold inside the engine
+gem "sprockets-rails", group: [:development]
