@@ -25,6 +25,7 @@ export const useTranslations = defineStore("babel.translations", {
     state: () => {
         return {
             locales: [],
+            localeSource: [],
             options: {
                 locales_available: []
             }
@@ -52,8 +53,13 @@ export const useTranslations = defineStore("babel.translations", {
                 this.options = result 
 
                 this.locales = []
+                this.localeSource = [{ label:'Label', value:'label' }]
                 for(let locale in result.locales_available) {
                     this.locales.push({
+                        label: result.locales_available[locale],
+                        value: locale
+                    })
+                    this.localeSource.push({
                         label: result.locales_available[locale],
                         value: locale
                     })
