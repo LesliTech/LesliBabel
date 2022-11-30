@@ -22,7 +22,7 @@ jobs:
   version:
     name: Build new engine version
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'release(gem):')"
+    if: "!contains(github.event.head_commit.message, 'release(gem):') && !contains(github.event.head_commit.message, 'assets(js):') && !contains(github.event.head_commit.message, 'ci(workflows):')"
 
     steps:
 
@@ -90,7 +90,7 @@ jobs:
       - name: Commit compiled javascript app
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          repository: engines/${{ github.event.pull_request.base.ref }}
+          repository: engines/${{ github.event.repository.name }}
           commit_message: "assets(js): Compile Js to Production"
           branch: production
         env:
