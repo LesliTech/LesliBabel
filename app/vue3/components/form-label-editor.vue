@@ -19,9 +19,11 @@ For more information read the license file including with this software.
 
 // · import vue tools
 import { ref, reactive, onMounted, watch, computed, onUnmounted } from "vue"
+import { useRouter, useRoute } from 'vue-router'
 
 
 // · import lesli stores
+const route = useRoute()
 import { useStrings } from "CloudBabel/stores/strings"
 import { useTranslations } from "CloudBabel/stores/translations"
 
@@ -50,7 +52,7 @@ const columns = ref([])
 
 
 // · 
-const language = ref('de')
+const language = ref(null)
 
 
 // · 
@@ -63,10 +65,10 @@ const languageSource = ref('label')
 
 // · 
 onMounted(() => {
+    language.value = route.query?.locale ?? 'en'
     fetch()
     storeTranslations.fetchOptions()
     setTimeout(() => renderColumns(), 1000)
-    
 })
 
 
@@ -147,7 +149,7 @@ watch(() => storeStrings.relevant.records, () => {
 })
 
 
-// · changin the working language
+// · changing the working language
 watch(() => language.value, (language) => {
     storeStrings.language = language
     fetch()
@@ -278,20 +280,37 @@ function nextTranslation () {
         </template>
 
         <template #detail="{ record }">
-
-            <button 
-                class="button is-ghost px-0 mb-2" 
-                @click.stop="copyToClipboard($event, record.path)">
-                path: {{ record.path }}
+            <button class="button is-primary is-inverted" @click.stop="copyToClipboard($event, record.path)">
+                <span class="icon-text">
+                    <span class="icon">
+                        <span class="material-icons">
+                            content_copy
+                        </span>
+                    </span>
+                    <span>
+                        {{ record.path }}
+                    </span>
+                </span>
             </button>
-            <div class="message mb-4">
-                <div class="message-body">
-                    <p v-for="(locale_name, locale_code) in storeTranslations.options.locales_available">
-                        {{locale_name}}: {{ record[locale_code] }}
-                    </p>
-                </div>
+
+            <div class="mt-2 ml-2">
+                <p class="icon-text">
+                    <span class="icon">
+                        <span class="material-icons">
+                            public
+                        </span>
+                    </span>
+                    <span>
+                        Translations:
+                    </span>
+                </p>
+                <ul class="ml-5">
+                    <li class="mb-1" v-for="(locale_name, locale_code) in storeTranslations.options.locales_available">
+                        - {{locale_name}}: {{ record[locale_code] }}
+                    </li>
+                </ul>
+                <p v-if="record.context">context: {{ record.context }}</p>
             </div>
-            <p v-if="record.context">context: {{ record.context }}</p>
         </template>
     </lesli-table>
 </template>
