@@ -18,5 +18,9 @@ For more information read the license file including with this software.
 class AlterCloudBabelStrings < ActiveRecord::Migration[7.0]
     def change
         add_column :cloud_babel_strings, :hr, :string # Hrvatski/Croatian
+        add_column :cloud_babel_strings, :last_update_hr, :datetime
+        add_column :cloud_babel_strings, :last_update_sr, :datetime
+        add_column :cloud_babel_strings, :last_update_uk, :datetime
+        add_column :cloud_babel_strings, :last_update_ru, :datetime
     end
 end
