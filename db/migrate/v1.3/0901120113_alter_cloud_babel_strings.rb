@@ -1,6 +1,6 @@
-/*
+=begin
 
-Copyright (c) 2020, all rights reserved.
+Copyright (c) 2022, all rights reserved.
 
 All the information provided by this platform is protected by international laws related  to 
 industrial property, intellectual property, copyright and relative international laws. 
@@ -14,26 +14,13 @@ For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-*/
-
-
-// · 
-@import "templates/component";
-
-
-// · 
-.locales {
-    @include lesli-css-flex-columns($column-width: 200px, $gap: 14px);
-    justify-content: start;
-
-    .card {
-        padding: 1.8rem 1rem;
-        text-align: center;
-        box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 15px;
-
-        span.flag-icon {
-            border-radius: 4px;
-            box-shadow: rgb(160, 160, 160) 0px 0px 10px;
-        }
-    }
-}
+=end
+class AlterCloudBabelStrings < ActiveRecord::Migration[7.0]
+    def change
+        add_column :cloud_babel_strings, :hr, :string # Hrvatski/Croatian
+        add_column :cloud_babel_strings, :last_update_hr, :datetime
+        add_column :cloud_babel_strings, :last_update_sr, :datetime
+        add_column :cloud_babel_strings, :last_update_uk, :datetime
+        add_column :cloud_babel_strings, :last_update_ru, :datetime
+    end
+end
