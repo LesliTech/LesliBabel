@@ -63,25 +63,22 @@ function flag(language) {
         </lesli-header>
 
         <componentActions></componentActions>
-
         <lesli-toolbar @search="storeStrings.fetch"></lesli-toolbar>
 
-        <div class="columns mt-2">
-            <div class="column" v-for="locale in storeStatistics.languages" :key="locale.code">
-                <router-link :to="url.babel('translations', { locale: locale.code }).s">
-                    <div class="card translations-stats pt-1">
-                        <div class="card-content has-text-centered">
-                            <span :class="['mb-2', 'is-size-2','flag-icon', flag(locale.code)]"></span>
-                            <p class="is-size-5">
-                                {{ locale.name }}: {{ locale.total }}
-                            </p>
-                            <small>
-                                missing: {{ storeStatistics.totalStrings - locale.total }} translations
-                            </small>
-                        </div>
-                    </div>
-                </router-link>
-            </div>
+        <div class="locales mt-2">
+            <router-link class="card" 
+                v-for="locale in storeStatistics.languages" 
+                :key="locale.code"
+                :to="url.babel('translations', { locale: locale.code }).s" >
+                <span :class="['mb-2', 'is-size-2','flag-icon', flag(locale.code)]"></span>
+                <p class="is-size-5">
+                    {{ locale.name }}: {{ locale.total }}
+                </p>
+                <small>
+                    missing: {{ storeStatistics.totalStrings - locale.total }} translations
+                </small>
+            </router-link>
         </div>
+
     </section>
 </template>

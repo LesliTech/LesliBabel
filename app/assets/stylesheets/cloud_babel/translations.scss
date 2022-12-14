@@ -14,7 +14,6 @@ For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-
 */
 
 
@@ -22,6 +21,34 @@ For more information read the license file including with this software.
 @import "templates/component";
 
 
+// · 
+#babel-translations {
+
+    tbody tr {
+        border-bottom: 1px solid lesli-css-color(silver, 300);
+    }
+
+    tr th, 
+    tr td {
+        &:last-child {
+            width: 60%;
+        }
+    }
+
+    tr:nth-child(even) {
+        background-color: #fff;
+    }
+
+    td {
+        border: none;
+    }
+
+}
+
+
+
+
+/*
 // · 
 .card {
     margin-bottom: 1.2rem;
@@ -66,3 +93,4 @@ For more information read the license file including with this software.
 .pagination-link {
     justify-content: center;
 }
+*/

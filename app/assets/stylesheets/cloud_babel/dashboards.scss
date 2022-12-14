@@ -14,22 +14,26 @@ For more information read the license file including with this software.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-
 */
 
+
+// · 
 @import "templates/component";
 
-.header-translation-options button {
-    flex-direction: column;
-    height: auto;
-}
 
-.translations-stats {
-    .card-content {
-        padding: 2.4rem 0;
-    }
-    &:hover {
-        cursor: pointer;
-        color: lesli-css-get-color(blue, 900);
+// · 
+.locales {
+    @include lesli-css-flex-columns($column-width: 200px, $gap: 14px);
+    justify-content: start;
+
+    .card {
+        padding: 1.8rem 1rem;
+        text-align: center;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 15px;
+
+        span.flag-icon {
+            border-radius: 4px;
+            box-shadow: rgb(160, 160, 160) 0px 0px 10px;
+        }
     }
 }
