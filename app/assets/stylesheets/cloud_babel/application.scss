@@ -1,4 +1,8 @@
 
 .lesli-header {
-    margin-bottom: 10px;
+    margin-bottom: 16px;
 }
+
+
+body.babel { @import "./dashboards"; }
+body.babel-translations { @import "./translations"; }
