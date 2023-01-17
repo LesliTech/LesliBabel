@@ -1,23 +1,23 @@
-# Copyright (c) 2022, all rights reserved.
-# 
-# All the information provided by this platform is protected by international laws related  to 
-# industrial property, intellectual property, copyright and relative international laws. 
-# All intellectual or industrial property rights of the code, texts, trade mark, design, 
+# Copyright (c) 2023, all rights reserved.
+#
+# All the information provided by this platform is protected by international laws related  to
+# industrial property, intellectual property, copyright and relative international laws.
+# All intellectual or industrial property rights of the code, texts, trade mark, design,
 # pictures and any other information belongs to the owner of this platform.
-# 
+#
 # Without the written permission of the owner, any replication, modification,
 # transmission, publication is strictly forbidden.
-# 
+#
 # For more information read the license file including with this software.
 
 
-# Specs for Lesli Core
+# Specs for Lesli Module
 # -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-
 name: "Lesli specs workflow"
 on:
 
 
-  # execute this workflow only when trying to merge from dev branch to master 
+  # execute this workflow only when trying to merge from dev branch to master
   pull_request:
     branches: [master, production]
 
@@ -56,8 +56,8 @@ jobs:
         ports:
           - 5432:5432
 
-    steps:
 
+    steps:
 
       # Set the right owner for work folders
       - name: Set folder righ permissions
@@ -65,7 +65,7 @@ jobs:
 
 
       # Send a message to slack announcing the workflow start
-      - name: Notify slack github actions start 
+      - name: Notify slack github actions start
         uses: LesliTech/github-action-slack-job-status@v1
         with:
           channel: alerts
@@ -90,6 +90,18 @@ jobs:
           path: ./engines/${{ github.event.repository.name }}
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+
+
+      # · Checkout engines (most used engines)
+
+      - name: Checkout cloud_dispatcher
+        uses: actions/checkout@v3
+        with:
+          path: ./engines/cloud_dispatcher
+          ref: master
+          token: ${{ secrets.PUBLISH_GEM_BY_ACTIONS }}
+          repository: leitfaden/cloud_dispatcher
+
 
 
       # Use the official receipt to install ruby in ubuntu
