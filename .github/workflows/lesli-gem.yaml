@@ -1,17 +1,17 @@
-# Copyright (c) 2022, all rights reserved.
-# 
-# All the information provided by this platform is protected by international laws related  to 
-# industrial property, intellectual property, copyright and relative international laws. 
-# All intellectual or industrial property rights of the code, texts, trade mark, design, 
+# Copyright (c) 2023, all rights reserved.
+#
+# All the information provided by this platform is protected by international laws related  to
+# industrial property, intellectual property, copyright and relative international laws.
+# All intellectual or industrial property rights of the code, texts, trade mark, design,
 # pictures and any other information belongs to the owner of this platform.
-# 
+#
 # Without the written permission of the owner, any replication, modification,
 # transmission, publication is strictly forbidden.
-# 
+#
 # For more information read the license file including with this software.
 
 
-# Specs for Lesli Core
+# Specs for Lesli Module
 # -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-   -·-
 name: "Lesli build and publish gem"
 on:
@@ -26,9 +26,8 @@ jobs:
 
     steps:
 
-
       # Send a message to slack announcing the workflow start
-      - name: Notify slack github actions start 
+      - name: Notify slack github actions start
         uses: LesliTech/github-action-slack-job-status@v1
         with:
           channel: alerts
@@ -73,7 +72,7 @@ jobs:
 
       # Install node dependencies for vue2 apps
       - name: NPM install vue2
-        run: npm install --prefix ./lib/vue2 
+        run: npm install --prefix ./lib/vue2
 
 
       # Compile vue2 app
@@ -130,7 +129,7 @@ jobs:
       # The newly created tag is deleted if a step fails or the workflow is cancelled.
       - name: Delete Tag
         if: "cancelled() || failure()"
-        run: git push --delete origin ${{ steps.bumpVersion.outputs.new_tag}}
+        run: git push --delete origin ${{ steps.bumpVersion.outputs.new_tag }}
 
 
       # Send a message to slack with the status of the workflow
