@@ -82,7 +82,7 @@ module CloudBabel
         end
 
         def clean
-            responseWithSuccessful()
+            respond_with_successful()
         end
 
         def deploy
