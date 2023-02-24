@@ -31,7 +31,7 @@ module CloudBabel
             # if special namespace is configured in the lesli.yml settings
             # this is useful when we need install an instance and customize
             # the translations for a client
-            instance_code = Rails.application.config.lesli.dig(:configuration, :babel, :namespace)
+            #instance_code = Rails.application.config.lesli.dig(:configuration, :babel, :namespace)
 
             api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
 
@@ -44,7 +44,6 @@ module CloudBabel
 
             # if first time sync
             response = FastJsonparser.parse({ modules: [], buckets: [], strings: [] }.to_json) if response.blank?
-
 
             # add new modules
             response[:modules].each do |babel_module|

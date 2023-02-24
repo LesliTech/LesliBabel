@@ -22,7 +22,6 @@ For more information read the license file including with this software.
 import componentActions from "../../components/actions.vue"
 import componentFormLabelEditor from "../../components/form-label-editor.vue"
 
-
 // · 
 export default {
     components: {
