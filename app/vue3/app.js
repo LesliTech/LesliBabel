@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2022, all rights reserved.
+Copyright (c) 2020, all rights reserved.
 
 All the information provided by this platform is protected by international laws related  to 
 industrial property, intellectual property, copyright and relative international laws. 
@@ -16,24 +16,9 @@ For more information read the license file including with this software.
 */
 
 
-// · 
+// · Import main app
 import app from "LesliVue/app"
 
 
-// · 
-import appDashboardShow from "CloudBabel/apps/dashboards/show.vue"
-import appTranslationsShow from "CloudBabel/apps/translations/show.vue"
-import appModulesShow from "CloudBabel/apps/modules/show.vue"
-
-
-// · 
-app("CloudBabel", [{
-    path: "/",
-    component: appDashboardShow
-}, {
-    path: "/translations",
-    component: appTranslationsShow
-}, {
-    path: "/modules/:id",
-    component: appModulesShow
-}])
+// · Cloud app
+app("CloudBabel", [])
