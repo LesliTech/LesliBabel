@@ -47,10 +47,13 @@ const storeTranslations = useTranslations()
 </script>
 <template>
     <section class="application-component">
-        <lesli-header title="Relevant translations"></lesli-header>
-        <component-actions></component-actions>
+        <lesli-header title="Relevant translations">
+            <component-actions></component-actions>
+        </lesli-header>
+
         <lesli-toolbar :initial-value="storeStrings.search" @search="storeStrings.fetchSearch">
         </lesli-toolbar>
+
         <component-label-editor>
         </component-label-editor>
     </section>

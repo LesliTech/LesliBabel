@@ -9,36 +9,61 @@ const storeTranslations = useTranslations()
 
 </script>
 <template>
-    <nav class="level mb-4 pb-4">
-        <div class="level-left">
-            <div class="level-item">
-                <lesli-button icon="download" @click="storeTranslations.postRenovate()">
-                    update
-                </lesli-button>
-            </div>
-            <div class="level-item">
-                <lesli-button icon="rocket_launch" @click="storeTranslations.postDeploy()">
-                    deploy
-                </lesli-button>
-            </div>
-            <div class="level-item">
-                <lesli-button icon="sync" @click="storeTranslations.postSync()">
-                    sync
-                </lesli-button>
+    <div class="dropdown is-hoverable">
+        <div class="dropdown-trigger">
+            <button class="button is-primary is-outlined" aria-haspopup="true" aria-controls="dropdown-menu">
+                <span class="icon is-small">
+                    <span class="material-icons">
+                        tune
+                    </span>
+                </span>
+                <span>Options</span>
+            </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+                <a class="dropdown-item" @click="storeTranslations.postRenovate()">
+                    <span class="icon is-small">
+                        <span class="material-icons">
+                            download
+                        </span>
+                    </span>
+                    <span>Update</span>
+                </a>
+                <a class="dropdown-item" @click="storeTranslations.postDeploy()">
+                    <span class="icon is-small">
+                        <span class="material-icons">
+                            rocket_launch
+                        </span>
+                    </span>
+                    <span>Deploy</span>
+                </a>
+                <a class="dropdown-item" @click="storeTranslations.postSync()">
+                    <span class="icon is-small">
+                        <span class="material-icons">
+                            sync
+                        </span>
+                    </span>
+                    <span>Sync</span>
+                </a>
+                <hr class="dropdown-divider">
+                <a class="dropdown-item">
+                    <span class="icon is-small">
+                        <span class="material-icons">
+                            download
+                        </span>
+                    </span>
+                    <span>JavaScript</span>
+                </a>
+                <a class="dropdown-item">
+                    <span class="icon is-small">
+                        <span class="material-icons">
+                            download
+                        </span>
+                    </span>
+                    <span>Flutter</span>
+                </a>
             </div>
         </div>
-
-        <div class="level-right">
-            <div class="level-item">
-                <lesli-button icon="code">
-                    javascript
-                </lesli-button>
-            </div>
-            <div class="level-item">
-                <lesli-button icon="code">
-                    flutter
-                </lesli-button>
-            </div>
-        </div>
-    </nav>
+    </div>
 </template>
