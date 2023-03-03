@@ -45,10 +45,9 @@ namespace :cloud_babel do
             translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: t[:controller], module: translation_module, reference_module: translation_module.name })
             translation_bucket = CloudBabel::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
 
-            # send debug message
-            puts "object found: #{t[:module]}/#{t[:controller]}"
-
         end
+
+        L2.msg "CloudBabel: Module/Controllers scanned and registered"
 
     end
 

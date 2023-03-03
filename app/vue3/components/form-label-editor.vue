@@ -35,11 +35,6 @@ const storeTranslations = useTranslations()
 
 // · 
 const props = defineProps({
-    locale: {
-        type: String,
-        require: false,
-        default: I18n.locale
-    }, 
     module: {
         type: [Number, String],
         require: false
@@ -47,7 +42,7 @@ const props = defineProps({
 })
 
 
-// · 
+// · editor columns
 const columns = ref([])
 
 
@@ -60,23 +55,37 @@ const languageSource = ref('label')
 
 
 // · 
-
-
-
-// · 
 onMounted(() => {
+
+    // english by default if custom language not sent through url
     language.value = route.query?.locale ?? 'en'
-    fetch()
+
+    // get options for translations
     storeTranslations.fetchOptions()
-    setTimeout(() => renderColumns(), 1000)
+
 })
 
 
-// · 
-function fetch() {
-    storeStrings.module = props.module
-    if (props.module) { storeStrings.fetch() }
-    if (!props.module) { storeStrings.fetchRelevant() }
+// · get translations
+function fetchTranslations() {
+
+    console.log(props.module)
+
+    // work with an specific module if provided
+    if (props.module) {
+        storeStrings.module = props.module
+        storeStrings.fetchStrings()
+        console.log("fetchStrings")
+    }
+
+    // work with relevant translations
+    if (!props.module) {
+        storeStrings.module = 0
+        storeStrings.fetchRelevant()
+        console.log("fetchRelevant")
+    }
+
+    console.log("---")
 }
 
 
@@ -84,7 +93,7 @@ function fetch() {
 function initColumns() {
     columns.value = []
     columns.value.push({
-        label: 'Label',
+        label: 'Label to translate',
         field: 'label'
     })
 }
@@ -92,7 +101,11 @@ function initColumns() {
 
 // · load all the columns available for the editor
 function resetColumns() {
+
+    // load initial static columns
     initColumns()
+
+    // dynamic add the column related to the selected working language
     columns.value.push({
         label: storeTranslations?.options?.locales_available[language.value],
         field: language.value,
@@ -101,7 +114,7 @@ function resetColumns() {
 }
 
 
-// · 
+// · update strings through the store
 function putString(string) {
     storeStrings.putString(string)
 }
@@ -127,7 +140,7 @@ function renderColumns() {
 }
 
 
-// · 
+// · build the title for the table custom headers
 function languageHead(language) {
     return 'head('+language+')'
 }
@@ -139,12 +152,16 @@ watch(() => storeTranslations.options.locales_available, () => {
 })
 
 
-// · 
-watch(() => props.module, () => fetch())
+// · get strings for the module selected
+watch(() => props.module, () => {
+    storeStrings.search = ""
+    storeStrings.module = props.module
+    fetchTranslations()
+})
 
 
-// · 
-watch(() => storeStrings.relevant.records, () => {
+// · go to the first input once translations loaded
+watch(() => storeStrings.strings.records, () => {
     setTimeout(() => { nextTranslation() }, 1000) 
 })
 
@@ -152,7 +169,7 @@ watch(() => storeStrings.relevant.records, () => {
 // · changing the working language
 watch(() => language.value, (language) => {
     storeStrings.language = language
-    fetch()
+    fetchTranslations()
     resetColumns()
 })
 
@@ -234,21 +251,15 @@ function nextTranslation () {
 <template>
     <lesli-table
         id="babel-translations"
-        :loading="storeStrings.relevant.loading"
-        :records="storeStrings.relevant.records"
-        :columns="columns">
+        :loading="storeStrings.strings.loading"
+        :records="storeStrings.strings.records"
+        :columns="columns"
+        @paginate="storeStrings.fetchStrings()"
+        @details="nextTranslation()">
 
         <!-- 
             Table custom header
         -->
-        <template #head(label)="{ column }">
-            <lesli-select
-                icon="public"
-                v-model="languageSource"
-                :options="storeTranslations.localeSource">
-            </lesli-select>
-        </template>
-        
         <template #[languageHead(language)]="{ column }">
             <lesli-select
                 icon="public"
@@ -263,7 +274,7 @@ function nextTranslation () {
         -->
         <template #label="{ record }">
             <button 
-                class="button is-white px-2 py-0" 
+                class="button is-white p-0" 
                 @click.stop="copyToClipboard($event, record.label)"
                 @contextmenu.capture.prevent="copyToClipboard($event, record.path)">
                 {{ record[languageSource] }}
@@ -274,81 +285,46 @@ function nextTranslation () {
             <input 
                 type="text"
                 class="input"
+                placeholder="Add translations..."
                 @input="putString(record)"
                 v-model="record[language]"
             />
         </template>
 
         <template #detail="{ record }">
-            <button class="button is-primary is-inverted" @click.stop="copyToClipboard($event, record.path)">
-                <span class="icon-text">
-                    <span class="icon">
-                        <span class="material-icons">
-                            content_copy
-                        </span>
-                    </span>
-                    <span>
+            <tr v-for="(locale_name, locale_code) in storeTranslations.options.locales_available">
+                <td></td>
+                <td class="has-text-right">{{ locale_name }}</td>
+                <td>
+                    <input 
+                        type="text"
+                        class="input"
+                        placeholder="Add translations..."
+                        v-model="record[locale_code]"
+                        @input="putString(record)"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="has-text-right">Context</td>
+                <td>
+                    <input 
+                        type="text"
+                        class="input"
+                        placeholder="Add translation context..."
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="has-text-right">Full path</td>
+                <td>
+                    <button class="button is-primary is-inverted" @click.stop="copyToClipboard($event, record.path)">
                         {{ record.path }}
-                    </span>
-                </span>
-            </button>
-
-            <div class="mt-2 ml-2">
-                <p class="icon-text">
-                    <span class="icon">
-                        <span class="material-icons">
-                            public
-                        </span>
-                    </span>
-                    <span>
-                        Translations:
-                    </span>
-                </p>
-                <ul class="ml-5">
-                    <li class="mb-1" v-for="(locale_name, locale_code) in storeTranslations.options.locales_available">
-                        - {{locale_name}}: {{ record[locale_code] }}
-                    </li>
-                </ul>
-                <p v-if="record.context">context: {{ record.context }}</p>
-            </div>
+                    </button>
+                </td>
+            </tr>
         </template>
     </lesli-table>
 </template>
-<style>
-
-table.lesli-table thead th, 
-table.lesli-table thead td,
-table.lesli-table tbody th,
-table.lesli-table tbody td {
-    padding: .8rem 1rem;
-}
-
-table.lesli-table thead th {
-    padding-left: 1.6rem;
-}
-
-table.lesli-table tbody .buttons {
-    flex-wrap: nowrap;
-}
-
-table input.input {
-    border: none;
-    box-shadow: none;
-    border-radius: 3px;
-    background-color: transparent;
-}
-
-.copied:after{
-    display: inline;
-    position: absolute;
-    content: "Label copied to clipboard!";
-    animation: 1s ease-in-out 0s 1 normal forwards running copyit;
-    font-size: .8em;
-}
-
-@keyframes copyit{ 
-    0%{ bottom:2em;opacity:1;} 
-    100%{bottom:4em;opacity:0;} 
-}
-
-</style>

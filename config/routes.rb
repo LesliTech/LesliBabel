@@ -25,7 +25,6 @@ CloudBabel::Engine.routes.draw do
     resources :strings, only: [:index, :create, :update] do 
         collection do 
             get :stats
-            get :search
             get :locales
             get :relevant
         end 

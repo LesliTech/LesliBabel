@@ -24,73 +24,35 @@ For more information read the license file including with this software.
 // · 
 #babel-translations {
 
-    tbody tr {
-        border-bottom: 1px solid lesli-css-color(silver, 300);
-    }
-
-    tr th, 
-    tr td {
-        &:last-child {
-            width: 60%;
-        }
-    }
-
-    tr:nth-child(even) {
-        background-color: #fff;
-    }
-
-    td {
-        border: none;
-    }
-
-}
-
-
-
-
-/*
-// · 
-.card {
-    margin-bottom: 1.2rem;
-}
-
-.card2 {
-
-    button.button.is-text {
-        text-decoration: none;
-        &:hover {
+    tbody td {
+        padding: 0rem 1rem;
+        height: 60px;
+        input.input {
+            height: 60px;
+            border: none;
+            box-shadow: none;
+            border-radius: 3px;
             background-color: transparent;
+            &::placeholder {
+                color: lesli-css-color(silver, 900);
+            }
+        }
+
+        &.detail-row {
+            padding-left: 1rem !important;
         }
     }
 
-    table.table {
+    .copied:after{
+        display: inline;
+        position: absolute;
+        content: "Label copied to clipboard!";
+        animation: 1s ease-in-out 0s 1 normal forwards running copyit;
+        font-size: .8em;
+    }
     
-        td.chevron-cell {
-            padding-left: 0;
-            padding-right: 0;
-            text-align: center;
-        }
-
-        // disable arrow by default due there is no context
-        tr {
-            .chevron-cell a i {
-                color: lesli-css-get-color(silver);
-            }
-            &.has-context {
-                .chevron-cell a i {
-                    color: lesli-css-get-color(blue);
-                }
-            }
-            &.has-need-help-translation {
-                background-color: lesli-css-get-color(banana, 100);
-            }
-        }
-
+    @keyframes copyit{ 
+        0%{ bottom:2em;opacity:1;} 
+        100%{bottom:4em;opacity:0;} 
     }
-
 }
-
-.pagination-link {
-    justify-content: center;
-}
-*/

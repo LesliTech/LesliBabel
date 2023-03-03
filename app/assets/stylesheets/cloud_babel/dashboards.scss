@@ -23,17 +23,17 @@ For more information read the license file including with this software.
 
 // · 
 .locales {
-    @include lesli-css-flex-columns($column-width: 200px, $gap: 14px);
+    @include lesli-css-flex-columns($column-width: 200px);
     justify-content: start;
 
     .card {
         padding: 1.8rem 1rem;
         text-align: center;
-        box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 15px;
+        box-shadow: $lesli-box-shadow;
 
         span.flag-icon {
             border-radius: 4px;
-            box-shadow: rgb(160, 160, 160) 0px 0px 10px;
+            box-shadow: $lesli-box-shadow;
         }
     }
 }
