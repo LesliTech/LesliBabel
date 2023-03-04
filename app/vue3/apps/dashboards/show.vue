@@ -60,9 +60,9 @@ function flag(language) {
 <template>
     <section class="application-component">
         <lesli-header :title="`Found ${ storeStatistics.totalStrings } registered labels`">
+            <component-actions></component-actions>
         </lesli-header>
 
-        <componentActions></componentActions>
         <lesli-toolbar @search="storeStrings.fetch"></lesli-toolbar>
 
         <div class="locales mt-2">
