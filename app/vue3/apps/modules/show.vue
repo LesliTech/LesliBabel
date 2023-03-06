@@ -59,12 +59,11 @@ watch(() => route.params.id, () => {
 <template>
     <section class="application-component">
         <lesli-header :title="storeModule.name">
-            <lesli-button icon="add" @click="storeStrings.showPanel = true">
+            <component-actions></component-actions>
+            <lesli-button solid icon="add" @click="storeStrings.showPanel = true">
                 add new string
             </lesli-button>
         </lesli-header>
-
-        <componentActions></componentActions>
 
         <lesli-toolbar @search="storeStrings.fetchSearch">
         </lesli-toolbar>

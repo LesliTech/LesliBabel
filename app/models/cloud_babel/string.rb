@@ -10,32 +10,26 @@ module CloudBabel
 
         def self.index(current_user, query, params)
 
-            strings = []
+            strings = TranslationsService.strings(params[:module], params[:bucket])
 
-            # if bucket or module was not sent, return relevant strings
-            # relevant strings:
-            #   - missing translation for evailable language
-            #   - need help
-            #   - need translation
-            if params[:module].blank?
+            # if search string was sent
+            if params[:search]
+
+                search = params[:search].downcase.gsub(" ","%") 
 
                 sql_where_condition = []
 
                 # add filter to select only available languages 
                 Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                    sql_where_condition.push("#{locale} is NULL")
-                    sql_where_condition.push("#{locale} = ''")
+                    sql_where_condition.push("LOWER(#{locale}) like :search")
                 end
 
-                sql_where_condition.push("need_help = TRUE")
-                sql_where_condition.push("need_translation = TRUE")
+                sql_where_condition.push("LOWER(label) like :search")
+                sql_where_condition.push("LOWER(context) like :search")
 
-                strings = TranslationsService.strings().where(sql_where_condition.join(" OR "))
-            end
+                # get strings with bucket and module information
+                strings = TranslationsService.strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
 
-            # returns strings for specif module with optional bucket
-            if not params[:module].blank?
-                strings = TranslationsService.strings(params[:module], params[:bucket])
             end
 
             strings = strings.select(
@@ -59,14 +53,6 @@ module CloudBabel
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
             .order(:updated_at)
-
-            LC::Response.pagination(
-                strings.current_page,
-                strings.total_pages,
-                strings.total_count,
-                strings.length,
-                strings
-            )
 
         end
 

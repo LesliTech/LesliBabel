@@ -27,9 +27,10 @@ export const useStrings = defineStore("babel.strings", {
             showPanel: false,
             language: 'en',     // working language
             timer: null,
+            search: "",
             module: 0,
             bucket: 0,
-            relevant: { 
+            strings: { 
                 loading:false, 
                 records:[], 
                 pagination:{} 
@@ -37,6 +38,50 @@ export const useStrings = defineStore("babel.strings", {
         }
     },
     actions: {
+        fetchSearch(search) {
+            this.search = search
+            this.fetchStrings()
+        },
+        fetchRelevant() {
+            this.strings.loading = true
+            this.strings.records = []
+            this.http.get(
+                this.url.babel("strings/relevant")
+                .paginate(this.strings.pagination.page, 100) // get the first 100 missing translations
+                .order(this.language)
+            ).then(result => {
+                this.strings.records = result.records
+                this.strings.pagination = result.pagination
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => {
+                this.strings.loading = false
+            })
+        },
+        fetchStrings() {
+
+            this.strings.loading = true
+            this.strings.records = []
+
+            let params = {}
+
+            if (this.module > 0) { params['module'] = this.module }
+            if (this.bucket > 0) { params['bucket'] = this.bucket }
+
+            let url = this.url.babel("strings", params)
+            
+            if (this.search != "") {
+                url = url.search(this.search)
+            }
+
+            this.http.get(url).then(result => {
+                this.strings.records = result.records
+                this.strings.pagination = result.pagination
+            }).catch(error => {
+            }).finally(()=>{
+                this.strings.loading = false
+            })
+        },
         putString(string) {
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
@@ -48,63 +93,6 @@ export const useStrings = defineStore("babel.strings", {
                     console.log(error)
                 })
             }, 1500)
-        },
-        fetchRelevant() {
-            this.relevant.loading = true
-            this.relevant.records = []
-            this.http.get(
-                this.url.babel("strings/relevant")
-                .paginate(this.relevant.pagination.page, 100) // get the first 100 missing translations
-                .order(this.language)
-            ).then(result => {
-                this.relevant.records = result.records
-                this.relevant.pagination = result.pagination
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => {
-                this.relevant.loading = false
-            })
-        },
-        fetchSearch(search) {
-
-            if (search == "") {
-                return this.fetch()
-            }
-
-            this.loading = true
-
-            let params = {}
-
-            if (this.module > 0) { params['module'] = this.module }
-            if (this.bucket > 0) { params['bucket'] = this.bucket }
-            
-            let url = this.url.babel("strings/search", params).search(search)
-
-            this.http.get(url).then(result => {
-                this.relevant.records = result.records
-                this.relevant.pagination = result.pagination
-            }).catch(error => {
-            }).finally(()=>{
-                this.loading = false
-            })
-        },
-        fetch() {
-            this.loading = true
-
-            let params = {}
-
-            if (this.module > 0) { params['module'] = this.module }
-            if (this.bucket > 0) { params['bucket'] = this.bucket }
-            
-            let url = this.url.babel("strings", params)
-
-            this.http.get(url).then(result => {
-                this.relevant.records = result.records
-                this.relevant.pagination = result.pagination
-            }).catch(error => {
-            }).finally(()=>{
-                this.loading = false
-            })
         },
         post(string) {
             this.http.post(this.url.babel('strings'), {
