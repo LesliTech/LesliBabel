@@ -60,13 +60,13 @@ function flag(language) {
 <template>
     <section class="application-component">
         <lesli-header :title="`Found ${ storeStatistics.totalStrings } registered labels`">
+            <component-actions></component-actions>
         </lesli-header>
 
-        <componentActions></componentActions>
         <lesli-toolbar @search="storeStrings.fetch"></lesli-toolbar>
 
         <div class="locales mt-2">
-            <router-link class="card" 
+            <router-link class="card mr-5 mb-5" 
                 v-for="locale in storeStatistics.languages" 
                 :key="locale.code"
                 :to="url.babel('translations', { locale: locale.code }).s" >

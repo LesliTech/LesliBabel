@@ -5,3 +5,4 @@
 
 //= link cloud_babel/application.css
 //= link cloud_babel/application.js
+//= link cloud_babel/application-2.js

@@ -4,20 +4,12 @@ module CloudBabel
     class StringsController < ApplicationController
         before_action :set_string, only: [:show, :edit, :update, :destroy, :need_help, :need_translation]
 
-        def privileges 
-            {
-                index: [],
-                new: [],
-                edit: []
-            }
-        end
-
         # GET /strings
         def index
             respond_to do |format|
                 format.html { }
                 format.json { 
-                    respond_with_successful(String.index(current_user, @query, params))
+                    respond_with_pagination(String.index(current_user, @query, params))
                 }
             end
         end
@@ -143,10 +135,6 @@ module CloudBabel
                   respond_with_successful(@string)
                 }
             end
-        end
-
-        def search
-            respond_with_pagination(String.search(current_user, @query, params))
         end
 
         def stats
