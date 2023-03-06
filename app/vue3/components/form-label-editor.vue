@@ -69,8 +69,6 @@ onMounted(() => {
 // · get translations
 function fetchTranslations() {
 
-    console.log(props.module)
-
     // work with an specific module if provided
     if (props.module) {
         storeStrings.module = props.module
@@ -85,7 +83,6 @@ function fetchTranslations() {
         console.log("fetchRelevant")
     }
 
-    console.log("---")
 }
 
 

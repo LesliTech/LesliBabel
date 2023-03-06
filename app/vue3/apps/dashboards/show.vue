@@ -66,7 +66,7 @@ function flag(language) {
         <lesli-toolbar @search="storeStrings.fetch"></lesli-toolbar>
 
         <div class="locales mt-2">
-            <router-link class="card mr-5" 
+            <router-link class="card mr-5 mb-5" 
                 v-for="locale in storeStatistics.languages" 
                 :key="locale.code"
                 :to="url.babel('translations', { locale: locale.code }).s" >
