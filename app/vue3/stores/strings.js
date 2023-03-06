@@ -82,17 +82,20 @@ export const useStrings = defineStore("babel.strings", {
                 this.strings.loading = false
             })
         },
-        putString(string) {
+        updateString(string) {
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
-                this.http.put(this.url.babel("strings/:id", string.id), {
-                    string: string
-                }).then(result => {
-                    this.msg.success("Translation updated successfully")
-                }).catch(error => {
-                    console.log(error)
-                })
+                this.putString(string)
             }, 1500)
+        },
+        putString(string) {
+            this.http.put(this.url.babel("strings/:id", string.id), {
+                string: string
+            }).then(result => {
+                this.msg.success("Translation updated successfully")
+            }).catch(error => {
+                console.log(error)
+            })
         },
         post(string) {
             this.http.post(this.url.babel('strings'), {
