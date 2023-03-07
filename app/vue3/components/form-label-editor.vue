@@ -26,11 +26,13 @@ import { useRouter, useRoute } from 'vue-router'
 const route = useRoute()
 import { useStrings } from "CloudBabel/stores/strings"
 import { useTranslations } from "CloudBabel/stores/translations"
+import { useServiceTranslator } from "LesliVue/stores/services/translator"
 
 
 // · implement stores
 const storeStrings = useStrings()
 const storeTranslations = useTranslations()
+const storeServiceTranslator = useServiceTranslator()
 
 
 // · 
@@ -73,14 +75,12 @@ function fetchTranslations() {
     if (props.module) {
         storeStrings.module = props.module
         storeStrings.fetchStrings()
-        console.log("fetchStrings")
     }
 
     // work with relevant translations
     if (!props.module) {
         storeStrings.module = 0
         storeStrings.fetchRelevant()
-        console.log("fetchRelevant")
     }
 
 }
@@ -244,6 +244,32 @@ function nextTranslation () {
 
 }
 
+
+// suggest translation from english to desire language
+// to make this work we need to have the label translated to english already
+function suggestTranslation(label, locale) {
+
+    // we use the translator service (integrated with google translate)
+    // we always send the text in english due the label key is compound with the 
+    // collection and bucket names
+    storeServiceTranslator.getTranslation(label["en"], "en", locale).then(result => {
+
+        // update the translation
+        label[locale] = result.translatedText
+
+        // custom property added just here to let the editor know that an automatic
+        // translation was added to the label
+        label[`translated_${locale}`] = true
+    })
+}
+
+
+// remove a translation for a specific locale
+// mostly used with suggested translations
+function clearStringTranslation(record, locale) {
+    record[locale] = ''
+    record[`translated_${locale}`] = false
+}
 </script>
 <template>
     <lesli-table
@@ -283,7 +309,7 @@ function nextTranslation () {
                 type="text"
                 class="input"
                 placeholder="Add translations..."
-                @input="putString(record)"
+                @input="updateString(record)"
                 v-model="record[language]"
             />
         </template>
@@ -292,14 +318,29 @@ function nextTranslation () {
             <tr v-for="(locale_name, locale_code) in storeTranslations.options.locales_available">
                 <td></td>
                 <td class="has-text-right">{{ locale_name }}</td>
-                <td>
+                <td class="is-flex is-align-items-center">
                     <input 
                         type="text"
                         class="input"
                         placeholder="Add translations..."
                         v-model="record[locale_code]"
-                        @input="putString(record)"
+                        @change="test(record)"
+                        @input="updateString(record)"
                     />
+                    <lesli-button 
+                        icon-only small danger icon="clear"
+                        v-if="record[`translated_${locale_code}`] == true"  
+                        @click="clearStringTranslation(record, locale_code)">
+                    </lesli-button>
+                    &nbsp;
+                    <lesli-button 
+                        icon-only small icon="save"
+                        v-if="record[`translated_${locale_code}`] == true"  
+                        @click="putString(record, false)">
+                    </lesli-button>
+                    &nbsp;
+                    <lesli-button icon-only small icon="translate" @click="suggestTranslation(record, locale_code)">
+                    </lesli-button>
                 </td>
             </tr>
             <tr>
