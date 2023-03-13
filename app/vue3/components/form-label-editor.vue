@@ -315,6 +315,21 @@ function clearStringTranslation(record, locale) {
         </template>
 
         <template #detail="{ record }">
+            <tr>
+                <td></td>
+                <td class="has-text-right">Full path</td>
+                <td>
+                    <div class="is-flex is-align-items-center">
+                        <button class="button is-primary is-inverted" @click.stop="copyToClipboard($event, record.path)">
+                            {{ record.path }}
+                        </button>
+
+                        <lesli-button warning solid small icon="help">
+                            need help
+                        </lesli-button>
+                    </div>
+                </td>
+            </tr>
             <tr v-for="(locale_name, locale_code) in storeTranslations.options.locales_available">
                 <td></td>
                 <td class="has-text-right">{{ locale_name }}</td>
@@ -352,15 +367,6 @@ function clearStringTranslation(record, locale) {
                         class="input"
                         placeholder="Add translation context..."
                     />
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td class="has-text-right">Full path</td>
-                <td>
-                    <button class="button is-primary is-inverted" @click.stop="copyToClipboard($event, record.path)">
-                        {{ record.path }}
-                    </button>
                 </td>
             </tr>
         </template>
