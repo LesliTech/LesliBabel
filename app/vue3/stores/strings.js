@@ -72,7 +72,9 @@ export const useStrings = defineStore("babel.strings", {
             if (this.module > 0) { params['module'] = this.module }
             if (this.bucket > 0) { params['bucket'] = this.bucket }
 
-            let url = this.url.babel("strings", params)
+            let url = this.url
+            .babel("strings", params)
+            .paginate(this.strings.pagination.page, 100)
             
             if (this.search != "") {
                 url = url.search(this.search)

@@ -62,54 +62,6 @@ module CloudBabel
 
         end
 
-        
-        def self.search(current_user, query, params)
-            
-            search = params[:search].downcase.gsub(" ","%") if params[:search]
-
-            sql_where_condition = []
-
-            # add filter to select only available languages 
-            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                sql_where_condition.push("LOWER(#{locale}) like :search")
-            end
-
-            sql_where_condition.push("LOWER(label) like :search")
-            sql_where_condition.push("LOWER(context) like :search")
-
-            # get strings with bucket and module information
-            strings = TranslationsService.strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
-
-            strings = strings.where("cloud_babel_modules.id = ?", params[:module]) if params[:module]
-            strings = strings.where("cloud_babel_buckets.id = ?", params[:bucket]) if params[:bucket]
-
-            strings = strings.select(
-                :id,
-                :label,
-                :status,
-                :context,
-                :priority,
-                :need_help,
-                :need_translation,
-                Rails.application.config.lesli_settings["configuration"]["locales"],
-                "cloud_babel_modules.id as engine_id",
-                "cloud_babel_buckets.id as bucket_id",
-                "cloud_babel_buckets.name as bucket_name",
-                "cloud_babel_modules.name as engine_name",
-                "cloud_babel_modules.platform as platform",
-                "'' as path"
-            )
-
-
-            strings = strings
-            .page(query[:pagination][:page])
-            .per(query[:pagination][:perPage])
-            .order(:updated_at)
-
-            strings
-            
-        end
-
 
         def self.stats
 
@@ -118,7 +70,6 @@ module CloudBabel
                 # total translations registered in babel
                 total_strings = TranslationsService.strings.count
                 
-
                 # total translations by language
                 total_strings_translations = []
                 
@@ -194,18 +145,11 @@ module CloudBabel
                 "'' as path"
             )
 
-            return strings
+            strings
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
             .order(query.dig(:order, :by))
 
-            LC::Response.pagination(
-                strings.current_page,
-                strings.total_pages,
-                strings.total_count,
-                strings.length,
-                strings
-            )
         end
 
 
