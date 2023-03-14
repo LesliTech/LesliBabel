@@ -55,6 +55,11 @@ function flag(language) {
     return 'flag-icon-'+language
 }
 
+// · 
+function search(string) {
+    router.push({path: "translations", query: { search: string }})
+}
+
 
 </script>
 <template>
@@ -63,7 +68,7 @@ function flag(language) {
             <component-actions></component-actions>
         </lesli-header>
 
-        <lesli-toolbar @search="storeStrings.fetch"></lesli-toolbar>
+        <lesli-toolbar @search="search"></lesli-toolbar>
 
         <div class="locales mt-2">
             <router-link class="card mr-5 mb-5" 

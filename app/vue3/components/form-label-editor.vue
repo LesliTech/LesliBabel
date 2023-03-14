@@ -73,6 +73,12 @@ function fetchTranslations() {
         return storeStrings.fetchStrings()
     }
 
+    // check if search params is provided through query
+    if (route.query?.search) {
+        storeStrings.search = route.query?.search
+        return storeStrings.fetchStrings()
+    }
+
     // work with an specific module if provided
     if (props.module) {
         storeStrings.module = props.module
