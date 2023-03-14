@@ -32,6 +32,12 @@ module CloudBabel
 
             end
 
+            # filters by specif ids sent as query params
+            if params["ids"]
+                ids = params["ids"].split(',').map{ |id| id.to_i }
+                strings = strings.where("cloud_babel_strings.id in (?)", ids)
+            end
+
             strings = strings.select(
                 :id,
                 :label,
@@ -157,12 +163,12 @@ module CloudBabel
 
             # add filter to select if is available language
             if locale
-                if Rails.application.config.lesli_settings["configuration"]["locales"].include?(locale.to_s)
+                if Rails.application.config.lesli.dig(:configuration, :locales).include?(locale.to_s)
                     sql_where_condition.push("#{locale.to_s} is NULL")
                     sql_where_condition.push("#{locale.to_s} = ''")
                 end
             else
-                Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                Rails.application.config.lesli.dig(:configuration, :locales).each do |locale|
                     sql_where_condition.push("#{locale} is NULL")
                     sql_where_condition.push("#{locale} = ''")
                 end
@@ -171,7 +177,6 @@ module CloudBabel
             sql_where_condition.push("need_help = TRUE")
             sql_where_condition.push("need_translation = TRUE")
 
-            #strings = TranslationsService.strings.where(sql_where_condition.join(" OR ")).select(
             strings = TranslationsService.strings.where(sql_where_condition.join(" OR ")).select(
                 :id,
                 :label,
@@ -189,7 +194,7 @@ module CloudBabel
                 "'' as path"
             )
 
-            strings = strings
+            return strings
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
             .order(query.dig(:order, :by))
