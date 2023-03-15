@@ -23,12 +23,6 @@ module CloudBabel
 
         # GET /relevants
         def index
-            respond_to do |format|
-                format.html {}
-                format.json do
-                    #respond_with_pagination(Relevant.index(current_user, @query))
-                end
-            end
         end
 
         private
