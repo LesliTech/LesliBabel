@@ -21,6 +21,8 @@ CloudBabel::Engine.routes.draw do
 
     root to: "dashboards#show"
 
+    resources :relevants, only: [:index]
+
     # working with strings
     resources :strings, only: [:index, :create, :update] do 
         collection do 
@@ -44,55 +46,5 @@ CloudBabel::Engine.routes.draw do
     resources :modules, only: [:index, :show, :new, :create, :edit] do 
         resources :buckets, only: [:index]
     end
-
-
-=begin
-
-    resource :clone
-
-    resources :modules, only: [:index, :show, :new, :create, :edit] do
-        resources :strings, only: [:index]
-        resources :buckets, only: [:index, :create] do 
-            resources :strings, only: [:index]
-        end
-    end
-
-    resources :strings, only: [:index, :create, :update, :destroy] do
-        collection do 
-            get :stats
-            get :search
-        end
-        member do
-            scope :resources do
-                put :need_help
-                put :need_translation
-          end
-        end
-        collection do
-            scope :resources do
-                get  :relevant
-                get  :search
-                get  :stats
-                get  :available_locales
-            end
-        end
-        scope module: :string do
-            resources :discussions, only: []
-            resources :activities,  only: []
-        end
-    end
-
-    resources :translations, only: [:index] do 
-        collection do
-            get :options
-            scope :resources do
-                post :deploy
-                post :renovate
-                post :synchronization
-                get  :download
-            end
-        end
-    end
-=end
 
 end

@@ -79,7 +79,6 @@ module CloudBabel
             end
 
             if @string.update(string_params)
-                @string.update_attribute(:need_help, false)
 
                 # We store the new attributes and compare the activities
                 new_attributes = @string.attributes
@@ -105,44 +104,12 @@ module CloudBabel
             end
         end
 
-        def need_help
-            return respond_with_not_found unless @string
-
-            if @string.need_help?
-                @string.update_attribute(:need_help, false)
-            else
-                @string.update_attribute(:need_help, true)
-            end
-
-            respond_to do |format|
-                format.json {
-                  respond_with_successful(@string)
-                }
-            end
-        end
-
-        def need_translation
-            return respond_with_not_found unless @string
-
-            if @string.need_translation?
-                @string.update_attribute(:need_translation, false)
-            else
-                @string.update_attribute(:need_translation, true)
-            end
-
-            respond_to do |format|
-                format.json {
-                  respond_with_successful(@string)
-                }
-            end
-        end
-
         def stats
             respond_with_successful(String.stats)
         end
 
         def relevant
-            respond_with_successful(String.relevant(current_user, @query, params))
+            respond_with_pagination(String.relevant(current_user, @query, params))
         end
 
         # return a list of the locales available

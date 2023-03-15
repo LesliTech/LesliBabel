@@ -28,8 +28,14 @@ module CloudBabel
                 sql_where_condition.push("LOWER(context) like :search")
 
                 # get strings with bucket and module information
-                strings = TranslationsService.strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
+                strings = strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
 
+            end
+
+            # filters by specif ids sent as query params
+            if params["ids"]
+                ids = params["ids"].split(',').map{ |id| id.to_i }
+                strings = strings.where("cloud_babel_strings.id in (?)", ids)
             end
 
             strings = strings.select(
@@ -56,28 +62,34 @@ module CloudBabel
 
         end
 
-        
-        def self.search(current_user, query, params)
-            
-            search = params[:search].downcase.gsub(" ","%") if params[:search]
 
+        def self.relevant current_user, query, params
+            # relevant strings:
+            #   - missing translation for available language
+            #   - need help
+            #   - need translation
+
+            locale = query.dig(:order, :by)
+            strings = []
             sql_where_condition = []
 
-            # add filter to select only available languages 
-            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                sql_where_condition.push("LOWER(#{locale}) like :search")
+            # add filter to select if is available language
+            if locale
+                if Rails.application.config.lesli.dig(:configuration, :locales).include?(locale.to_s)
+                    sql_where_condition.push("#{locale.to_s} is NULL")
+                    sql_where_condition.push("#{locale.to_s} = ''")
+                end
+            else
+                Rails.application.config.lesli.dig(:configuration, :locales).each do |locale|
+                    sql_where_condition.push("#{locale} is NULL")
+                    sql_where_condition.push("#{locale} = ''")
+                end
             end
 
-            sql_where_condition.push("LOWER(label) like :search")
-            sql_where_condition.push("LOWER(context) like :search")
+            sql_where_condition.push("need_help = TRUE")
+            sql_where_condition.push("need_translation = TRUE")
 
-            # get strings with bucket and module information
-            strings = TranslationsService.strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
-
-            strings = strings.where("cloud_babel_modules.id = ?", params[:module]) if params[:module]
-            strings = strings.where("cloud_babel_buckets.id = ?", params[:bucket]) if params[:bucket]
-
-            strings = strings.select(
+            strings = TranslationsService.strings.where(sql_where_condition.join(" OR ")).select(
                 :id,
                 :label,
                 :status,
@@ -94,14 +106,11 @@ module CloudBabel
                 "'' as path"
             )
 
-
-            strings = strings
+            strings
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
-            .order(:updated_at)
+            .order(query.dig(:order, :by))
 
-            strings
-            
         end
 
 
@@ -112,7 +121,6 @@ module CloudBabel
                 # total translations registered in babel
                 total_strings = TranslationsService.strings.count
                 
-
                 # total translations by language
                 total_strings_translations = []
                 
@@ -145,65 +153,7 @@ module CloudBabel
 
         end
 
-        def self.relevant current_user, query, params
-            # relevant strings:
-            #   - missing translation for available language
-            #   - need help
-            #   - need translation
-
-            locale = query.dig(:order, :by)
-            strings = []
-            sql_where_condition = []
-
-            # add filter to select if is available language
-            if locale
-                if Rails.application.config.lesli_settings["configuration"]["locales"].include?(locale.to_s)
-                    sql_where_condition.push("#{locale.to_s} is NULL")
-                    sql_where_condition.push("#{locale.to_s} = ''")
-                end
-            else
-                Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                    sql_where_condition.push("#{locale} is NULL")
-                    sql_where_condition.push("#{locale} = ''")
-                end
-            end
-
-            sql_where_condition.push("need_help = TRUE")
-            sql_where_condition.push("need_translation = TRUE")
-
-            #strings = TranslationsService.strings.where(sql_where_condition.join(" OR ")).select(
-            strings = TranslationsService.strings.where(sql_where_condition.join(" OR ")).select(
-                :id,
-                :label,
-                :status,
-                :context,
-                :priority,
-                :need_help,
-                :need_translation,
-                Rails.application.config.lesli_settings["configuration"]["locales"],
-                "cloud_babel_modules.id as engine_id",
-                "cloud_babel_buckets.id as bucket_id",
-                "cloud_babel_buckets.name as bucket_name",
-                "cloud_babel_modules.name as engine_name",
-                "cloud_babel_modules.platform as platform",
-                "'' as path"
-            )
-
-            strings = strings
-            .page(query[:pagination][:page])
-            .per(query[:pagination][:perPage])
-            .order(query.dig(:order, :by))
-
-            LC::Response.pagination(
-                strings.current_page,
-                strings.total_pages,
-                strings.total_count,
-                strings.length,
-                strings
-            )
-        end
-
-
+        
         #######################################################################################
         ##############################  Activities Log Methods   ##############################
         #######################################################################################

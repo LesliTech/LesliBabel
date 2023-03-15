@@ -41,19 +41,27 @@ const route = useRoute()
 
 
 // · 
+onMounted(() => {
+    storeModule.fetchModule(route.params.id)
+})
+
+
+// · 
 function getModule() {
     return route.params?.id
 }
 
-onMounted(() => {
-    storeModule.fetchModule(route.params.id)
-})
+
+// · 
+function search(string) {
+    router.push({ query: { search: string }})
+}
+
 
 // · 
 watch(() => route.params.id, () => {
     storeModule.fetchModule(route.params.id)
 })
-
 
 </script>
 <template>
@@ -65,7 +73,7 @@ watch(() => route.params.id, () => {
             </lesli-button>
         </lesli-header>
 
-        <lesli-toolbar @search="storeStrings.fetchSearch">
+        <lesli-toolbar @search="search">
         </lesli-toolbar>
         
         <formLabelEditor :module="getModule()">
