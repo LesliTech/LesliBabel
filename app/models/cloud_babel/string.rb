@@ -28,7 +28,7 @@ module CloudBabel
                 sql_where_condition.push("LOWER(context) like :search")
 
                 # get strings with bucket and module information
-                strings = TranslationsService.strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
+                strings = strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
 
             end
 
@@ -62,45 +62,6 @@ module CloudBabel
 
         end
 
-
-        def self.stats
-
-            Rails.cache.fetch("translations-stats", expires_in: 1.second) do
-
-                # total translations registered in babel
-                total_strings = TranslationsService.strings.count
-                
-                # total translations by language
-                total_strings_translations = []
-                
-                Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |locale|
-                    total_strings_translations.push({
-                        code: locale[0],
-                        name: locale[1],
-                        total: TranslationsService.strings.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
-                    })
-                end
-
-                # total translations that needs help
-                total_strings_waiting_for_help = TranslationsService.strings.where(:need_help => true).count
-
-                # total translations that needs translation
-                total_strings_waiting_for_translation = TranslationsService.strings.where(:need_translation => true).count
-                
-                last_synchronization_at = "Not synchronized"
-                last_synchronization_at = LC::Date.to_string_datetime(Module.first.updated_at) if not Module.first.blank?
-
-                {
-                    total_strings: total_strings,
-                    total_strings_translations: total_strings_translations,
-                    total_strings_waiting_for_help: total_strings_waiting_for_help,
-                    total_strings_waiting_for_translation: total_strings_waiting_for_translation,
-                    last_synchronization_at: last_synchronization_at
-                }
-
-            end
-
-        end
 
         def self.relevant current_user, query, params
             # relevant strings:
@@ -153,6 +114,46 @@ module CloudBabel
         end
 
 
+        def self.stats
+
+            Rails.cache.fetch("translations-stats", expires_in: 1.second) do
+
+                # total translations registered in babel
+                total_strings = TranslationsService.strings.count
+                
+                # total translations by language
+                total_strings_translations = []
+                
+                Rails.application.config.lesli_settings["configuration"]["locales_available"].each do |locale|
+                    total_strings_translations.push({
+                        code: locale[0],
+                        name: locale[1],
+                        total: TranslationsService.strings.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
+                    })
+                end
+
+                # total translations that needs help
+                total_strings_waiting_for_help = TranslationsService.strings.where(:need_help => true).count
+
+                # total translations that needs translation
+                total_strings_waiting_for_translation = TranslationsService.strings.where(:need_translation => true).count
+                
+                last_synchronization_at = "Not synchronized"
+                last_synchronization_at = LC::Date.to_string_datetime(Module.first.updated_at) if not Module.first.blank?
+
+                {
+                    total_strings: total_strings,
+                    total_strings_translations: total_strings_translations,
+                    total_strings_waiting_for_help: total_strings_waiting_for_help,
+                    total_strings_waiting_for_translation: total_strings_waiting_for_translation,
+                    last_synchronization_at: last_synchronization_at
+                }
+
+            end
+
+        end
+
+        
         #######################################################################################
         ##############################  Activities Log Methods   ##############################
         #######################################################################################

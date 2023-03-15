@@ -41,19 +41,21 @@ const route = useRoute()
 
 
 // · 
+onMounted(() => {
+    storeModule.fetchModule(route.params.id)
+})
+
+
+// · 
 function getModule() {
     return route.params?.id
 }
 
-onMounted(() => {
-    storeModule.fetchModule(route.params.id)
-})
 
 // · 
 watch(() => route.params.id, () => {
     storeModule.fetchModule(route.params.id)
 })
-
 
 </script>
 <template>

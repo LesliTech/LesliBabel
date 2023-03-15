@@ -21,6 +21,8 @@ CloudBabel::Engine.routes.draw do
 
     root to: "dashboards#show"
 
+    resources :relevants, only: [:index]
+
     # working with strings
     resources :strings, only: [:index, :create, :update] do 
         collection do 

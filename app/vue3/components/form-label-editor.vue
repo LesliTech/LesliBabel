@@ -67,29 +67,28 @@ onMounted(() => {
 // · get translations
 function fetchTranslations() {
 
+    // work with relevant translations
+    if (props.module == "relevants") {
+        storeStrings.module = 0
+        return storeStrings.fetchRelevant()
+    }
+
     // check if labels ids are provided
     if (route.query?.ids) {
         storeStrings.ids = route.query?.ids
-        return storeStrings.fetchStrings()
     }
 
     // check if search params is provided through query
     if (route.query?.search) {
         storeStrings.search = route.query?.search
-        return storeStrings.fetchStrings()
     }
 
     // work with an specific module if provided
     if (props.module) {
         storeStrings.module = props.module
-        return storeStrings.fetchStrings()
     }
 
-    // work with relevant translations
-    if (!props.module) {
-        storeStrings.module = 0
-        return storeStrings.fetchRelevant()
-    }
+    return storeStrings.fetchStrings()
 
 }
 
@@ -145,17 +144,66 @@ function languageHead(language) {
 }
 
 
-// · watch for the locales available to dynamically show language columns in the editor
-watch(() => storeTranslations.options.locales_available, () => {
-    resetColumns()
-})
+// suggest translation from english to desire language
+// to make this work we need to have the label translated to english already
+function suggestTranslation(label, locale) {
+
+    // we use the translator service (integrated with google translate)
+    // we always send the text in english due the label key is compound with the 
+    // collection and bucket names
+    storeServiceTranslator.getTranslation(label["en"], "en", locale).then(result => {
+
+        // update the translation
+        label[locale] = result.translatedText
+
+        // custom property added just here to let the editor know that an automatic
+        // translation was added to the label
+        label[`translated_${locale}`] = true
+    })
+}
 
 
-// · get strings for the module selected
+// remove a translation for a specific locale
+// mostly used with suggested translations
+function clearStringTranslation(record, locale) {
+    record[locale] = ''
+    record[`translated_${locale}`] = false
+}
+
+
+// build a string to use as direct link to the selected label
+function getLabelLink(id) {
+    return `${window.location.host}/babel/translations?ids=${id}`
+}
+
+
+// switch a label as help needed
+function askForHelp(record) {
+    record.need_help = !record.need_help
+    storeStrings.putString(record)
+}
+
+
+// switch a label as help needed
+function askForTranslation(record) {
+    record.need_translation = !record.need_translation
+    storeStrings.putString(record)
+}
+
+
+// · get strings for the module selected, reset if module changed
 watch(() => props.module, () => {
     storeStrings.search = ""
     storeStrings.module = props.module
     fetchTranslations()
+})
+
+
+// · changing the working language, keep config if language changed
+watch(() => language.value, (language) => {
+    storeStrings.language = language
+    fetchTranslations()
+    resetColumns()
 })
 
 
@@ -165,10 +213,8 @@ watch(() => storeStrings.strings.records, () => {
 })
 
 
-// · changing the working language
-watch(() => language.value, (language) => {
-    storeStrings.language = language
-    fetchTranslations()
+// · watch for the locales available to dynamically show language columns in the editor
+watch(() => storeTranslations.options.locales_available, () => {
     resetColumns()
 })
 
@@ -246,52 +292,6 @@ function nextTranslation () {
 
 }
 
-
-// suggest translation from english to desire language
-// to make this work we need to have the label translated to english already
-function suggestTranslation(label, locale) {
-
-    // we use the translator service (integrated with google translate)
-    // we always send the text in english due the label key is compound with the 
-    // collection and bucket names
-    storeServiceTranslator.getTranslation(label["en"], "en", locale).then(result => {
-
-        // update the translation
-        label[locale] = result.translatedText
-
-        // custom property added just here to let the editor know that an automatic
-        // translation was added to the label
-        label[`translated_${locale}`] = true
-    })
-}
-
-
-// remove a translation for a specific locale
-// mostly used with suggested translations
-function clearStringTranslation(record, locale) {
-    record[locale] = ''
-    record[`translated_${locale}`] = false
-}
-
-
-// build a string to use as direct link to the selected label
-function getLabelLink(id) {
-    return `${window.location.host}/babel/translations?ids=${id}`
-}
-
-
-// switch a label as help needed
-function askForHelp(record) {
-    record.need_help = !record.need_help
-    storeStrings.putString(record)
-}
-
-
-// switch a label as help needed
-function askForTranslation(record) {
-    record.need_translation = !record.need_translation
-    storeStrings.putString(record)
-}
 </script>
 <template>
     <lesli-table

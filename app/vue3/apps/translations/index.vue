@@ -47,7 +47,7 @@ const storeTranslations = useTranslations()
 </script>
 <template>
     <section class="application-component">
-        <lesli-header title="Relevant translations">
+        <lesli-header title="Translations">
             <component-actions></component-actions>
         </lesli-header>
 
