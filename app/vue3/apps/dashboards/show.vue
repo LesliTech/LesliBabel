@@ -55,12 +55,11 @@ function flag(language) {
     return 'flag-icon-'+language
 }
 
+
 // · 
 function search(string) {
-    router.push({path: "translations", query: { search: string }})
+    router.push({ path: "translations", query: { search: string }})
 }
-
-
 </script>
 <template>
     <section class="application-component">

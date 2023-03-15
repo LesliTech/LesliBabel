@@ -44,6 +44,10 @@ const storeStrings = useStrings()
 const storeTranslations = useTranslations()
 
 
+// · 
+function search(string) {
+    router.push({ path: "translations", query: { search: string }})
+}
 </script>
 <template>
     <section class="application-component">
@@ -51,7 +55,7 @@ const storeTranslations = useTranslations()
             <component-actions></component-actions>
         </lesli-header>
 
-        <lesli-toolbar :initial-value="storeStrings.search" @search="storeStrings.fetchSearch">
+        <lesli-toolbar :initial-value="storeStrings.search" @search="search">
         </lesli-toolbar>
 
         <component-label-editor>

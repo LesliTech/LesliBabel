@@ -68,6 +68,7 @@ onMounted(() => {
 function fetchTranslations() {
 
     // always reset the config
+    storeStrings.search = ""
     storeStrings.module = 0
     storeStrings.ids = null
 
@@ -176,6 +177,12 @@ function askForTranslation(record) {
 watch(() => props.module, () => {
     storeStrings.search = ""
     storeStrings.module = props.module
+    fetchTranslations()
+})
+
+
+watch(() => route.query.search, string => {
+    storeStrings.search = string
     fetchTranslations()
 })
 
