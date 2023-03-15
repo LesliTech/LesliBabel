@@ -22,38 +22,26 @@ import { ref, reactive, onMounted, watch, computed, inject } from "vue"
 import { useRouter, useRoute } from 'vue-router'
 
 
-// · Import components
-import componentActions from "CloudBabel/components/actions.vue"
-
-
 // · initialize/inject plugins
 const router = useRouter()
+const route = useRoute()
 const msg = inject("msg")
 const url = inject("url")
 
 
+// · import components
+import componentLabelEditor from "CloudBabel/components/form-label-editor.vue"
+import componentActions from "CloudBabel/components/actions.vue"
+
+
 // · import lesli stores
-import { useStatistics } from "CloudBabel/stores/statistics"
 import { useStrings } from "CloudBabel/stores/strings"
+import { useTranslations } from "CloudBabel/stores/translations"
 
 
 // · implement stores
-const storeStatistics = useStatistics()
 const storeStrings = useStrings()
-
-
-// · 
-onMounted(() => {
-    storeStatistics.fetch()
-})
-
-
-// · 
-function flag(language) {
-    if (language == 'en') { return 'flag-icon-gb' }
-    if (language == 'uk') { return 'flag-icon-ua' }
-    return 'flag-icon-'+language
-}
+const storeTranslations = useTranslations()
 
 
 // · 
@@ -63,26 +51,14 @@ function search(string) {
 </script>
 <template>
     <section class="application-component">
-        <lesli-header :title="`Found ${ storeStatistics.totalStrings } registered labels`">
+        <lesli-header title="Translations">
             <component-actions></component-actions>
         </lesli-header>
 
-        <lesli-toolbar @search="search"></lesli-toolbar>
+        <lesli-toolbar :initial-value="storeStrings.search" @search="search">
+        </lesli-toolbar>
 
-        <div class="locales mt-2">
-            <router-link class="card mr-5 mb-5" 
-                v-for="locale in storeStatistics.languages" 
-                :key="locale.code"
-                :to="url.babel('translations', { locale: locale.code }).s" >
-                <span :class="['mb-2', 'is-size-2','flag-icon', flag(locale.code)]"></span>
-                <p class="is-size-5">
-                    {{ locale.name }}: {{ locale.total }}
-                </p>
-                <small>
-                    missing: {{ storeStatistics.totalStrings - locale.total }} translations
-                </small>
-            </router-link>
-        </div>
-
+        <component-label-editor>
+        </component-label-editor>
     </section>
 </template>

@@ -44,16 +44,12 @@ const props = defineProps({
 })
 
 
-// · editor columns
+// · columns of the editor table
 const columns = ref([])
 
 
-// · 
+// · selected language to work with
 const language = ref(null)
-
-
-// · 
-const languageSource = ref('label')
 
 
 // · 
@@ -68,39 +64,50 @@ onMounted(() => {
 })
 
 
-// · get translations
+// · get translations checking configuration provided through the store or query
 function fetchTranslations() {
+
+    // always reset the config
+    storeStrings.search = ""
+    storeStrings.module = 0
+    storeStrings.ids = null
+
+    // work with relevant translations
+    if (props.module == "relevants") {
+        return storeStrings.fetchRelevant()
+    }
+
+    // check if labels ids are provided
+    if (route.query?.ids) {
+        storeStrings.ids = route.query?.ids
+    }
+
+    // check if search params is provided through query
+    if (route.query?.search) {
+        storeStrings.search = route.query?.search
+    }
 
     // work with an specific module if provided
     if (props.module) {
         storeStrings.module = props.module
-        storeStrings.fetchStrings()
     }
 
-    // work with relevant translations
-    if (!props.module) {
-        storeStrings.module = 0
-        storeStrings.fetchRelevant()
-    }
+    return storeStrings.fetchStrings()
 
-}
-
-
-// · load only the necessary columns for the editor
-function initColumns() {
-    columns.value = []
-    columns.value.push({
-        label: 'Label to translate',
-        field: 'label'
-    })
 }
 
 
 // · load all the columns available for the editor
 function resetColumns() {
 
-    // load initial static columns
-    initColumns()
+    // reset columns
+    columns.value = []
+
+    // load defaults columns for the editor table
+    columns.value.push({
+        label: 'Label to translate',
+        field: 'label'
+    })
 
     // dynamic add the column related to the selected working language
     columns.value.push({
@@ -111,36 +118,81 @@ function resetColumns() {
 }
 
 
-// · update strings through the store
-function putString(string) {
-    storeStrings.putString(string)
+// · build the title for the table custom headers
+// · this is necessary to show the custom header cell for every language 
+// · (we show only one language at the time)
+function languageHead(language) {
+    return 'head('+language+')'
 }
 
 
-// · 
-function renderColumns() {
+// suggest translation from english to desire language
+// to make this work we need to have the label already translated to english 
+function suggestTranslation(label, locale) {
 
-    // reset means the user selected to work with all the languages
-    if (language.value == 'reset') {
-        return resetColumns()
-    }
+    // we use the translator service (integrated with google translate)
+    // we always send the text in english due the label key is compound with the 
+    // collection and bucket names
+    storeServiceTranslator.getTranslation(label["en"], "en", locale).then(result => {
 
-    // show initial columns
-    initColumns()
+        // update the translation
+        label[locale] = result.translatedText
 
-    // push the column with the language selected by the user
-    columns.value.push({
-        label: storeTranslations?.options?.locales_available[language.value],
-        field: language.value,
-        width: '100%'
+        // custom property added just here to let the editor know that an automatic
+        // translation was added to the label
+        label[`translated_${locale}`] = true
     })
 }
 
 
-// · build the title for the table custom headers
-function languageHead(language) {
-    return 'head('+language+')'
+// remove a translation for a specific locale
+// mostly used with suggested translations
+function clearStringTranslation(record, locale) {
+    record[locale] = ''
+    record[`translated_${locale}`] = false
 }
+
+
+// build a string to use as direct link to the selected label
+function getLabelLink(id) {
+    return `${window.location.host}/babel/translations?ids=${id}`
+}
+
+
+// switch a label as help needed
+function askForHelp(record) {
+    record.need_help = !record.need_help
+    storeStrings.putString(record)
+}
+
+
+// switch a label as help needed
+function askForTranslation(record) {
+    record.need_translation = !record.need_translation
+    storeStrings.putString(record)
+}
+
+
+// · get strings for the module selected, reset if module changed
+watch(() => props.module, () => {
+    storeStrings.search = ""
+    storeStrings.module = props.module
+    fetchTranslations()
+})
+
+
+watch(() => route.query.search, string => {
+    storeStrings.search = string
+    fetchTranslations()
+})
+
+
+// · changing the working language, keep config if language changed
+watch(() => language.value, (language) => {
+    storeStrings.language = language
+    fetchTranslations()
+    resetColumns()
+})
 
 
 // · watch for the locales available to dynamically show language columns in the editor
@@ -149,25 +201,9 @@ watch(() => storeTranslations.options.locales_available, () => {
 })
 
 
-// · get strings for the module selected
-watch(() => props.module, () => {
-    storeStrings.search = ""
-    storeStrings.module = props.module
-    fetchTranslations()
-})
-
-
 // · go to the first input once translations loaded
 watch(() => storeStrings.strings.records, () => {
     setTimeout(() => { nextTranslation() }, 1000) 
-})
-
-
-// · changing the working language
-watch(() => language.value, (language) => {
-    storeStrings.language = language
-    fetchTranslations()
-    resetColumns()
 })
 
 
@@ -244,32 +280,6 @@ function nextTranslation () {
 
 }
 
-
-// suggest translation from english to desire language
-// to make this work we need to have the label translated to english already
-function suggestTranslation(label, locale) {
-
-    // we use the translator service (integrated with google translate)
-    // we always send the text in english due the label key is compound with the 
-    // collection and bucket names
-    storeServiceTranslator.getTranslation(label["en"], "en", locale).then(result => {
-
-        // update the translation
-        label[locale] = result.translatedText
-
-        // custom property added just here to let the editor know that an automatic
-        // translation was added to the label
-        label[`translated_${locale}`] = true
-    })
-}
-
-
-// remove a translation for a specific locale
-// mostly used with suggested translations
-function clearStringTranslation(record, locale) {
-    record[locale] = ''
-    record[`translated_${locale}`] = false
-}
 </script>
 <template>
     <lesli-table
@@ -281,7 +291,7 @@ function clearStringTranslation(record, locale) {
         @details="nextTranslation()">
 
         <!-- 
-            Table custom header
+            Table custom header, renders a language selector
         -->
         <template #[languageHead(language)]="{ column }">
             <lesli-select
@@ -293,25 +303,47 @@ function clearStringTranslation(record, locale) {
 
 
         <!-- 
-            Table custom cells
+            Print the label string with a button to easely copy to clipboard
         -->
         <template #label="{ record }">
             <button 
                 class="button is-white p-0" 
                 @click.stop="copyToClipboard($event, record.label)"
                 @contextmenu.capture.prevent="copyToClipboard($event, record.path)">
-                {{ record[languageSource] }}
+                <span class="icon has-text-grey">
+                    <span class="material-icons">
+                        content_copy
+                    </span>
+                </span>
+                <span>
+                    {{ record.label }}
+                </span>
             </button>
         </template>
         
+        <!-- 
+            Print a input to edit the translation for the current locale
+        -->
         <template #[language]="{ value, record }">
-            <input 
-                type="text"
-                class="input"
-                placeholder="Add translations..."
-                @input="updateString(record)"
-                v-model="record[language]"
-            />
+            <div class="is-flex is-align-items-center">
+                <input 
+                    type="text"
+                    class="input"
+                    placeholder="Add translations..."
+                    @input="storeStrings.updateString(record, language)"
+                    v-model="record[language]"
+                />
+                <span class="icon mx-1" v-if="record.need_help">
+                    <span class="material-icons has-text-info">
+                        help_outline
+                    </span>
+                </span>
+                <span class="icon mx-1" v-if="record.need_translation">
+                    <span class="material-icons has-text-warning-dark">
+                        translate
+                    </span>
+                </span>
+            </div>
         </template>
 
         <template #detail="{ record }">
@@ -324,8 +356,7 @@ function clearStringTranslation(record, locale) {
                         class="input"
                         placeholder="Add translations..."
                         v-model="record[locale_code]"
-                        @change="test(record)"
-                        @input="updateString(record)"
+                        @input="storeStrings.updateString(record, locale_code)"
                     />
                     <lesli-button 
                         icon-only small danger icon="clear"
@@ -336,10 +367,13 @@ function clearStringTranslation(record, locale) {
                     <lesli-button 
                         icon-only small icon="save"
                         v-if="record[`translated_${locale_code}`] == true"  
-                        @click="putString(record, false)">
+                        @click="storeStrings.putString(record)">
                     </lesli-button>
                     &nbsp;
-                    <lesli-button icon-only small icon="translate" @click="suggestTranslation(record, locale_code)">
+                    <lesli-button 
+                        icon-only small icon="translate" 
+                        v-if="!!record['en']"
+                        @click="suggestTranslation(record, locale_code)">
                     </lesli-button>
                 </td>
             </tr>
@@ -351,6 +385,8 @@ function clearStringTranslation(record, locale) {
                         type="text"
                         class="input"
                         placeholder="Add translation context..."
+                        v-model="record.context"
+                        @input="storeStrings.updateString(record)"
                     />
                 </td>
             </tr>
@@ -358,9 +394,44 @@ function clearStringTranslation(record, locale) {
                 <td></td>
                 <td class="has-text-right">Full path</td>
                 <td>
-                    <button class="button is-primary is-inverted" @click.stop="copyToClipboard($event, record.path)">
-                        {{ record.path }}
+                    <button 
+                        class="button is-primary is-inverted" 
+                        @click.stop="copyToClipboard($event, record.path)">
+                        <span class="icon has-text-grey">
+                            <span class="material-icons">
+                                content_copy
+                            </span>
+                        </span>
+                        <span>
+                            {{ record.path }}
+                        </span>
                     </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="100%">
+                    <div class="buttons is-justify-content-center">
+                        <button 
+                            class="button is-primary is-small"
+                            @click="copyToClipboard($event, getLabelLink(record.id))">
+                            <span class="icon is-small">
+                                <span class="material-icons">link</span>
+                            </span>
+                            <span>Copy link</span>
+                        </button>
+
+                        <lesli-button 
+                            small info solid icon="help_outline"
+                            @click="askForHelp(record)">
+                            Need help
+                        </lesli-button>
+
+                        <lesli-button 
+                            small warning solid icon="translate"
+                            @click="askForTranslation(record)">
+                            Need translation
+                        </lesli-button>
+                    </div>
                 </td>
             </tr>
         </template>
