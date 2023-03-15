@@ -34,16 +34,6 @@ import componentLabelEditor from "CloudBabel/components/form-label-editor.vue"
 import componentActions from "CloudBabel/components/actions.vue"
 
 
-// · import lesli stores
-import { useStrings } from "CloudBabel/stores/strings"
-import { useTranslations } from "CloudBabel/stores/translations"
-
-
-// · implement stores
-const storeStrings = useStrings()
-const storeTranslations = useTranslations()
-
-
 </script>
 <template>
     <section class="application-component">
@@ -51,10 +41,7 @@ const storeTranslations = useTranslations()
             <component-actions></component-actions>
         </lesli-header>
 
-        <lesli-toolbar :initial-value="storeStrings.search" @search="storeStrings.fetchSearch">
-        </lesli-toolbar>
-
-        <component-label-editor>
+        <component-label-editor module="relevants">
         </component-label-editor>
     </section>
 </template>

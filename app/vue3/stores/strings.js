@@ -24,6 +24,7 @@ import { defineStore } from "pinia"
 export const useStrings = defineStore("babel.strings", {
     state: () => {
         return {
+            ids: null,
             showPanel: false,
             language: 'en',     // working language
             timer: null,
@@ -38,10 +39,12 @@ export const useStrings = defineStore("babel.strings", {
         }
     },
     actions: {
+
         fetchSearch(search) {
             this.search = search
             this.fetchStrings()
         },
+
         fetchRelevant() {
             this.strings.loading = true
             this.strings.records = []
@@ -58,6 +61,7 @@ export const useStrings = defineStore("babel.strings", {
                 this.strings.loading = false
             })
         },
+
         fetchStrings() {
 
             this.strings.loading = true
@@ -68,10 +72,17 @@ export const useStrings = defineStore("babel.strings", {
             if (this.module > 0) { params['module'] = this.module }
             if (this.bucket > 0) { params['bucket'] = this.bucket }
 
-            let url = this.url.babel("strings", params)
+            let url = this.url
+            .babel("strings", params)
+            .paginate(this.strings.pagination.page, 100)
             
             if (this.search != "") {
                 url = url.search(this.search)
+            }
+
+            // requested specific labels through id
+            if (this.ids != null) {
+                url = url.query("ids", this.ids)
             }
 
             this.http.get(url).then(result => {
@@ -82,21 +93,39 @@ export const useStrings = defineStore("babel.strings", {
                 this.strings.loading = false
             })
         },
-        updateString(string) {
+
+        updateString(string, locale=false) {
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
-                this.putString(string)
+                this.putString(string, locale)
             }, 1500)
         },
-        putString(string) {
+
+        putString(string, locale=false) {
+
+            // we need to send only properties that we can update
+            let stringToUpdate = {
+                status: string.status,
+                context: string.context,
+                priority: string.priority,
+                need_help: string.need_help,
+                need_translation: string.need_translation
+            }
+
+            // if locale send then we update only the specific translation
+            if (locale) {
+                stringToUpdate[locale] = string[locale]
+            }
+
             this.http.put(this.url.babel("strings/:id", string.id), {
-                string: string
+                string: stringToUpdate
             }).then(result => {
                 this.msg.success("Translation updated successfully")
             }).catch(error => {
                 console.log(error)
             })
         },
+
         post(string) {
             this.http.post(this.url.babel('strings'), {
                 string: string
