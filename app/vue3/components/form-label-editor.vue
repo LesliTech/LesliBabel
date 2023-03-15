@@ -44,11 +44,11 @@ const props = defineProps({
 })
 
 
-// · editor columns
+// · columns of the editor table
 const columns = ref([])
 
 
-// · 
+// · selected language to work with
 const language = ref(null)
 
 
@@ -64,12 +64,15 @@ onMounted(() => {
 })
 
 
-// · get translations
+// · get translations checking configuration provided through the store or query
 function fetchTranslations() {
+
+    // always reset the config
+    storeStrings.module = 0
+    storeStrings.ids = null
 
     // work with relevant translations
     if (props.module == "relevants") {
-        storeStrings.module = 0
         return storeStrings.fetchRelevant()
     }
 
@@ -93,21 +96,17 @@ function fetchTranslations() {
 }
 
 
-// · load only the necessary columns for the editor
-function initColumns() {
+// · load all the columns available for the editor
+function resetColumns() {
+
+    // reset columns
     columns.value = []
+
+    // load defaults columns for the editor table
     columns.value.push({
         label: 'Label to translate',
         field: 'label'
     })
-}
-
-
-// · load all the columns available for the editor
-function resetColumns() {
-
-    // load initial static columns
-    initColumns()
 
     // dynamic add the column related to the selected working language
     columns.value.push({
@@ -118,34 +117,16 @@ function resetColumns() {
 }
 
 
-// · 
-function renderColumns() {
-
-    // reset means the user selected to work with all the languages
-    if (language.value == 'reset') {
-        return resetColumns()
-    }
-
-    // show initial columns
-    initColumns()
-
-    // push the column with the language selected by the user
-    columns.value.push({
-        label: storeTranslations?.options?.locales_available[language.value],
-        field: language.value,
-        width: '100%'
-    })
-}
-
-
 // · build the title for the table custom headers
+// · this is necessary to show the custom header cell for every language 
+// · (we show only one language at the time)
 function languageHead(language) {
     return 'head('+language+')'
 }
 
 
 // suggest translation from english to desire language
-// to make this work we need to have the label translated to english already
+// to make this work we need to have the label already translated to english 
 function suggestTranslation(label, locale) {
 
     // we use the translator service (integrated with google translate)
@@ -207,15 +188,15 @@ watch(() => language.value, (language) => {
 })
 
 
-// · go to the first input once translations loaded
-watch(() => storeStrings.strings.records, () => {
-    setTimeout(() => { nextTranslation() }, 1000) 
-})
-
-
 // · watch for the locales available to dynamically show language columns in the editor
 watch(() => storeTranslations.options.locales_available, () => {
     resetColumns()
+})
+
+
+// · go to the first input once translations loaded
+watch(() => storeStrings.strings.records, () => {
+    setTimeout(() => { nextTranslation() }, 1000) 
 })
 
 
