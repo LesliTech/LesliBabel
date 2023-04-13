@@ -38,9 +38,6 @@ module CloudBabel
 
             # get last sync data
             response = Faraday.get("#{api_endpoint}/last")
-
-            L2.info "response"
-            pp response.body
             response = FastJsonparser.parse(response.body)
             response = response[:documents][0]
 
