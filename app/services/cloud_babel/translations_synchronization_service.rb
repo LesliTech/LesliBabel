@@ -25,7 +25,7 @@ module CloudBabel
         def self.remote_sync double_way_sync=false
 
             host = "http://localhost:8080"
-            host = "https://server.raven.dev.gt"
+            host = "https://api.datenbanken.dev/v2"
             instance_code = LC::System::Info.instance[:code].gsub("_","-")
 
             # if special namespace is configured in the lesli.yml settings
@@ -33,12 +33,13 @@ module CloudBabel
             # the translations for a client
             #instance_code = Rails.application.config.lesli.dig(:configuration, :babel, :namespace)
 
-            api_endpoint = "#{host}/api/bucket/babel-#{instance_code}/documents"
+            api_endpoint = "#{host}/buckets/#{instance_code}-babel/documents"
+
 
             # get last sync data
-            response = Faraday.get("#{api_endpoint}?last=1")
+            response = Faraday.get("#{api_endpoint}/last")
             response = FastJsonparser.parse(response.body)
-            response = response[:data][:documents][0]
+            response = response[:documents][0]
 
 
             # if first time sync
