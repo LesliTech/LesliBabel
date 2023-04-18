@@ -27,6 +27,7 @@ module CloudBabel
             host = "http://localhost:8080"
             host = "https://api.datenbanken.dev/v2"
             instance_code = LC::System::Info.instance[:code].gsub("_","-")
+            instance_code = "test4"
 
             # if special namespace is configured in the lesli.yml settings
             # this is useful when we need install an instance and customize
@@ -116,22 +117,6 @@ module CloudBabel
 
                 # add new string if it does not exist
                 local_string = CloudBabel::String.with_deleted.create_with({
-                    context: remote_string[:context],
-                    es: remote_string[:es],
-                    en: remote_string[:en],
-                    de: remote_string[:de],
-                    status: remote_string[:status],
-                    need_help: remote_string[:need_help],
-                    need_translation: remote_string[:need_translation],
-                    last_update_context: remote_string[:last_update_context],
-                    last_update_es: remote_string[:last_update_es],
-                    last_update_en: remote_string[:last_update_en],
-                    last_update_de: remote_string[:last_update_de],
-                    last_update_fr: remote_string[:last_update_fr],
-                    last_update_status: remote_string[:last_update_status],
-                    created_at: remote_string[:created_at],
-                    updated_at: remote_string[:updated_at],
-                    deleted_at: remote_string[:deleted_at],
                     bucket: babel_reference_buckets[remote_string[:reference_bucket]]
                 }).find_or_create_by({
                     label: remote_string[:label],
@@ -174,20 +159,20 @@ module CloudBabel
 
                 # check if necessary to update any translation
                 # due babel can work as client and server at the same time, we have to synchronize labels for all supported languages
-                ["es", "en", "de", "fr", "nl", "pl", "pt", "it", "tr", "ro", "bg"].each do |locale|
+                I18n.available_locales.each do |locale|
 
-                    remote_string[:"last_update_#{locale}"] = Time.now if remote_string[:"last_update_#{locale}"].blank?
-                    local_string["last_update_#{locale}"] = Time.now if local_string["last_update_#{locale}"].blank?
+                    remote_time = Time.parse remote_string[:"last_update_#{locale}"] rescue Time.now.getutc
+                    local_time = Time.parse local_string["last_update_#{locale}"] rescue Time.parse("Jan 1900")
 
                     # if translation changed
                     if local_string[locale] != remote_string[:"#{locale}"]
             
                         # check if remote is newer than local
-                        if (remote_string[:"last_update_#{locale}"] > local_string["last_update_#{locale}"])
+                        if (remote_time > local_time)
             
                             # if so, update local translation with the incoming
-                            local_string[locale] = remote_string[:"#{locale}"]
-                            local_string["last_update_#{locale}"] = remote_string[:"last_update_#{locale}"]
+                            local_string[locale] = local_time
+                            local_string["last_update_#{locale}"] = remote_time
 
                         end
             
@@ -219,10 +204,7 @@ module CloudBabel
             end
 
             # send latest translation to raven
-            response = Faraday.post(api_endpoint, 
-                ({ modules: modules, buckets: buckets, strings: strings }).to_json,
-                "Content-Type" => "application/json"
-            )
+            #response = Faraday.post(api_endpoint, ({ modules: modules, buckets: buckets, strings: strings }).to_json, "Content-Type" => "application/json")
 
             LC::Response.service true
 
