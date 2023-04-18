@@ -27,7 +27,6 @@ module CloudBabel
             host = "http://localhost:8080"
             host = "https://api.datenbanken.dev/v2"
             instance_code = LC::System::Info.instance[:code].gsub("_","-")
-            instance_code = "test4"
 
             # if special namespace is configured in the lesli.yml settings
             # this is useful when we need install an instance and customize
@@ -161,7 +160,10 @@ module CloudBabel
                 # due babel can work as client and server at the same time, we have to synchronize labels for all supported languages
                 I18n.available_locales.each do |locale|
 
+                    # parse the remote time for comparison, if no time use the current time
                     remote_time = Time.parse remote_string[:"last_update_#{locale}"] rescue Time.now.getutc
+
+                    # parse the remote time for comparison, if no time use old time so we can update the string
                     local_time = Time.parse local_string["last_update_#{locale}"] rescue Time.parse("Jan 1900")
 
                     # if translation changed
@@ -204,7 +206,7 @@ module CloudBabel
             end
 
             # send latest translation to raven
-            #response = Faraday.post(api_endpoint, ({ modules: modules, buckets: buckets, strings: strings }).to_json, "Content-Type" => "application/json")
+            response = Faraday.post(api_endpoint, ({ modules: modules, buckets: buckets, strings: strings }).to_json, "Content-Type" => "application/json")
 
             LC::Response.service true
 
