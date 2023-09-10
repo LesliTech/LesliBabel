@@ -1,23 +1,28 @@
-<p align="center">
-	<img width="100" alt="CloudBabel logo" src="app/assets/images/cloud_babel/babel-logo.svg" />
-</p>
+# LesliBabel
+Short description and motivation.
 
-<h3 align="center">CloudBabel - Translation management system</h3>
+## Usage
+How to use my plugin.
 
-<hr/>
+## Installation
+Add this line to your application's Gemfile:
 
-Version 3.0
+```ruby
+gem "lesli_babel"
+```
 
-#### License
--------
-Copyright (c) 2020, all rights reserved.
+And then execute:
+```bash
+$ bundle
+```
 
-All the information provided by this platform is protected by international laws related  to
-industrial property, intellectual property, copyright and relative international laws.
-All intellectual or industrial property rights of the code, texts, trade mark, design,
-pictures and any other information belongs to the owner of this platform.
+Or install it yourself as:
+```bash
+$ gem install lesli_babel
+```
 
-Without the written permission of the owner, any replication, modification,
-transmission, publication is strictly forbidden.
+## Contributing
+Contribution directions go here.
 
-For more information read the license file including with this software.
+## License
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

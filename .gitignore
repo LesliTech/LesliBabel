@@ -1,6 +1,7 @@
-.bundle/
-.Gemfile.lock
+app2
 .DS_Store
-log/
-pkg/
-config/locales
+/.bundle/
+/doc/
+/log/*.log
+/pkg/
+/tmp/
