@@ -30,14 +30,14 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
-class CreateLesliBabelModules < ActiveRecord::Migration[7.0]
+class CreateLesliBabelBuckets < ActiveRecord::Migration[7.0]
     def change
-        create_table :lesli_babel_modules do |t|
+        create_table :lesli_babel_buckets do |t|
             t.string :name
-            t.string :platform
+            t.string :reference_engine
             t.datetime :deleted_at
             t.timestamps
         end
-        #add_reference(:cloud_babel_modules, :cloud_babel_accounts, foreign_key: true)
+        add_reference(:lesli_babel_buckets, :engine, foreign_key: { to_table: :lesli_babel_engines })
     end
 end

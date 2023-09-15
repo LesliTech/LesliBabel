@@ -1,28 +1,19 @@
-# LesliBabel
-Short description and motivation.
+<p align="center">
+	<img width="100" alt="LesliBabel logo" src="app/assets/images/lesli_babel/babel-logo.svg" />
+</p>
 
-## Usage
-How to use my plugin.
+<h3 align="center">LesliBabel - Translation management system</h3>
 
-## Installation
-Add this line to your application's Gemfile:
+<hr/>
 
-```ruby
-gem "lesli_babel"
-```
+Version 5.0
 
-And then execute:
-```bash
-$ bundle
-```
+### License  
+------
+Software developed in [Guatemala](http://visitguatemala.com/) by [LesliTech](https://www.lesli.tech) distributed under the *General Public License v 3.0* you can read the full license [here](http://www.gnu.org/licenses/gpl-3.0.html)
 
-Or install it yourself as:
-```bash
-$ gem install lesli_babel
-```
+<br>
 
-## Contributing
-Contribution directions go here.
-
-## License
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+<p align="center">
+    <img alt="Lesli logo" width="100" src="./app/assets/images/lesli/brand/app-icon.svg" />
+</p>

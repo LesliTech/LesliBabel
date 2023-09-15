@@ -30,14 +30,13 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
-class CreateLesliBabelBuckets < ActiveRecord::Migration[7.0]
+class CreateLesliBabelEngines < ActiveRecord::Migration[7.0]
     def change
-        create_table :lesli_babel_buckets do |t|
-            t.string :name
-            t.string :reference_module
+        create_table :lesli_babel_engines do |t|
+            t.string :name      # engine name
+            t.string :platform  # rails, reactnative
             t.datetime :deleted_at
             t.timestamps
         end
-        add_reference(:cloud_babel_buckets, :cloud_babel_modules, foreign_key: true)
     end
 end

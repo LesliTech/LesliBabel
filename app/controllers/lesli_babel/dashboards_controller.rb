@@ -30,8 +30,6 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
-#require_dependency "cloud_babel/application_controller"
-
 module LesliBabel
     class DashboardsController < ApplicationController
         def show

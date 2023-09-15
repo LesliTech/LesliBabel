@@ -19,17 +19,9 @@ For more information read the license file including with this software.
 
 =end
 
-require_dependency "cloud_babel/application_controller"
-
 module LesliBabel
     class TranslationsController < ApplicationController
         before_action :set_translation, only: []
-
-        def privileges 
-            {
-                index: ['CloudBabel::StringsController#relevant', 'options']
-            }
-        end
 
         # GET /translations
         def index

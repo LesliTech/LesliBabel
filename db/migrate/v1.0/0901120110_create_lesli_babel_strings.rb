@@ -35,32 +35,23 @@ class CreateLesliBabelStrings < ActiveRecord::Migration[6.0]
         create_table :lesli_babel_strings do |t|
 
             t.string    :label
-            t.string    :status
-            t.string    :context
-            t.string    :priority
-            t.boolean   :need_help
-            t.boolean   :need_translation
-
-            t.datetime  :last_update_status
-            t.datetime  :last_update_context
-            t.datetime  :last_update_priority
-            t.datetime  :last_update_need_help
-            t.datetime  :last_update_need_translation
-
-            t.string    :es #spanish
-            t.string    :en #english
-            t.string    :de #deutsch/german
-            t.string    :fr #french
-            t.string    :nl #nederlands/netherlands/holanda
-            t.string    :pl #polski/polish/poland
-            t.string    :pt #portuguese
-            t.string    :it #italian
-            t.string    :tr #turkish
-            t.string    :ro #romanian
-            t.string    :bg #bulgarian
-            t.string    :uk #Ukrainian
+            t.string    :es # spanish
+            t.string    :en # english
+            t.string    :de # deutsch/german
+            t.string    :fr # french
+            t.string    :nl # nederlands/netherlands/holanda
+            t.string    :pl # polski/polish/poland
+            t.string    :pt # portuguese
+            t.string    :it # italian
+            t.string    :tr # turkish
+            t.string    :ro # romanian
+            t.string    :bg # bulgarian
+            t.string    :uk # Ukrainian
             t.string    :sr # Serbian
             t.string    :hr # Hrvatski/Croatian
+
+            t.integer   :status # 0 disabled, 1 ok, 2 need help, 3 need translation
+            t.string    :context
 
             t.datetime  :last_update_es
             t.datetime  :last_update_en
@@ -77,11 +68,13 @@ class CreateLesliBabelStrings < ActiveRecord::Migration[6.0]
             t.datetime  :last_update_sr
             t.datetime  :last_update_hr
 
+            t.datetime  :last_update_status
+            t.datetime  :last_update_context
+
             t.string    :reference_bucket
             t.datetime  :deleted_at
             t.timestamps
         end
-        add_reference(:cloud_babel_strings, :users, foreign_key: true)
-        add_reference(:cloud_babel_strings, :cloud_babel_buckets, foreign_key: true)
+        add_reference(:lesli_babel_strings, :bucket, foreign_key: { to_table: :lesli_babel_buckets })
     end
 end
