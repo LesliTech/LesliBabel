@@ -1,10 +1,7 @@
 module LesliBabel
-    class String < CloudObject
-        belongs_to :user, foreign_key: "users_id", optional: true
-        belongs_to :bucket, foreign_key: "cloud_babel_buckets_id"
-
-        has_many :discussions,  foreign_key: "cloud_babel_strings_id"
-        has_many :activities,   foreign_key: "cloud_babel_strings_id"
+    class String < ApplicationRecord
+        belongs_to :user
+        belongs_to :bucket
 
         before_create :clean_label_string
 

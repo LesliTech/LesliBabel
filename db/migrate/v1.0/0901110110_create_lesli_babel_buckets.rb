@@ -34,10 +34,10 @@ class CreateLesliBabelBuckets < ActiveRecord::Migration[7.0]
     def change
         create_table :lesli_babel_buckets do |t|
             t.string :name
-            t.string :reference_engine
+            t.string :reference_module
             t.datetime :deleted_at
             t.timestamps
         end
-        add_reference(:lesli_babel_buckets, :engine, foreign_key: { to_table: :lesli_babel_engines })
+        add_reference(:lesli_babel_buckets, :module, foreign_key: { to_table: :lesli_babel_modules })
     end
 end

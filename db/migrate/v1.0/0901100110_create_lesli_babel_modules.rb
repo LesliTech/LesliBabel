@@ -30,9 +30,9 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
-class CreateLesliBabelEngines < ActiveRecord::Migration[7.0]
+class CreateLesliBabelModules < ActiveRecord::Migration[7.0]
     def change
-        create_table :lesli_babel_engines do |t|
+        create_table :lesli_babel_modules do |t|
             t.string :name      # engine name
             t.string :platform  # rails, reactnative
             t.datetime :deleted_at

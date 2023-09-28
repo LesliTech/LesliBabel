@@ -1,4 +1,3 @@
-require_dependency "cloud_babel/application_controller"
 
 module LesliBabel
     class StringsController < ApplicationController
@@ -9,7 +8,7 @@ module LesliBabel
             respond_to do |format|
                 format.html { }
                 format.json { 
-                    respond_with_pagination(String.index(current_user, @query, params))
+                    respond_with_pagination(StringService.new(current_user, query).index(params))
                 }
             end
         end
@@ -105,7 +104,7 @@ module LesliBabel
         end
 
         def stats
-            respond_with_successful(StringServices.stats)
+            respond_with_successful(StringService.new(current_user, query).stats())
         end
 
         def relevant

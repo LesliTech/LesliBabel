@@ -69,7 +69,7 @@ module LesliBabel
 
         def options
             respond_with_successful({
-                locales_available: Rails.application.config.lesli_settings["configuration"]["locales_available"]
+                locales_available: Lesli.config.locales
             })
         end
 
