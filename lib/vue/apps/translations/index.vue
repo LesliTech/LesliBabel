@@ -50,7 +50,7 @@ function search(string) {
 }
 </script>
 <template>
-    <lesli-application>
+    <lesli-application-container>
         <lesli-header title="Translations">
             <component-actions></component-actions>
         </lesli-header>
@@ -60,5 +60,5 @@ function search(string) {
 
         <component-label-editor>
         </component-label-editor>
-    </lesli-application>
+    </lesli-application-container>
 </template>

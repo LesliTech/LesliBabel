@@ -62,7 +62,7 @@ function search(string) {
 }
 </script>
 <template>
-    <lesli-application>
+    <lesli-application-container>
         <lesli-header :title="`Found ${ storeStatistics.totalStrings } registered labels`">
             <component-actions></component-actions>
         </lesli-header>
@@ -81,5 +81,5 @@ function search(string) {
                 </small>
             </router-link>
         </div>
-    </lesli-application>
+    </lesli-application-container>
 </template>

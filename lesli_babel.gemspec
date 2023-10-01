@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
     spec.email       = ["hello@lesli.tech"]
     spec.homepage    = "https://www.lesli.dev/"
     spec.summary     = "Translation management system for the Lesli Framework"
-    spec.description = ""
+    spec.description = "Translation management system for the Lesli Framework"
 
     # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
     # to allow pushing to a single host or delete this section to allow pushing to any host.
