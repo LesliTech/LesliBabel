@@ -35,11 +35,13 @@ require_relative "lib/lesli_babel/version"
 Gem::Specification.new do |spec|
     spec.name        = "lesli_babel"
     spec.version     = LesliBabel::VERSION
+    spec.platform    = Gem::Platform::RUBY
+    spec.license     = "GPL-3.0"
     spec.authors     = ["The Lesli Development Team"]
     spec.email       = ["hello@lesli.tech"]
     spec.homepage    = "https://www.lesli.dev/"
-    spec.summary     = "Translation management system for the Lesli Framework"
-    spec.description = "Translation management system for the Lesli Framework"
+    spec.summary     = "Translation Management System for The Lesli Framework"
+    spec.description = "Translation Management System for The Lesli Framework"
 
     # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
     # to allow pushing to a single host or delete this section to allow pushing to any host.
