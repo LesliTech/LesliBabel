@@ -1,14 +1,8 @@
-require_dependency "cloud_babel/application_controller"
+
 
 module LesliBabel
     class BucketsController < ApplicationController
         before_action :set_bucket, only: [:show, :edit, :update, :destroy]
-
-        def privileges 
-            {
-                index: []
-            }
-        end
 
         # GET /buckets
         def index

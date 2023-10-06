@@ -23,7 +23,8 @@ module LesliBabel
         end
 
         def index params
-            strings = self.list.select(
+
+            strings = self.list(params[:module]).select(
                 :id,
                 :label,
                 :status,
@@ -36,6 +37,8 @@ module LesliBabel
                 "lesli_babel_modules.platform as platform",
                 "'' as path"
             )
+
+            #strings = strings.where()
 
             strings = strings
             .page(query[:pagination][:page])

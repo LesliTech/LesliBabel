@@ -1,18 +1,33 @@
 <script setup>
 /*
-Copyright (c) 2022, all rights reserved.
 
-All the information provided by this platform is protected by international laws related  to 
-industrial property, intellectual property, copyright and relative international laws. 
-All intellectual or industrial property rights of the code, texts, trade mark, design, 
-pictures and any other information belongs to the owner of this platform.
+Lesli
 
-Without the written permission of the owner, any replication, modification,
-transmission, publication is strictly forbidden.
+Copyright (c) 2023, Lesli Technologies, S. A.
 
-For more information read the license file including with this software.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see http://www.gnu.org/licenses/.
+
+Lesli · Ruby on Rails SaaS Development Framework.
+
+Made with ♥ by https://www.lesli.tech
+Building a better future, one line of code at a time.
+
+@contact  hello@lesli.tech
+@website  https://www.lesli.tech
+@license  GPLv3 http://www.gnu.org/licenses/gpl-3.0.en.html
+
+// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
 */
 
@@ -54,80 +69,53 @@ const string = ref('')
 
 // · 
 const prefixes = [{
-    label: 'account_init',
-    value: 'account_init'
-}, {
-    label: 'activity_description',
-    value: 'activity_description'
-}, {
     label: "column",
     value: "column"
 }, {
-    label: "column_enum",
-    value: "column_enum"
+    label: "message",
+    value: "message"
 }, {
-    label: "mailer",
-    value: "mailer"
-}, {
-    label: "messages_success",
-    value: "messages_success"
-}, {
-    label: "messages_info",
-    value: "messages_info"
-}, {
-    label: "messages_warning",
-    value: "messages_warning"
-}, {
-    label: "messages_danger",
-    value: "messages_danger"
-}, {
-    label: "sidebar_nav",
-    value: "sidebar_nav"
+    label: "navigation",
+    value: "navigation"
 }, {
     label: "error",
     value: "error"
 }, {
+    label: "button",
+    value: "button"
+}, {
+    label: "chart",
+    value: "chart"
+}, {
+    label: "tab_title",
+    value: "tab_title"
+}, {
+    label: "table_action",
+    value: "table_action"
+}, {
+    label: "table_header",
+    value: "table_header"
+}, {
+    label: "title",
+    value: "title"
+}, {
+    label: "toolbar",
+    value: "toolbar"
+}, {
     label: "view",
     value: "view"
-}, {
-    label: "view_btn",
-    value: "view_btn"
-}, {
-    label: "view_chart_title",
-    value: "view_chart_title"
-}, {
-    label: "view_placeholder",
-    value: "view_placeholder"
-}, {
-    label: "view_tab_title",
-    value: "view_tab_title"
-}, {
-    label: "view_table_action",
-    value: "view_table_action"
-}, {
-    label: "view_table_header",
-    value: "view_table_header"
 }, {
     label: "view_text",
     value: "view_text"
 }, {
-    label: "view_title",
-    value: "view_title"
-}, {
-    label: "view_toolbar_filter",
-    value: "view_toolbar_filter"
-}, {
-    label: "view_toolbar_filter_placeholder",
-    value: "view_toolbar_filter_placeholder"
-}, {
-    label: "view_toolbar_search_by_placeholder",
-    value: "view_toolbar_search_by_placeholder"
+    label: "view_placeholder",
+    value: "view_placeholder"
 }]
 
 
 function postString() {
     storeString.post({
-        cloud_babel_buckets_id: bucket.value,
+        bucket_id: bucket.value,
         context: '',
         label: prefix.value + "_" + string.value
     })
@@ -137,7 +125,7 @@ function postString() {
 
 </script>
 <template>
-    <form v-on:submit.prevent="postString" class="card is-shadowless">
+    <lesli-form @submit="postString">
         <div class="card-content">
             <div class="field">
                 <label class="label">Bucket</label>
@@ -167,5 +155,5 @@ function postString() {
                 <input class="button is-primary" type="submit" value="Save" />
             </div>
         </div>
-    </form>
+    </lesli-form>
 </template>

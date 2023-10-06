@@ -35,16 +35,10 @@ LesliBabel::Engine.routes.draw do
     root to: "dashboards#show"
     resource :dashboard
 
-    resources :relevants, only: [:index]
-
-    # working with strings
-    resources :strings, only: [:index, :create, :update] do 
-        collection do 
-            get :stats
-            get :locales
-            get :relevant
-        end 
-    end 
+    # working with modules
+    resources :modules, only: [:index, :show, :new, :create, :edit] do 
+        resources :buckets, only: [:index]
+    end
 
     # working with translations
     resources :translations, only: [:index] do 
@@ -56,8 +50,15 @@ LesliBabel::Engine.routes.draw do
         end 
     end 
 
-    # working with modules
-    resources :modules, only: [:index, :show, :new, :create, :edit] do 
-        resources :buckets, only: [:index]
-    end
+    # relevant strings
+    resources :relevants, only: [:index]
+
+    # working with strings
+    resources :strings, only: [:index, :create, :update] do 
+        collection do 
+            get :stats
+            get :locales
+            get :relevant
+        end 
+    end 
 end

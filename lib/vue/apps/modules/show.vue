@@ -65,7 +65,7 @@ watch(() => route.params.id, () => {
 
 </script>
 <template>
-    <section class="application-component">
+    <lesli-application-container>
         <lesli-header :title="storeModule.name">
             <component-actions></component-actions>
             <lesli-button solid icon="add" @click="storeStrings.showPanel = true">
@@ -81,11 +81,6 @@ watch(() => route.params.id, () => {
 
         <lesli-panel v-model:open="storeStrings.showPanel">
             <template #header>
-                <span class="icon">
-                    <span class="material-icons">
-                        translate
-                    </span>
-                </span>
                 Add new string to translate
             </template>
             <template #default>
@@ -93,5 +88,5 @@ watch(() => route.params.id, () => {
                 </formStringNew>        
             </template>
         </lesli-panel>
-    </section>
+    </lesli-application-container>
 </template>

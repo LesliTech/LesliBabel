@@ -29,13 +29,16 @@ module LesliBabel
         # POST /strings
         def create
 
-            if String.find_by(label: string_params[:label],cloud_babel_buckets_id: string_params[:cloud_babel_buckets_id])
+            if String.find_by(
+                label: string_params[:label],
+                bucket_id: string_params[:cloud_babel_buckets_id]
+            )
                 return respond_with_error("Duplicated string")
             end
-
+            
             string = String.new(string_params)
             if string.save
-                String.log_activity_create(current_user, string)
+                #String.log_activity_create(current_user, string)
                 respond_with_successful(string)
             else
                 respond_with_error("Error on create translation string", string.errors)
@@ -65,7 +68,7 @@ module LesliBabel
 
             end
 
-            Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+            Lesli.config.locales.keys.each do |locale|
 
                 # if translation changed
                 if @string[locale] != string_params[locale]
@@ -81,7 +84,7 @@ module LesliBabel
 
                 # We store the new attributes and compare the activities
                 new_attributes = @string.attributes
-                String.log_activity_update(current_user, @string, old_attributes, new_attributes)
+                #String.log_activity_update(current_user, @string, old_attributes, new_attributes)
 
                 respond_with_successful(@string)
             else
@@ -130,11 +133,8 @@ module LesliBabel
                 :label,
                 :status,
                 :context,
-                :priority,
-                :need_help,
-                :need_translation,
-                :cloud_babel_buckets_id,
-                Rails.application.config.lesli_settings["configuration"]["locales"]
+                :bucket_id,
+                Lesli.config.locales.keys
             )
         end
 

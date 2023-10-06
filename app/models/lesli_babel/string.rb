@@ -1,9 +1,31 @@
 module LesliBabel
     class String < ApplicationRecord
-        belongs_to :user
         belongs_to :bucket
 
         before_create :clean_label_string
+=begin
+        enum prefix: {
+            # database
+            # controllers 
+            # models
+            # views
+            # components
+            # elements
+
+            column
+            enum
+
+            message
+
+            navigation
+            toolbar
+
+            button 
+            chart
+            title
+            form
+        }
+=end
 
         def self.index(current_user, query, params)
 
@@ -215,11 +237,7 @@ module LesliBabel
                 .gsub(/\s+/, '_')                   # replace spaces or spaces with single dash
 
             self.status = "normal" if self.status.blank?
-            self.priority = "normal" if self.priority.blank?
-
-            self.reference_module_bucket = "#{self.bucket.reference_module}-#{self.bucket.name}"
-
+            self.reference_bucket = "#{self.bucket.reference_module}-#{self.bucket.name}"
         end
-
     end
 end

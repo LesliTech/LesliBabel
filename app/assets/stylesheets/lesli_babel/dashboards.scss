@@ -38,7 +38,7 @@ Building a better future, one line of code at a time.
 // · 
 .locales {
     @include lesli-css-flex-columns($column-width: 200px);
-    justify-content: start;
+    justify-content: center;
 
     .card {
         padding: 1.8rem 1rem;

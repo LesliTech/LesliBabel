@@ -32,14 +32,12 @@ Building a better future, one line of code at a time.
 =end
 %>
 
-<%= navigation_item(lesli_babel.dashboard_path, "Lesli", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Driver", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Focus", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Help", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Team", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Notes", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Driver", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Focus", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Help", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Team", "ri-folder-settings-line"); %>
-<%= navigation_item(lesli_babel.dashboard_path, "Notes", "ri-folder-settings-line"); %>
+
+<p class="menu-label">Modules</p>
+<% LesliBabel::Module.all.order(:platform, :name).each do |engine| %>
+    <%= navigation_item(
+        lesli_babel.modules_path + "/" + engine.id.to_s, 
+        engine.name.titleize, 
+        "ri-folder-settings-line"
+    ); %>
+<% end %>
