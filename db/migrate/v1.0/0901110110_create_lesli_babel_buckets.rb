@@ -33,7 +33,7 @@ Building a better future, one line of code at a time.
 class CreateLesliBabelBuckets < ActiveRecord::Migration[7.0]
     def change
         create_table :lesli_babel_buckets do |t|
-            t.string :name
+            t.string :code
             t.string :reference_module
             t.datetime :deleted_at
             t.timestamps

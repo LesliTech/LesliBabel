@@ -8,7 +8,7 @@ module LesliBabel
 
             # get list of ids of installed engines and available third-party apps
             Module
-            .where(:name => babel_modules_names) # -> only installed engines
+            .where(:code => babel_modules_names) # -> only installed engines
             #.or(Module.where.not(:platform => ["rails_core", "rails_builder", "rails_engine"]))
             .map { |engine| engine.id } 
             

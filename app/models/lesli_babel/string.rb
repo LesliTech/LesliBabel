@@ -217,11 +217,10 @@ module LesliBabel
         end
 
         def path
-            self[:engine_name]
+            self[:engine_code]
             .downcase
-            .sub("cloud", "")
             .concat(".")
-            .concat(self[:bucket_name])
+            .concat(self[:bucket_code])
             .concat(".")
             .concat(self[:label])
         end
@@ -237,7 +236,7 @@ module LesliBabel
                 .gsub(/\s+/, '_')                   # replace spaces or spaces with single dash
 
             self.status = "normal" if self.status.blank?
-            self.reference_bucket = "#{self.bucket.reference_module}-#{self.bucket.name}"
+            self.reference_bucket = "#{self.bucket.reference_module}-#{self.bucket.code}"
         end
     end
 end

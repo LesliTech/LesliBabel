@@ -31,7 +31,7 @@ module LesliBabel
 
             if String.find_by(
                 label: string_params[:label],
-                bucket_id: string_params[:cloud_babel_buckets_id]
+                bucket_id: string_params[:bucket_id]
             )
                 return respond_with_error("Duplicated string")
             end

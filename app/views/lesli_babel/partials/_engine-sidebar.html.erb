@@ -34,10 +34,10 @@ Building a better future, one line of code at a time.
 
 
 <p class="menu-label">Modules</p>
-<% LesliBabel::Module.all.order(:platform, :name).each do |engine| %>
+<% LesliBabel::Module.all.order(:platform, :code).each do |engine| %>
     <%= navigation_item(
         lesli_babel.modules_path + "/" + engine.id.to_s, 
-        engine.name.titleize, 
+        engine.code.titleize, 
         "ri-folder-settings-line"
     ); %>
 <% end %>

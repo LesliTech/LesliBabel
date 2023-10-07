@@ -33,8 +33,8 @@ Building a better future, one line of code at a time.
 class CreateLesliBabelModules < ActiveRecord::Migration[7.0]
     def change
         create_table :lesli_babel_modules do |t|
-            t.string :name      # engine name
-            t.string :platform  # rails, reactnative
+            t.string :code      # engine code
+            t.string :platform  # rails, reactnative, etc
             t.datetime :deleted_at
             t.timestamps
         end

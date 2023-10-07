@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @deploy %>
+
+<div>
+  <%= link_to "Edit this deploy", edit_deploy_path(@deploy) %> |
+  <%= link_to "Back to deploys", deploys_path %>
+
+  <%= button_to "Destroy this deploy", @deploy, method: :delete %>
+</div>

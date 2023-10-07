@@ -30,8 +30,7 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
-LesliBabel::Engine.routes.draw do
-    
+LesliBabel::Engine.routes.draw do  
     root to: "dashboards#show"
     resource :dashboard
 
@@ -61,4 +60,6 @@ LesliBabel::Engine.routes.draw do
             get :relevant
         end 
     end 
+
+    resource :deploy
 end

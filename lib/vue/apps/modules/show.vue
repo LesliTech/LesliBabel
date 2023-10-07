@@ -66,7 +66,7 @@ watch(() => route.params.id, () => {
 </script>
 <template>
     <lesli-application-container>
-        <lesli-header :title="storeModule.name">
+        <lesli-header :title="storeModule.code">
             <component-actions></component-actions>
             <lesli-button solid icon="add" @click="storeStrings.showPanel = true">
                 add new string

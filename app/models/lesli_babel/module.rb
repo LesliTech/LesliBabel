@@ -18,12 +18,21 @@ module LesliBabel
             end
         end
 
+        def show 
+            {
+                :id => self.id, 
+                :code => self.code.titleize,
+                :platform => self.platform,
+                :created_at => self.created_at
+            }
+        end 
+
         def format_module_name
 
             return if self.platform == "lesli_core"
             return if self.platform == "lesli_engine"
 
-            self.name = self.name
+            self.code = self.code
             .gsub(/[^0-9A-Za-z\s\-\_]/, '')  # remove special characters from string
             .gsub(/-/, '')                   # replace dashes with underscore
             .gsub(/_/, '')                   # replace underscore with underscore

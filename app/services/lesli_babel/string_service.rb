@@ -32,8 +32,8 @@ module LesliBabel
                 Lesli.config.locales.keys,
                 "lesli_babel_modules.id as engine_id",
                 "lesli_babel_buckets.id as bucket_id",
-                "lesli_babel_buckets.name as bucket_name",
-                "lesli_babel_modules.name as engine_name",
+                "lesli_babel_buckets.code as bucket_code",
+                "lesli_babel_modules.code as engine_code",
                 "lesli_babel_modules.platform as platform",
                 "'' as path"
             )

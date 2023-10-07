@@ -30,8 +30,8 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
+# · 
 require "json"
-
 namespace :lesli_babel do
 
     desc "Delete translations files"
@@ -45,7 +45,7 @@ namespace :lesli_babel do
     end
 
     desc "Create standard structure for translations according to the objects in the app"
-    task scan: [:environment] do 
+    task build: [:environment] do 
 
         engines = Lesli::SystemController.index(matrix: false)
 
@@ -55,67 +55,13 @@ namespace :lesli_babel do
             platform = "lesli_core" if t[:engine] == "lesli"
 
             # add object to the translation workflow
-            translation_module = LesliBabel::Module.find_or_create_by(name: t[:engine], platform: platform)
-            translation_bucket = LesliBabel::Bucket.find_or_create_by(name: t[:controller], module: translation_module, reference_module: translation_module.name)
-            translation_bucket = LesliBabel::Bucket.find_or_create_by({ name: "shared", module: translation_module, reference_module: translation_module.name })
+            translation_module = LesliBabel::Module.find_or_create_by(code: t[:engine], platform: platform)
+            translation_bucket = LesliBabel::Bucket.find_or_create_by(code: t[:route].sub(t[:engine]+"/", ""), module: translation_module, reference_module: translation_module.code)
+            translation_bucket = LesliBabel::Bucket.find_or_create_by(code: "shared", module: translation_module, reference_module: translation_module.code)
 
         end 
 
         L2.msg "CloudBabel: Module/Controllers scanned and registered"
 
-    end
-
-    desc "Scan for descriptors and register labels for translations for them"
-    task descriptors: [:environment] do 
-
-        puts "scan for descriptors"
-
-        translation_module = CloudBabel::Module.find_or_create_by({ name: "Core", platform: "rails_core" })
-        translation_bucket = CloudBabel::Bucket.find_or_create_by({ 
-            name: "descriptors", 
-            module: translation_module, 
-            reference_module: translation_module.name 
-        })
-
-        Descriptor.all.each do |descriptor|
-            CloudBabel::String.find_or_create_by({ 
-                :label => "descriptor_#{descriptor["name"]}", 
-                :bucket => translation_bucket 
-            })
-        end
-        
-
-    end
-    
-    def scan_for_engines
-        controller_list = {}
-        
-        Rails.application.routes.routes.each do |route| 
-            route = route.defaults 
-            
-            next if route[:controller].blank?
-            next if route[:controller].include? "rails"
-            next if route[:controller].include? "action_mailbox"
-            next if route[:controller].include? "active_storage"
-            
-            controller_list[route[:controller]] = [] unless controller_list[route[:controller]]
-            
-            controller_list[route[:controller]].push(route[:action])
-        end
-
-        Rails.configuration.lesli.dig(:engines).each do |engine|
-            platform = "rails_engine"
-            platform = "rails_builder" if engine[:type] == "builder"
-            routes = "#{engine[:name]}::Engine".constantize.routes.routes.each do |route| 
-                route = route.defaults 
-                
-                controller_list[route[:controller]] = [] if controller_list[route[:controller]].blank?
-                
-                controller_list[route[:controller]].push(route[:action])
-
-            end
-        end
-
-        return controller_list
     end
 end

@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Deploys</h1>
+
+<div id="deploys">
+  <% @deploys.each do |deploy| %>
+    <%= render deploy %>
+    <p>
+      <%= link_to "Show this deploy", deploy %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New deploy", new_deploy_path %>

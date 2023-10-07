@@ -132,7 +132,7 @@ function postString() {
                 <div class="control">
                     <lesli-select
                         v-model="bucket"
-                        :options="storeModule.buckets.map(b => { return { value: b.id, label: b.name }})">
+                        :options="storeModule.buckets.map(b => { return { value: b.id, label: b.code }})">
                     </lesli-select>
                 </div>
             </div>

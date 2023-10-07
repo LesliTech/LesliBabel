@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lesli_babel (0.1.0)
+    lesli_babel (0.2.0)
 
 GEM
   remote: https://rubygems.org/

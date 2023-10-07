@@ -46,7 +46,7 @@ module LesliBabel
         def show
             respond_to do |format|
                 format.html { }
-                format.json { respond_with_successful(@module) }
+                format.json { respond_with_successful(@module.show) }
             end
         end
 
