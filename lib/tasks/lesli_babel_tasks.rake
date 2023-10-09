@@ -64,4 +64,35 @@ namespace :lesli_babel do
         L2.msg "CloudBabel: Module/Controllers scanned and registered"
 
     end
+
+
+    desc "Scan and register labels"
+    task :deploy => :environment do |task, args|
+
+        # You can provide the config directly using the following
+        config = {
+            "translations"=> [
+                { 
+                    "file"=>"engines/LesliAdmin/lib/vue/stores/translations.json", 
+                    "patterns"=>[
+                        "*",
+                        "!*.date",
+                        "!*.devise",
+                        "!*.faker",
+                        "!*.flash",
+                        "!*.helpers",
+                        "!*.number",
+                        "!*.views",
+                        "!*.time",
+                        "!*.support",
+                        "!*.i18n",
+                        "!*.activerecord",
+                        "!*.errors",
+                        "!*.number.nth"
+                    ] 
+                }
+            ]
+        }
+        pp I18nJS.call(config: config)
+    end 
 end
