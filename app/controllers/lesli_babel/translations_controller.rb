@@ -90,7 +90,7 @@ module LesliBabel
 
         def deploy
             #TranslationsService.clean
-            LesliBabel::Deploy::RailsService.new(current_user, query).build
+            DeployRailsService.new(current_user, query).build
             #TranslationsService.restart_server
             respond_with_successful
         end
