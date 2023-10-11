@@ -5,7 +5,8 @@ module LesliBabel
 
             Lesli::System.engines.each do |engine, engine_info|
 
-                #next unless engine == "LesliAdmin"
+                L2.br(30)
+                L2.info 
 
                 # get all rails engines to buil
                 engine_id = Module
@@ -14,7 +15,7 @@ module LesliBabel
                 .pluck(:id)
 
                 # get strings filtered by module (only rails translations)
-                strings = StringService.new(current_user, query).list(engine_id)
+                strings = StringService.new(current_user, query).list #(engine_id)
 
                 strings = strings.select(
                     :id,
@@ -36,61 +37,55 @@ module LesliBabel
 
                 # add key for every available language (required by i18n Rails gem)
                 available_locales.each do |lang|
-                    translations[lang] = { }
+                    translations[lang] = { 
+                        :file => "",
+                        :labels => {}
+                    }
                 end
+
+                engine_code = engine_info[:code]
 
                 available_locales.each do |lang|
 
                     # translations path for lesli core
-                    file_path = "#{engine}::Engine".constantize.root.join(
+                    translations[lang][:file] = "#{engine}::Engine".constantize.root.join(
                         "config", "locales", "translations.#{lang}.yml"
-                    )
-
-                    file_id = file_path.to_s.to_sym
+                    ).to_s
 
                     strings.each do |string|
-                        bucket_name = string[:bucket_code]
+                        
+                        bucket_code = string[:bucket_code]
 
-                        unless translations[lang].has_key? file_id
-                            translations[lang][file_id] = { }
+                        unless translations[lang][:labels].has_key? engine_code
+                            translations[lang][:labels][engine_code] = { }
                         end
 
-                        unless translations[lang][file_id].has_key? bucket_name
-                            translations[lang][file_id][bucket_name] = { }
+                        unless translations[lang][:labels][engine_code].has_key? bucket_code
+                            translations[lang][:labels][engine_code][bucket_code] = { }
                         end
 
-                        # send debug message for missing translations
+                        # # send debug message for missing translations
                         string[lang] = ":" + string.path + ":" if string[lang].blank?
 
-                        translations[lang][file_id][bucket_name][string.label] = string[lang]
+                        translations[lang][:labels][engine_code][bucket_code][string.label] = string[lang]
 
                     end
 
                 end
 
-                translations.each do |file_by_language|
+                translations.each do |lang, translations|
 
-                    lang = file_by_language[0]
-                    file_by_controller = file_by_language[1]
+                    # creates folder and subfolders
+                    FileUtils.makedirs(File.dirname(translations[:file]))
 
-                    file_by_controller.each do |file|
+                    # creates translation file for every available language
+                    translation_file = File.new(translations[:file], "w+")
 
-                        file_path = file[0].to_s
-                        translations = file[1]
+                    translation_file.write({ "#{lang}": translations[:labels] }.to_yaml)
 
-                        # creates folder and subfolders
-                        FileUtils.makedirs(File.dirname(file_path))
+                    translation_file.close
 
-                        # creates translation file for every available language
-                        translation_file = File.new(file_path, "w+")
-
-                        translation_file.write({ "#{lang}": translations}.to_yaml)
-
-                        translation_file.close
-
-                        p "file added: #{ file_path }"
-
-                    end
+                    L2.msg "file added: #{ translations[:file] }"
                 end
             end
         end

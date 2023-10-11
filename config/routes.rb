@@ -60,6 +60,4 @@ LesliBabel::Engine.routes.draw do
             get :relevant
         end 
     end 
-
-    resource :deploy
 end

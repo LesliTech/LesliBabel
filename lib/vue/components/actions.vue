@@ -1,7 +1,7 @@
 <script setup>
 
 // · import lesli stores
-import { useTranslations } from "LesliBabel/stores/translations""
+import { useTranslations } from "LesliBabel/stores/translations"
 
 
 // · implement stores

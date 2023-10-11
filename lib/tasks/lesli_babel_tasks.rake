@@ -66,33 +66,37 @@ namespace :lesli_babel do
     end
 
 
-    desc "Scan and register labels"
-    task :deploy => :environment do |task, args|
+    desc "Export translations to json files"
+    task :export => :environment do |task, args|
 
-        # You can provide the config directly using the following
-        config = {
-            "translations"=> [
-                { 
-                    "file"=>"engines/LesliAdmin/lib/vue/stores/translations.json", 
-                    "patterns"=>[
-                        "*",
-                        "!*.date",
-                        "!*.devise",
-                        "!*.faker",
-                        "!*.flash",
-                        "!*.helpers",
-                        "!*.number",
-                        "!*.views",
-                        "!*.time",
-                        "!*.support",
-                        "!*.i18n",
-                        "!*.activerecord",
-                        "!*.errors",
-                        "!*.number.nth"
-                    ] 
-                }
-            ]
-        }
-        pp I18nJS.call(config: config)
+        Lesli::System.engines.each do |engine, engine_info|
+            # You can provide the config directly using the following
+            config = {
+                "translations"=> [
+                    { 
+                        "file"=>"engines/#{engine}/lib/vue/stores/translations.json", 
+                        "patterns"=>[
+                            "*.#{engine_info[:code]}",
+                            "*.lesli.*",
+                            "!*.date",
+                            "!*.devise",
+                            "!*.faker",
+                            "!*.flash",
+                            "!*.helpers",
+                            "!*.number",
+                            "!*.views",
+                            "!*.time",
+                            "!*.support",
+                            "!*.i18n",
+                            "!*.activerecord",
+                            "!*.errors",
+                            "!*.number.nth"
+                        ] 
+                    }
+                ]
+            }
+
+            pp I18nJS.call(config: config)
+        end
     end 
 end
