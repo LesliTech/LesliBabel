@@ -2,6 +2,4 @@
 :es:
   lesli_babel:
     shared:
-      title_lesli: 'Lesli en español '
-    users:
-      title_users: Usuarios
+      button_save: Guardar

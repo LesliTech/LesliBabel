@@ -53,6 +53,7 @@ namespace :lesli_babel do
 
             platform = "lesli_engine"
             platform = "lesli_core" if t[:engine] == "lesli"
+            platform = "rails_app" if t[:engine] == "app"
 
             # add object to the translation workflow
             translation_module = LesliBabel::Module.find_or_create_by(code: t[:engine], platform: platform)
