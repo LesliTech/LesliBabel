@@ -29,6 +29,7 @@ module LesliBabel
 
         def format_module_name
 
+            return if self.code == "main_app"
             return if self.platform == "lesli_core"
             return if self.platform == "lesli_engine"
 
@@ -36,9 +37,7 @@ module LesliBabel
             .gsub(/[^0-9A-Za-z\s\-\_]/, '')  # remove special characters from string
             .gsub(/-/, '')                   # replace dashes with underscore
             .gsub(/_/, '')                   # replace underscore with underscore
-            .titlecase                       # Capitalizes all the words
             .gsub(/\s+/, '')                 # remove blank spaces
         end 
-
     end
 end

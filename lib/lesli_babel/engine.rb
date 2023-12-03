@@ -43,6 +43,8 @@ module LesliBabel
             config.i18n.default_locale = Lesli.config.locales.keys.first || :en
             config.i18n.available_locales = Lesli.config.locales.keys || [:en]
 
+            config.i18n.load_path += Dir["#{Lesli::Engine.root.to_s}/config/locales/*.yml"]
+
             # register engine migrations path
             unless app.root.to_s.match root.to_s
                 config.paths["db/migrate"].expanded.each do |expanded_path|

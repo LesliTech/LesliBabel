@@ -37,13 +37,13 @@ import { ref, reactive, onMounted, watch, computed, onUnmounted } from "vue"
 
 
 // · 
-import { useStrings } from "LesliBabel/stores/strings"
+import { useString } from "LesliBabel/stores/string"
 import { useModule } from "LesliBabel/stores/module"
 
 
 // · implement stores
 const storeModule = useModule()
-const storeString = useStrings()
+const storeString = useString()
 
 
 // · 
@@ -56,19 +56,13 @@ const props = defineProps({
 
 
 // · 
-onMounted(() => {
-
-})
-
-
-// · 
 const bucket = ref('')
 const prefix = ref('')
 const string = ref('')
 
 
 // · 
-const prefixes = [{
+const components = [{
     label: "column",
     value: "column"
 }, {
@@ -87,68 +81,45 @@ const prefixes = [{
     label: "chart",
     value: "chart"
 }, {
-    label: "tab_title",
-    value: "tab_title"
+    label: "tab",
+    value: "tab"
 }, {
-    label: "table_action",
-    value: "table_action"
-}, {
-    label: "table_header",
-    value: "table_header"
-}, {
-    label: "title",
-    value: "title"
+    label: "table",
+    value: "table"
 }, {
     label: "toolbar",
     value: "toolbar"
 }, {
     label: "view",
     value: "view"
-}, {
-    label: "view_text",
-    value: "view_text"
-}, {
-    label: "view_placeholder",
-    value: "view_placeholder"
 }]
-
-
-function postString() {
-    storeString.post({
-        bucket_id: bucket.value,
-        context: '',
-        label: prefix.value + "_" + string.value
-    })
-
-    string.value = ''   
-}
 
 </script>
 <template>
-    <lesli-form @submit="postString">
+    <lesli-form @submit="storeString.post()">
         <div class="card-content">
             <div class="field">
                 <label class="label">Bucket</label>
                 <div class="control">
                     <lesli-select
-                        v-model="bucket"
+                        v-model="storeString.string.bucket_id"
                         :options="storeModule.buckets.map(b => { return { value: b.id, label: b.code }})">
                     </lesli-select>
                 </div>
             </div>
             <div class="field">
-                <label class="label">Prefix</label>
+                <label class="label">Component</label>
                 <div class="control">
                     <lesli-select
-                        v-model="prefix"
-                        :options="prefixes">
+                        v-model="storeString.component"
+                        :options="components">
                     </lesli-select>
                 </div>
             </div>
             <div class="field">
                 <label class="label">Label</label>
                 <div class="control">
-                    <input required v-model="string" class="input" type="text" placeholder="Add label to translation workflow" />
+                    <input required v-model="storeString.string.label" class="input" type="text" placeholder="Add label to translation workflow" />
                 </div>
             </div>
             <div class="control">

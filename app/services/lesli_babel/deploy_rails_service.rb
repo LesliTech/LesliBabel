@@ -5,17 +5,25 @@ module LesliBabel
 
             Lesli::System.engines.each do |engine, engine_info|
 
-                L2.br(30)
-                L2.info 
-
                 # get all rails engines to buil
                 engine_id = Module
                 .where("platform in ('lesli_core', 'lesli_engine')")
                 .where(:code => engine_info[:code])
                 .pluck(:id)
 
+                engine_id_shared = Module
+                .where("platform in ('lesli_core', 'lesli_engine')")
+                .where(:code => "lesli")
+                .pluck(:id)
+
+                bucket_id_shared = Bucket
+                .where(:code => "shared")
+                .where(:module_id => engine_id_shared)
+                .pluck(:id)
+
                 # get strings filtered by module (only rails translations)
-                strings = StringService.new(current_user, query).list #(engine_id)
+                strings = StringService.new(current_user, query).list(engine_id)
+                strings_shared = StringService.new(current_user, query).list(engine_id_shared, bucket_id_shared)
 
                 strings = strings.select(
                     :id,
@@ -52,6 +60,7 @@ module LesliBabel
                         "config", "locales", "translations.#{lang}.yml"
                     ).to_s
 
+                    # Create a collection of strings for the current module
                     strings.each do |string|
                         
                         bucket_code = string[:bucket_code]
@@ -71,7 +80,26 @@ module LesliBabel
 
                     end
 
+                    # Create a collection of strings for the shared label of Lesli
+                    strings_shared.each do |string|
+
+                        unless translations[lang][:labels].has_key? "lesli"
+                            translations[lang][:labels]["lesli"] = { }
+                        end
+
+                        unless translations[lang][:labels]["lesli"].has_key? "shared"
+                            translations[lang][:labels]["lesli"]["shared"] = { }
+                        end
+
+                        # # send debug message for missing translations
+                        string[lang] = ":" + string.path + ":" if string[lang].blank?
+
+                        translations[lang][:labels]["lesli"]["shared"][string.label] = string[lang]
+                    end
+
                 end
+
+                pp translations
 
                 translations.each do |lang, translations|
 
@@ -85,7 +113,7 @@ module LesliBabel
 
                     translation_file.close
 
-                    L2.msg "file added: #{ translations[:file] }"
+                    #L2.msg "file added: #{ translations[:file] }"
                 end
             end
         end

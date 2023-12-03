@@ -1,15 +1,16 @@
 <p align="center">
 	<img width="75" alt="LesliBabel logo" src="./app/assets/images/lesli_babel/babel-logo.svg" />
-    <h3 align="center">Babel - Translation Management System for the Lesli Framework.</h3>
+    <h3 align="center">Translation Management System for the Lesli Framework.</h3>
 </p>
 
 <hr/>
     <p align="center">
         <a target="blank" href="https://rubygems.org/gems/lesli_babel">
-            <img src="https://badge.fury.io/rb/lesli_babel.svg" alt="Gem Version" height="24">
+            <img height="22" alt="Gem Version" src="https://badge.fury.io/rb/lesli_babel.svg" />
         </a>
     </p>
 <hr/>
+
 
 ### Quick start
 
@@ -32,9 +33,9 @@ end
 
 
 ### Documentation
-* [Roadmap](./docs/roadmap.md)
-* [database](./docs/database.md)
-* [documentation](https://www.lesli.dev/documentation/)
+* [Website](https://www.lesli.dev/babel/)
+* [Database](./docs/database.md)
+* [Documentation](https://www.lesli.dev/documentation/)
 
 
 ### Get in touch

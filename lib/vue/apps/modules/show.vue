@@ -82,7 +82,7 @@ watch(() => route.params.id, () => {
     <lesli-application-container>
         <lesli-header :title="storeModule.code">
             <component-actions></component-actions>
-            <lesli-button solid icon="add" @click="storeStrings.showPanel = true">
+            <lesli-button main icon="add" @click="storeStrings.showPanel = true">
                 add new string
             </lesli-button>
         </lesli-header>

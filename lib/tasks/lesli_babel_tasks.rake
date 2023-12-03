@@ -47,20 +47,48 @@ namespace :lesli_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task build: [:environment] do 
 
-        engines = Lesli::SystemController.index(matrix: false)
 
-        engines.each do |t|
+        DEVISE_CONTROLLERS = [
+            "Users::Registrations",
+            "Users::Sessions",
+            "Users::Passwords",
+            "Users::Confirmations"
+        ]
+
+        engines = Lesli::SystemController.index(matrix: true)
+
+        engines.each do |engine, routes|
 
             platform = "lesli_engine"
-            platform = "lesli_core" if t[:engine] == "lesli"
-            platform = "rails_app" if t[:engine] == "app"
+            platform = "lesli_core" if engine == "lesli"
+            platform = "rails_app" if engine == "main_app"
 
-            # add object to the translation workflow
-            translation_module = LesliBabel::Module.find_or_create_by(code: t[:engine], platform: platform)
-            translation_bucket = LesliBabel::Bucket.find_or_create_by(code: t[:route].sub(t[:engine]+"/", ""), module: translation_module, reference_module: translation_module.code)
-            translation_bucket = LesliBabel::Bucket.find_or_create_by(code: "shared", module: translation_module, reference_module: translation_module.code)
 
-        end 
+            translation_module = LesliBabel::Module
+            .create_with(:platform => platform)
+            .find_or_create_by!(:code => engine)
+
+            routes.each do |controller, route|
+
+                if DEVISE_CONTROLLERS.include?(controller)
+                    translation_module = LesliBabel::Module
+                    .find_by(:code => "lesli", :platform => "lesli_core")
+                end
+
+                LesliBabel::Bucket.find_or_create_by(
+                    code: route[:route].sub("#{ engine }/", ""), 
+                    module: translation_module, 
+                    reference_module: translation_module.code
+                )
+
+                LesliBabel::Bucket.find_or_create_by(
+                    code: "shared", 
+                    module: translation_module, 
+                    reference_module: translation_module.code
+                )
+
+            end
+        end
 
         L2.msg "CloudBabel: Module/Controllers scanned and registered"
 
@@ -77,8 +105,6 @@ namespace :lesli_babel do
                     { 
                         "file"=>"engines/#{engine}/lib/vue/stores/translations.json", 
                         "patterns"=>[
-                            "*.#{engine_info[:code]}",
-                            "*.lesli.*",
                             "!*.date",
                             "!*.devise",
                             "!*.faker",
@@ -91,7 +117,10 @@ namespace :lesli_babel do
                             "!*.i18n",
                             "!*.activerecord",
                             "!*.errors",
-                            "!*.number.nth"
+                            "!*.number.nth",
+                            "*.lesli.shared.*",
+                            "*.#{engine_info[:code]}.*",
+                            
                         ] 
                     }
                 ]
