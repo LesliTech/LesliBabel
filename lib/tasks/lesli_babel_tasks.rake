@@ -47,14 +47,6 @@ namespace :lesli_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task build: [:environment] do 
 
-
-        DEVISE_CONTROLLERS = [
-            "Users::Registrations",
-            "Users::Sessions",
-            "Users::Passwords",
-            "Users::Confirmations"
-        ]
-
         engines = Lesli::SystemController.index(matrix: true)
 
         engines.each do |engine, routes|
@@ -68,12 +60,8 @@ namespace :lesli_babel do
             .create_with(:platform => platform)
             .find_or_create_by!(:code => engine)
 
-            routes.each do |controller, route|
 
-                if DEVISE_CONTROLLERS.include?(controller)
-                    translation_module = LesliBabel::Module
-                    .find_by(:code => "lesli", :platform => "lesli_core")
-                end
+            routes.each do |controller, route|
 
                 LesliBabel::Bucket.find_or_create_by(
                     code: route[:route].sub("#{ engine }/", ""), 
@@ -86,7 +74,6 @@ namespace :lesli_babel do
                     module: translation_module, 
                     reference_module: translation_module.code
                 )
-
             end
         end
 
