@@ -11,19 +11,25 @@ module LesliBabel
                 .where(:code => engine_info[:code])
                 .pluck(:id)
 
-                engine_id_shared = Module
+                engine_id_lesli = Module
                 .where("platform in ('lesli_core', 'lesli_engine')")
                 .where(:code => "lesli")
                 .pluck(:id)
 
                 bucket_id_shared = Bucket
                 .where(:code => "shared")
-                .where(:module_id => engine_id_shared)
+                .where(:module_id => engine_id_lesli)
+                .pluck(:id)
+
+                bucket_id_application = Bucket
+                .where(:code => "application")
+                .where(:module_id => engine_id_lesli)
                 .pluck(:id)
 
                 # get strings filtered by module (only rails translations)
                 strings = StringService.new(current_user, query).list(engine_id)
-                strings_shared = StringService.new(current_user, query).list(engine_id_shared, bucket_id_shared)
+                strings_shared = StringService.new(current_user, query).list(engine_id_lesli, bucket_id_shared)
+                strings_application = StringService.new(current_user, query).list(engine_id_lesli, bucket_id_application)
 
                 strings = strings.select(
                     :id,
@@ -80,7 +86,7 @@ module LesliBabel
 
                     end
 
-                    # Create a collection of strings for the shared label of Lesli
+                    # Create a collection of strings for the shared labels of Lesli
                     strings_shared.each do |string|
 
                         unless translations[lang][:labels].has_key? "lesli"
@@ -97,9 +103,24 @@ module LesliBabel
                         translations[lang][:labels]["lesli"]["shared"][string.label] = string[lang]
                     end
 
-                end
+                    # Create a collection of strings for the application labels of Lesli
+                    strings_application.each do |string|
 
-                pp translations
+                        unless translations[lang][:labels].has_key? "lesli"
+                            translations[lang][:labels]["lesli"] = { }
+                        end
+
+                        unless translations[lang][:labels]["lesli"].has_key? "application"
+                            translations[lang][:labels]["lesli"]["application"] = { }
+                        end
+
+                        # # send debug message for missing translations
+                        string[lang] = ":" + string.path + ":" if string[lang].blank?
+
+                        translations[lang][:labels]["lesli"]["application"][string.label] = string[lang]
+                    end
+
+                end
 
                 translations.each do |lang, translations|
 

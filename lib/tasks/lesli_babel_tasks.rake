@@ -106,6 +106,7 @@ namespace :lesli_babel do
                             "!*.errors",
                             "!*.number.nth",
                             "*.lesli.shared.*",
+                            "*.lesli.application.*",
                             "*.#{engine_info[:code]}.*",
                             
                         ] 
@@ -116,4 +117,63 @@ namespace :lesli_babel do
             pp I18nJS.call(config: config)
         end
     end 
+
+
+    desc "Load local translations into LesliBabel"
+    task :load => :environment do |task, args|
+
+        # Get all the locally installed engines
+        engines = Lesli::System.engines
+
+
+        engines.each do |engine, engine_info|
+
+            # cache the engine code
+            engine_code = engine_info[:code]
+
+            # platform name 
+            platform = "lesli_engine"
+            platform = "lesli_core" if engine_code == "lesli"
+
+
+            # create the babel module if it does not exists
+            translation_module = LesliBabel::Module
+            .create_with(:platform => platform)
+            .find_or_create_by!(:code => engine_code)
+
+            
+            # Iterate over the available locales
+            I18n.available_locales.each do |locale|
+
+                # get the translations for an specific engine for an specific locale
+                translations = I18n.t(engine_code, locale: locale)
+
+                # check if the translations is an object
+                next unless translations.class == Hash
+                translations.each do |bucket, labels|
+
+                    # create the bucket if it does not exist
+                    translation_bucket = LesliBabel::Bucket.find_or_create_by(
+                        code: bucket, 
+                        module: translation_module, 
+                        reference_module: translation_module.code
+                    )
+
+                    labels.each do |label, translation|
+
+                        # create or get the label
+                        label = LesliBabel::String.create_with(
+                            reference_bucket: "#{translation_module.code}-#{translation_bucket.code}"
+                        ).find_or_create_by(
+                            label: label,
+                            bucket_id: translation_bucket.id
+                        )
+
+                        # add the correct translation to the label 
+                        label.update(locale => translation)
+                    end
+                end 
+            end
+        end
+    end
 end
