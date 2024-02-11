@@ -14,6 +14,7 @@
       view_status_active: Activo
       view_status_inactive: Inactivo
       button_settings: Configuración
+      button_show: Ver
     application:
       navigation_logout: Cerrar sesión
       navigation_my_profile: Mi perfil
