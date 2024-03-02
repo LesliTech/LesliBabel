@@ -37,14 +37,14 @@ import { useRouter, useRoute } from 'vue-router'
 
 
 // · import components
-import formStringNew from "LesliBabel/components/form-string-new.vue"
-import formLabelEditor from "LesliBabel/components/form-label-editor.vue"
-import componentActions from "LesliBabel/components/actions.vue"
+import formStringNew from "LesliBabel/vue/components/form-string-new.vue"
+import formLabelEditor from "LesliBabel/vue/components/form-label-editor.vue"
+import componentActions from "LesliBabel/vue/components/actions.vue"
 
 
 // · import lesli stores
-import { useModule } from "LesliBabel/stores/module"
-import { useStrings } from "LesliBabel/stores/strings"
+import { useModule } from "LesliBabel/vue/stores/module"
+import { useStrings } from "LesliBabel/vue/stores/strings"
 
 
 // · implement stores

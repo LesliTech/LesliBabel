@@ -31,12 +31,17 @@ Building a better future, one line of code at a time.
 */
 
 
+
 // · 
 body.lesli-babel,
-body.lesli-babel-dashboard { @import "./dashboards"; }
+body.lesli-babel-dashboard { 
+    @import "./dashboards"; 
+}
 
 
-// // · 
-// body.cloud_babel-modules,
-// body.cloud_babel-relevants,
-// body.cloud_babel-translations { @import "./translations"; }
+// · 
+body.cloud_babel-modules,
+body.cloud_babel-relevants,
+body.cloud_babel-translations { 
+    @import "./translations"; 
+}

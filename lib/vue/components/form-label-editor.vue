@@ -24,9 +24,9 @@ import { useRouter, useRoute } from 'vue-router'
 
 // · import lesli stores
 const route = useRoute()
-import { useStrings } from "LesliBabel/stores/strings"
-import { useTranslations } from "LesliBabel/stores/translations"
-import { useServiceTranslator } from "Lesli/stores/services/translator"
+import { useStrings } from "LesliBabel/vue/stores/strings"
+import { useTranslations } from "LesliBabel/vue/stores/translations"
+import { useServiceTranslator } from "Lesli/vue/shared/services/translator"
 
 
 // · implement stores

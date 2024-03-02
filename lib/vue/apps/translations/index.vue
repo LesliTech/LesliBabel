@@ -30,13 +30,13 @@ const url = inject("url")
 
 
 // · import components
-import componentLabelEditor from "LesliBabel/components/form-label-editor.vue"
-import componentActions from "LesliBabel/components/actions.vue"
+import componentLabelEditor from "LesliBabel/vue/components/form-label-editor.vue"
+import componentActions from "LesliBabel/vue/components/actions.vue"
 
 
 // · import lesli stores
-import { useStrings } from "LesliBabel/stores/strings"
-import { useTranslations } from "LesliBabel/stores/translations"
+import { useStrings } from "LesliBabel/vue/stores/strings"
+import { useTranslations } from "LesliBabel/vue/stores/translations"
 
 
 // · implement stores

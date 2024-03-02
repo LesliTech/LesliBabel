@@ -23,7 +23,7 @@ import { useRouter, useRoute } from 'vue-router'
 
 
 // · Import components
-import componentActions from "LesliBabel/components/actions.vue"
+import componentActions from "LesliBabel/vue/components/actions.vue"
 
 
 // · initialize/inject plugins
@@ -33,8 +33,8 @@ const url = inject("url")
 
 
 // · import lesli stores
-import { useStatistics } from "LesliBabel/stores/statistics"
-import { useStrings } from "LesliBabel/stores/strings"
+import { useStatistics } from "LesliBabel/vue/stores/statistics"
+import { useStrings } from "LesliBabel/vue/stores/strings"
 
 
 // · implement stores
@@ -67,18 +67,16 @@ function search(string) {
             <component-actions></component-actions>
         </lesli-header>
         <lesli-toolbar @search="search"></lesli-toolbar>
-        <div class="locales mt-2">
+        <div class="locales mt-5">
             <router-link class="card mr-5 mb-5" 
                 v-for="locale in storeStatistics.languages" 
                 :key="locale.code"
                 :to="url.babel('translations', { locale: locale.code }).s" >
-                <span :class="['mb-2', 'is-size-2','flag-icon', flag(locale.code)]"></span>
-                <p class="is-size-5">
-                    {{ locale.name }}: {{ locale.total }}
-                </p>
-                <small>
-                    missing: {{ storeStatistics.totalStrings - locale.total }} translations
-                </small>
+                <svg class="flag-icon mb-2" width="64px" height="48px">
+                    <use v-bind:xlink:href="'#locale-'+locale.code"></use>
+                </svg>
+                <p class="is-size-5">{{ locale.name }}: {{ locale.total }}</p>
+                <small>missing: {{ storeStatistics.totalStrings - locale.total }} translations</small>
             </router-link>
         </div>
     </lesli-application-container>

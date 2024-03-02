@@ -37,8 +37,8 @@ import { ref, reactive, onMounted, watch, computed, onUnmounted } from "vue"
 
 
 // · 
-import { useString } from "LesliBabel/stores/string"
-import { useModule } from "LesliBabel/stores/module"
+import { useString } from "LesliBabel/vue/stores/string"
+import { useModule } from "LesliBabel/vue/stores/module"
 
 
 // · implement stores
