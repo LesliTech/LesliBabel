@@ -71,7 +71,7 @@ function search(string) {
             <router-link class="card mr-5 mb-5" 
                 v-for="locale in storeStatistics.languages" 
                 :key="locale.code"
-                :to="url.babel('translations', { locale: locale.code }).s" >
+                :to="url.babel('translations', { locale: locale.code }).toString()" >
                 <svg class="flag-icon mb-2" width="64px" height="48px">
                     <use v-bind:xlink:href="'#locale-'+locale.code"></use>
                 </svg>
