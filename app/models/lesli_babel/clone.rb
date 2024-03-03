@@ -18,7 +18,7 @@ For more information read the license file including with this software.
 =end
 
 module LesliBabel
-    class Clone < ApplicationLesliRecord
+    class Clone < ApplicationRecord
 
     end
 end

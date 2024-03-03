@@ -16,7 +16,7 @@ For more information read the license file including with this software.
 // · 
 
 =end
-require_dependency "cloud_babel/application_controller"
+require_dependency "lesli_babel/application_controller"
 
 module LesliBabel
     class ClonesController < ApplicationController
