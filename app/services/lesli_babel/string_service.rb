@@ -19,12 +19,7 @@ module LesliBabel
                 strings = strings.where("lesli_babel_buckets.id in (?)", buckets_id)
             end
 
-            strings
-        end
-
-        def index params
-
-            strings = self.list(params[:module]).select(
+            strings.select(
                 :id,
                 :label,
                 :status,
@@ -37,10 +32,10 @@ module LesliBabel
                 "lesli_babel_modules.platform as platform",
                 "'' as path"
             )
+        end
 
-            #strings = strings.where()
-
-            strings = strings
+        def index params
+            self.list(params[:module])
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
             .order(:updated_at)
