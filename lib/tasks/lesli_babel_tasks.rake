@@ -32,6 +32,8 @@ Building a better future, one line of code at a time.
 
 # · 
 require "json"
+  
+
 namespace :lesli_babel do
 
     desc "Delete translations files"
@@ -169,6 +171,10 @@ namespace :lesli_babel do
                             bucket_id: translation_bucket.id
                         )
 
+
+                        # do not save strings with template translation
+                        next if translation.match?(/\A:.*:\z/)
+                        
                         # add the correct translation to the label 
                         label.update(locale => translation)
                     end

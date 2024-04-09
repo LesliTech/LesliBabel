@@ -32,6 +32,7 @@ module LesliBabel
                 "lesli_babel_modules.platform as platform",
                 "'' as path"
             )
+
         end
 
         def index params
@@ -46,25 +47,24 @@ module LesliBabel
             Rails.cache.fetch("babel/strings/stats", expires_in: 1.hour) do
 
                 # total translations registered in babel
-                total_strings = self.list.count
+                total_strings = self.list.reselect(:id).count
                 
                 # total translations by language
                 total_strings_translations = []
 
-                #Rails.application.config.lesli.dig(:configuration, :locales_available).each do |locale|
                 Lesli.config.locales.each do |locale|
                     total_strings_translations.push({
                         code: locale[0],
                         name: locale[1],
-                        total: self.list.where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
+                        total: self.list.reselect(:id).where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
                     })
                 end
 
                 # total translations that needs help
-                total_strings_waiting_for_help = self.list.where(:status => 1).count
+                total_strings_waiting_for_help = 0#self.list.reselect(:id).where(:status => 1).count
 
                 # total translations that needs translation
-                total_strings_waiting_for_translation = self.list.where(:status => 2).count
+                total_strings_waiting_for_translation = 0 #self.list.reselect(:id).where(:status => 2).count
 
                 {
                     total_strings: total_strings,
