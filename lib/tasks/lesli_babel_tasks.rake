@@ -79,7 +79,7 @@ namespace :lesli_babel do
             end
         end
 
-        L2.msg "CloudBabel: Module/Controllers scanned and registered"
+        L2.msg "LesliBabel: Module/Controllers scanned and registered"
 
     end
 
@@ -108,6 +108,7 @@ namespace :lesli_babel do
                             "!*.errors",
                             "!*.number.nth",
                             "*.lesli.shared.*",
+                            "*.lesli.dashboards.*",
                             "*.lesli.application.*",
                             "*.#{engine_info[:code]}.*",
                             
