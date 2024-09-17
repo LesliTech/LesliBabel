@@ -1,4 +1,4 @@
 <script setup>
-    import Readme from "./readme.md"
+    import Readme from "./index.md"
 </script>
 <Readme />

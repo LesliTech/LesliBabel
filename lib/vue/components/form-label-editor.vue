@@ -225,7 +225,7 @@ function copyToClipboard(button, text) {
 
 // · Navigate to the next translation using arrow keys
 function nextTranslation () {
-
+    return
     var table = document.getElementById("babel-translations")
     var inputs = table.getElementsByTagName("input")
 
@@ -290,10 +290,8 @@ function nextTranslation () {
         @paginate="storeStrings.fetchStrings()"
         @details="nextTranslation()">
 
-        <!-- 
-            Table custom header, renders a language selector
-        -->
-        <template #[languageHead(language)]="{ column }">
+        <!-- Table custom header, renders a language selector -->
+        <template :[languageHead(language)]="{ column }">
             <lesli-select
                 icon="public"
                 v-model="language"
@@ -301,10 +299,7 @@ function nextTranslation () {
             </lesli-select>
         </template>
 
-
-        <!-- 
-            Print the label string with a button to easely copy to clipboard
-        -->
+        <!--  Print the label string with a button to easely copy to clipboard -->
         <template #label="{ record }">
             <button 
                 class="button is-white p-0" 
@@ -320,11 +315,9 @@ function nextTranslation () {
                 </span>
             </button>
         </template>
-        
-        <!-- 
-            Print a input to edit the translation for the current locale
-        -->
-        <template #[language]="{ value, record }">
+
+        <!--  Print a input to edit the translation for the current locale -->
+        <template :[language]="{ value, record }">
             <div class="is-flex is-align-items-center">
                 <input 
                     type="text"

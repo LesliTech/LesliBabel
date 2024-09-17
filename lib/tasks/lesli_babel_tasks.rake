@@ -19,7 +19,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 Lesli · Ruby on Rails SaaS Development Framework.
 
-Made with ♥ by https://www.lesli.tech
+Made with ♥ by LesliTech
 Building a better future, one line of code at a time.
 
 @contact  hello@lesli.tech
@@ -122,8 +122,8 @@ namespace :lesli_babel do
     end 
 
 
-    desc "Load local translations into LesliBabel"
-    task :load => :environment do |task, args|
+    desc "Import local translations into LesliBabel"
+    task :import => :environment do |task, args|
 
         # Get all the locally installed engines
         engines = Lesli::System.engines

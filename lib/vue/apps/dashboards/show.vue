@@ -67,7 +67,7 @@ function search(string) {
             <component-actions></component-actions>
         </lesli-header>
         <lesli-toolbar @search="search"></lesli-toolbar>
-        <div class="locales mt-5">
+        <div class="locales">
             <router-link class="card mr-5 mb-5" 
                 v-for="locale in storeStatistics.languages" 
                 :key="locale.code"

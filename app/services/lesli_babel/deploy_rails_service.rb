@@ -5,6 +5,8 @@ module LesliBabel
 
             Lesli::System.engines.each do |engine, engine_info|
 
+                next if engine == "Root"
+
                 # get all rails engines to buil
                 engine_id = Module
                 .where("platform in ('lesli_core', 'lesli_engine')")
