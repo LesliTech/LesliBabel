@@ -235,7 +235,7 @@ module LesliBabel
                 .gsub(/-/, '_')                     # replace dashes with underscore
                 .gsub(/\s+/, '_')                   # replace spaces or spaces with single dash
 
-            self.status = "normal" if self.status.blank?
+            #self.status = "normal" if self.status.blank?
             self.reference_bucket = "#{self.bucket.reference_module}-#{self.bucket.code}"
         end
     end

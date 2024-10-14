@@ -8,6 +8,7 @@ module LesliBabel
             .joins("inner join lesli_babel_buckets on lesli_babel_buckets.id = lesli_babel_strings.bucket_id and lesli_babel_buckets.deleted_at is NULL")
             .joins("inner join lesli_babel_modules on lesli_babel_modules.id = lesli_babel_buckets.module_id and lesli_babel_modules.deleted_at is NULL")
             .where("lesli_babel_modules.id in (?)", ModuleService.new(current_user, query).list())
+            .where("lesli_babel_strings.status != 0 OR lesli_babel_strings.status is NULL")
 
             # filter by specific engines
             if engines_id
@@ -39,7 +40,8 @@ module LesliBabel
             self.list(params[:module])
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
-            .order(:updated_at)
+            .order(status: :desc )
+            .order(updated_at: :desc)
         end
 
         def stats

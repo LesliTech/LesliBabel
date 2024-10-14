@@ -161,14 +161,14 @@ function getLabelLink(id) {
 
 // switch a label as help needed
 function askForHelp(record) {
-    record.need_help = !record.need_help
+    record.status = 2
     storeStrings.putString(record)
 }
 
 
 // switch a label as help needed
 function askForTranslation(record) {
-    record.need_translation = !record.need_translation
+    record.status = 3
     storeStrings.putString(record)
 }
 
@@ -310,14 +310,17 @@ function nextTranslation () {
                         content_copy
                     </span>
                 </span>
-                <span>
+                <span :class="{
+                    'has-text-info': record.status == 2,
+                    'has-text-warning': record.status == 3
+                    }">
                     {{ record.label }}
                 </span>
             </button>
         </template>
 
         <!--  Print a input to edit the translation for the current locale -->
-        <template :[language]="{ value, record }">
+        <template #[language]="{ value, record }">
             <div class="is-flex is-align-items-center">
                 <input 
                     type="text"
@@ -415,12 +418,14 @@ function nextTranslation () {
 
                         <lesli-button 
                             small info solid icon="help_outline"
+                            :disabled="record.status == 2"
                             @click="askForHelp(record)">
                             Need help
                         </lesli-button>
 
                         <lesli-button 
                             small warning solid icon="translate"
+                            :disabled="record.status == 3"
                             @click="askForTranslation(record)">
                             Need translation
                         </lesli-button>
