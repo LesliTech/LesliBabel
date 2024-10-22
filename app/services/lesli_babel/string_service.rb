@@ -46,10 +46,12 @@ module LesliBabel
 
         def stats
 
-            Rails.cache.fetch("babel/strings/stats", expires_in: 1.hour) do
+            pp "hola"
+            #Rails.cache.fetch("babel/strings/stats", expires_in: 1.hour) do
 
                 # total translations registered in babel
                 total_strings = self.list.reselect(:id).count
+                pp total_strings
                 
                 # total translations by language
                 total_strings_translations = []
@@ -74,7 +76,7 @@ module LesliBabel
                     total_strings_waiting_for_help: total_strings_waiting_for_help,
                     total_strings_waiting_for_translation: total_strings_waiting_for_translation
                 }
-            end
+            #end
         end
     end
 end

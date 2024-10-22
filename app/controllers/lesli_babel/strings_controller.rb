@@ -1,7 +1,7 @@
 
 module LesliBabel
     class StringsController < ApplicationController
-        before_action :set_string, only: [:show, :edit, :update, :destroy, :need_help, :need_translation]
+        before_action :set_string, only: [:show, :edit, :update, :destroy]
 
         # GET /strings
         def index
