@@ -30,37 +30,20 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
-LesliBabel::Engine.routes.draw do  
-    root to: "dashboards#show"
-    
-    resource :dashboard
+# ·
+require "rails_helper"
+require Lesli::Engine.root.join("lib/rspec/testers/request")
 
-    # working with modules
-    resources :modules, only: [:index, :show, :new, :create, :edit] do 
-        resources :buckets, only: [:index]
+# ·
+RSpec.describe ::Rails::HealthController, type: :request do
+
+    include_context "request user authentication"
+
+    it "test health rails controller" do
+
+        get("#{LESLI_CALENDAR_ENGINE_MOUNTED_PATH}/up")
+
+        expect(response).to have_http_status(:success)
+        expect(response.content_type).to eq("text/html; charset=utf-8")
     end
-
-    # working with translations
-    resources :translations, only: [:index] do 
-        collection do 
-            get :options
-            post :renovate
-            post :deploy 
-            post :sync
-        end 
-    end 
-
-    # relevant strings
-    resources :relevants, only: [:index]
-
-    # working with strings
-    resources :strings, only: [:index, :create, :update] do 
-        collection do 
-            get :stats
-            get :locales
-            get :relevant
-        end 
-    end 
-
-    get "up" => "/rails/health#show"
 end
