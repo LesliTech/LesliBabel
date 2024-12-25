@@ -41,7 +41,7 @@ RSpec.describe ::Rails::HealthController, type: :request do
 
     it "test health rails controller" do
 
-        get("#{LESLI_CALENDAR_ENGINE_MOUNTED_PATH}/up")
+        get("#{LESLI_BABEL_ENGINE_MOUNTED_PATH}/up")
 
         expect(response).to have_http_status(:success)
         expect(response.content_type).to eq("text/html; charset=utf-8")
