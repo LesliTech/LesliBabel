@@ -165,19 +165,30 @@ namespace :lesli_babel do
                     labels.each do |label, translation|
 
                         # create or get the label
-                        label = LesliBabel::String.create_with(
+                        label = LesliBabel::Label.create_with(
+                            reference_bucket: "#{translation_module.code}-#{translation_bucket.code}"
+                        ).find_or_create_by(
+                            text: label,
+                            bucket_id: translation_bucket.id
+                        )
+
+                        
+
+                        # create or get the label
+                        string = LesliBabel::String.create_with(
                             reference_bucket: "#{translation_module.code}-#{translation_bucket.code}"
                         ).find_or_create_by(
                             label: label,
                             bucket_id: translation_bucket.id
                         )
 
-
                         # do not save strings with template translation
-                        #next if translation.match?(/\A:.*:\z/)
+                        next if translation.match?(/\A:.*:\z/) rescue false
+
+                        label.update(locale => translation)
                         
                         # add the correct translation to the label 
-                        label.update(locale => translation)
+                        string.update(locale => translation)
                     end
                 end 
             end

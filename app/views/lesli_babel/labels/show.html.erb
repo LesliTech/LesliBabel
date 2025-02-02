@@ -2,8 +2,8 @@
 <%= render(LesliView::Layout::Container.new("babel-translations-show")) do %>
     
     <%= render(LesliView::Components::Header.new(
-        @label.bucket.module.code.titleize + ": " + @label.text, 
-        #:back => module_path(@label.module_id)
+        [@label.bucket.module.code.titleize, @label.bucket.code.titleize, @label.text.titleize].join(" / "),
+        :back => module_path(@label.bucket.module.id)
     )) %>
 
     <%= render("form") %>

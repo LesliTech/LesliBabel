@@ -77,6 +77,5 @@ class CreateLesliBabelLabels < ActiveRecord::Migration[7.2]
             t.timestamps
         end
         add_reference(:lesli_babel_labels, :bucket, foreign_key: { to_table: :lesli_babel_buckets })
-        add_reference(:lesli_babel_labels, :module, foreign_key: { to_table: :lesli_babel_modules })
     end
 end

@@ -34,7 +34,7 @@ module LesliBabel
                 "lesli_babel_buckets.code as bucket_code",
                 "lesli_babel_modules.code as engine_code",
                 "lesli_babel_modules.platform as platform",
-                "'' as path"
+                "concat_ws('.', lesli_babel_modules.code, lesli_babel_buckets.code, text) as path"
             )
 
         end

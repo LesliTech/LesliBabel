@@ -21,7 +21,6 @@ module LesliBabel
         # POST /labels
         def create
             @label = Label.new(label_params)
-
             if @label.save
                 redirect_to label_path(@label.id), notice: "Label was successfully created."
             else
