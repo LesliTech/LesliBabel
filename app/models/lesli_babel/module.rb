@@ -1,6 +1,7 @@
 module LesliBabel
     class Module < ApplicationRecord
         has_many :buckets
+        has_many :labels
 
         validates_presence_of :platform
 
@@ -17,15 +18,6 @@ module LesliBabel
                 }
             end
         end
-
-        def show 
-            {
-                :id => self.id, 
-                :code => self.code.titleize,
-                :platform => self.platform,
-                :created_at => self.created_at
-            }
-        end 
 
         def format_module_name
 

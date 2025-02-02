@@ -1,1 +1,21 @@
-<router-view></router-view>
+<%= render(LesliView::Layout::Container.new("babel-dashboard")) do %>
+
+    <%= render(LesliView::Components::Header.new("Found #{@stats[:total_strings]} registered labels
+")) do %>
+        <%= render(LesliView::Elements::Button.new("Deploy", icon:"rocket_launch")) %>
+    <% end %>
+
+    <%= render(LesliView::Components::Toolbar.new) %>
+
+    <div class="locales">
+        <% @stats[:total_strings_translations].each do |locale| %>
+            <%= link_to labels_path({ :locale => locale[:code] }), :class => "card mr-5 mb-5" do %>
+                <svg class="flag-icon mb-2" width="64px" height="48px">
+                    <use xlink:href="#locale-<%= locale[:code] %>"></use>
+                </svg>
+                <p class="is-size-5"><%= locale[:name] %>: <%= locale[:total] %></p>
+                <small>missing: <%= @stats[:total_strings].to_i - locale[:total] %> translations</small>
+            <% end %>
+        <% end %>
+    </div>
+<% end %>

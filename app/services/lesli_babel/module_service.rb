@@ -1,6 +1,10 @@
 module LesliBabel
     class ModuleService < Lesli::ApplicationLesliService 
 
+        def find id 
+            super(Module.find_by_id(id))
+        end
+
         def list
 
             # get the list of installed engines, including: rails_core, rails_builder, rails_engine
@@ -13,6 +17,5 @@ module LesliBabel
             .map { |engine| engine.id } 
             
         end
-
     end
 end

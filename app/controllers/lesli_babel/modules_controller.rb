@@ -2,7 +2,7 @@
 
 Lesli
 
-Copyright (c) 2023, Lesli Technologies, S. A.
+Copyright (c) 2025, Lesli Technologies, S. A.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 Lesli · Ruby on Rails SaaS Development Framework.
 
-Made with ♥ by https://www.lesli.tech
+Made with ♥ by LesliTech
 Building a better future, one line of code at a time.
 
 @contact  hello@lesli.tech
@@ -32,7 +32,7 @@ Building a better future, one line of code at a time.
 
 module LesliBabel
     class ModulesController < ApplicationController
-        before_action :set_module, only: [:show, :edit, :update, :destroy]
+        before_action :set_module, only: [:show]
 
         # GET /modules
         def index
@@ -44,49 +44,18 @@ module LesliBabel
 
         # GET /modules/1
         def show
-            respond_to do |format|
-                format.html { }
-                format.json { respond_with_successful(@module.show) }
-            end
-        end
-
-        # GET /modules/new
-        def new
-        @module = Module.new
-        end
-
-        # GET /modules/1/edit
-        def edit
-        end
-
-        # POST /modules
-        def create
-            new_module = Module.new(module_params)
-            if new_module.save
-                respond_with_successful(new_module)
-            else
-                respond_with_error("Error on create module", new_module.errors)
-            end
-        end
-
-        # PATCH/PUT /modules/1
-        def update
-        if @module.update(module_params)
-        redirect_to @module, notice: 'Module was successfully updated.'
-        else
-        render :edit
-        end
-        end
-
-        # DELETE /modules/1
-        def destroy
+            module_id = params[:id]
+            @module = ModuleService.new(current_user, query).find(module_id).result
+            @labels = respond_as_pagination(LabelService.new(current_user, query).index({ modules_id: module_id }))
+            render "lesli_babel/labels/index"
         end
 
         private
 
         # Use callbacks to share common setup or constraints between actions.
         def set_module
-            @module = Module.find(params[:id])
+            #@module = Module.find(params[:id])
+            @module = params[:id]
         end
 
         # Only allow a trusted parameter "white list" through.

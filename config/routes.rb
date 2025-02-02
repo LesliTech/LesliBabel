@@ -2,7 +2,7 @@
 
 Lesli
 
-Copyright (c) 2023, Lesli Technologies, S. A.
+Copyright (c) 2025, Lesli Technologies, S. A.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 Lesli · Ruby on Rails SaaS Development Framework.
 
-Made with ♥ by https://www.lesli.tech
+Made with ♥ by LesliTech
 Building a better future, one line of code at a time.
 
 @contact  hello@lesli.tech
@@ -33,15 +33,17 @@ Building a better future, one line of code at a time.
 LesliBabel::Engine.routes.draw do  
     root to: "dashboards#show"
     
-    resource :dashboard
+    resource :dashboard, only: [:show]
+
+    resources :labels, only: [:index, :new, :create, :show]
 
     # working with modules
-    resources :modules, only: [:index, :show, :new, :create, :edit] do 
+    resources :modules, only: [:index, :show] do 
         resources :buckets, only: [:index]
     end
 
     # working with translations
-    resources :translations, only: [:index] do 
+    resources :translations, only: [] do 
         collection do 
             get :options
             post :renovate
@@ -54,7 +56,7 @@ LesliBabel::Engine.routes.draw do
     resources :relevants, only: [:index]
 
     # working with strings
-    resources :strings, only: [:index, :create, :update] do 
+    resources :strings, only: [] do 
         collection do 
             get :stats
             get :locales

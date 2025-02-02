@@ -174,7 +174,7 @@ namespace :lesli_babel do
 
 
                         # do not save strings with template translation
-                        next if translation.match?(/\A:.*:\z/)
+                        #next if translation.match?(/\A:.*:\z/)
                         
                         # add the correct translation to the label 
                         label.update(locale => translation)

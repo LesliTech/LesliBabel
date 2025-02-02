@@ -1,16 +1,16 @@
 <%
 columns = [{
     label: 'Label to translate',
-    field: 'label'
+    field: 'text'
 }, {
     label: 'English',
     field: 'en'
 }]
 %>
 
-<%= render(LesliView::Layout::Container.new("babel-translations")) do %>
+<%= render(LesliView::Layout::Container.new("babel-labels")) do %>
 
-    <%= render(LesliView::Components::Header.new((@module&.code&.titleize || "Translations"))) do %>
+    <%= render(LesliView::Components::Header.new((@module&.code&.titleize || "Labels"))) do %>
         <%= render(LesliView::Elements::Button.new("Deploy", icon:"rocket_launch")) %>
         <% if @module %>
         <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) %>
@@ -19,13 +19,13 @@ columns = [{
 
     <%= render(LesliView::Components::Toolbar.new) %>
 
+    <%= render LesliView::Elements::Table.new(
+        columns: columns, 
+        records: @labels[:records],
+        link: lambda { |label| label_path(label.id) }
+    ) %>
+
     <h1><%= I18n.t :hola %></h1>
     <h1><%= I18n.t ".hola" %></h1>
     <h1><%= t ".hola" %></h1>
-
-    <%= render LesliView::Elements::Table.new(
-        columns: columns, 
-        records: @translations[:records],
-        link: lambda { |label| translation_path(label.id) }
-    ) %>
 <% end %>

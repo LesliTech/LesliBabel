@@ -33,22 +33,21 @@ module LesliBabel
 
             # if search string was sent
             if params[:search]
-
-                search = params[:search].downcase.gsub(" ","%") 
-
-                sql_where_condition = []
-
-                # add filter to select only available languages 
-                Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
-                    sql_where_condition.push("LOWER(#{locale}) like :search")
-                end
-
-                sql_where_condition.push("LOWER(label) like :search")
-                sql_where_condition.push("LOWER(context) like :search")
-
-                # get strings with bucket and module information
-                strings = strings.where(sql_where_condition.join(" OR "), { search: "%#{ search }%" })
-
+                # search = "%#{params[:search].downcase.strip.gsub(' ', '%')}%"
+              
+                # # Dynamically build the `OR` conditions
+                # sql_conditions = []
+                # sql_values = { search: search }
+              
+                # Rails.application.config.lesli_settings["configuration"]["locales"].each do |locale|
+                #     sql_conditions << "LOWER(#{locale}) LIKE :search"
+                # end
+              
+                # sql_conditions << "LOWER(label) LIKE :search"
+                # sql_conditions << "LOWER(context) LIKE :search"
+              
+                # # Use Active Record's `where` with a single parameterized query
+                # strings = strings.where(sql_conditions.join(" OR "), sql_values)
             end
 
             # filters by specif ids sent as query params

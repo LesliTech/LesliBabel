@@ -1,0 +1,25 @@
+
+<%= form_with(
+    model: @label, 
+    :html => { :class => "box" }, 
+    :data => { :turbo => false },
+    builder: LesliView::Forms::BuilderHorizontal
+) do |form| %>
+
+    <% if @label.new_record? %>
+        <%= form.field(:text) %>
+        <%= form.field_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>
+        <%= form.field(:context) %>
+    <% end %>
+
+    <% unless @label.new_record? %>
+        <% I18n.available_locales.each do |locale| %>
+            <%= form.field(locale, label:language_name(locale)) %>
+        <% end %>
+        <%= form.field(:context) %>
+        <%= form.field_select(:status, LesliBabel::Label.statuses) %>
+        <%= form.field(:path) %>
+    <% end %>
+
+    <%= form.submit %>
+<% end %>

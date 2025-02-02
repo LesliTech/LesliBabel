@@ -1,0 +1,11 @@
+
+<%= render(LesliView::Layout::Container.new("babel-labels-new")) do %>
+    
+    <%= render(LesliView::Components::Header.new(
+        @module&.code&.titleize + ": Register a new label", 
+        :back => labels_path)
+    ) %>
+
+    <%= render("form") %>
+
+<% end %>

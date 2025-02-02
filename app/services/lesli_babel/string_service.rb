@@ -1,7 +1,7 @@
 module LesliBabel
     class StringService < Lesli::ApplicationLesliService
 
-        def list engines_id=nil, buckets_id=nil
+        def list modules_id=nil, buckets_id=nil
 
             # get strings with bucket and module information
             strings = String
@@ -11,8 +11,8 @@ module LesliBabel
             .where("lesli_babel_strings.status != 0 OR lesli_babel_strings.status is NULL")
 
             # filter by specific engines
-            if engines_id
-                strings = strings.where("lesli_babel_modules.id in (?)", engines_id)
+            if modules_id
+                strings = strings.where("lesli_babel_modules.id in (?)", modules_id)
             end
 
             # filter by specific engine buckets 
@@ -37,11 +37,15 @@ module LesliBabel
         end
 
         def index params
-            self.list(params[:module])
+            self.list(params[:modules_id])
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
             .order(status: :desc )
             .order(updated_at: :desc)
+        end
+
+        def show id
+            self.list.find_by_id(id)
         end
 
         def stats

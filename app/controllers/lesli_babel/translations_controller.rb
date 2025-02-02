@@ -36,52 +36,12 @@ module LesliBabel
 
         # GET /translations
         def index
-            #@translations = Translation.all
+            @translations = respond_as_pagination(StringService.new(current_user, query).index(params))
         end
 
         # GET /translations/1
         def show
-        end
-
-        # GET /translations/new
-        def new
-            @translation = Translation.new
-        end
-
-        # GET /translations/1/edit
-        def edit
-        end
-
-        # POST /translations
-        def create
-            @translation = Translation.new(translation_params)
-
-            if @translation.save
-                redirect_to @translation, notice: "Translation was successfully created."
-            else
-                render :new
-            end
-        end
-
-        # PATCH/PUT /translations/1
-        def update
-            if @translation.update(translation_params)
-                redirect_to @translation, notice: "Translation was successfully updated."
-            else
-                render :edit
-            end
-        end
-
-        # DELETE /translations/1
-        def destroy
-            @translation.destroy
-            redirect_to translations_url, notice: "Translation was successfully destroyed."
-        end
-
-        def options
-            respond_with_successful({
-                locales_available: Lesli.config.locales
-            })
+            @string = StringService.new(current_user, query).show(params.dig(:id))
         end
 
         def clean
