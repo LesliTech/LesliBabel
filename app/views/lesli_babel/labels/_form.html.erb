@@ -1,7 +1,7 @@
 
 <%= form_with(
     model: @label, 
-    :html => { :class => "box" }, 
+    :html => { :class => "box pt-6 pr-6" }, 
     :data => { :turbo => false },
     builder: LesliView::Forms::BuilderHorizontal
 ) do |form| %>
@@ -20,6 +20,12 @@
         <%= form.field_select(:status, LesliBabel::Label.statuses) %>
         <%= form.field(:path) %>
     <% end %>
+
+    <hr>
+
+    <%= render(LesliView::Elements::Button.new("Copy link", icon:"link", small:true)) %>
+                    <%= render(LesliView::Elements::Button.new("Need help", icon:"help_outline", small:true, solid:true)) %>
+                    <%= render(LesliView::Elements::Button.new("Need translation", icon:"translate", small:true, solid:true, warning:true)) %>
 
     <%= form.submit %>
 <% end %>

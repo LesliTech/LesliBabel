@@ -1,10 +1,19 @@
 <%
 columns = [{
+    label: 'ID',
+    field: 'id'
+}, {
     label: 'Label to translate',
     field: 'text'
 }, {
     label: 'English',
     field: 'en'
+}, {
+    label: 'Path',
+    field: 'path'
+}, {
+    label: nil,
+    field: nil
 }]
 %>
 
@@ -19,13 +28,32 @@ columns = [{
 
     <%= render(LesliView::Components::Toolbar.new) %>
 
-    <%= render LesliView::Elements::Table.new(
-        columns: columns, 
-        records: @labels[:records],
-        link: lambda { |label| label_path(label.id) }
-    ) %>
-
-    <h1><%= I18n.t :hola %></h1>
-    <h1><%= I18n.t ".hola" %></h1>
-    <h1><%= t ".hola" %></h1>
+    <%= render LesliView::Elements::Table.new(columns: columns) do |table| %>
+        <% @labels[:records].each do |record| %>
+            <% table.with_row do |row| %>
+                <% row.with_cell(css_class:"has-text-centered") do %>
+                    <%= turbo_link_to(record["id"], label_path(record["id"])) %>
+                <% end %>
+                <% row.with_cell do %>
+                    <%= turbo_link_to(record["text"], label_path(record["id"])) %>
+                <% end %>
+                <% row.with_cell do %>
+                    <%= turbo_link_to(record["en"], label_path(record["id"])) %>
+                <% end %>
+                <% row.with_cell do %>
+                    <button 
+                        class="button is-primary is-inverted">
+                        <span class="icon has-text-grey">
+                            <span class="material-icons">
+                                content_copy
+                            </span>
+                        </span>
+                        <span>
+                            <%= record["path"] %>
+                        </span>
+                    </button>
+                <% end %>
+            <% end %>
+        <% end %>
+    <% end %>
 <% end %>
