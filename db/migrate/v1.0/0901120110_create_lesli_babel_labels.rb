@@ -35,6 +35,9 @@ class CreateLesliBabelLabels < ActiveRecord::Migration[7.2]
         create_table :lesli_babel_labels do |t|
 
             t.string    :text
+            t.string    :status
+            t.string    :context
+
             t.string    :es # spanish
             t.string    :en # english
             t.string    :de # deutsch/german
@@ -49,9 +52,6 @@ class CreateLesliBabelLabels < ActiveRecord::Migration[7.2]
             t.string    :uk # Ukrainian
             t.string    :sr # Serbian
             t.string    :hr # Hrvatski/Croatian
-
-            t.integer   :status # 0 disabled, 1 ok, 2 need help, 3 need translation
-            t.string    :context
 
             t.datetime  :last_update_es
             t.datetime  :last_update_en

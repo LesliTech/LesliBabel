@@ -30,11 +30,56 @@ module LesliBabel
 
         # PATCH/PUT /labels/1
         def update
-            if @label.update(label_params)
-                redirect_to @label, notice: "Label was successfully updated.", status: :see_other
-            else
-                render :edit, status: :unprocessable_entity
+            return respond_with_not_found unless @label.found?
+
+            #@label = Label.find_by_id(@label.result.id)
+            @label = @label.result
+
+            # We store the original attributes
+            old_attributes = @label.attributes
+
+            # if status changed
+            if @label["status"] != label_params["status"]
+
+                # saved update date
+                @label["last_update_status"] = Time.now
+
             end
+
+            # if context changed
+            if @label["context"] != label_params["context"]
+
+                # saved update date
+                @label["last_update_context"] = Time.now
+
+            end
+
+            Lesli.config.locales.keys.each do |locale|
+
+                # if translation changed
+                if @label[locale] != label_params[locale]
+
+                    # saved update date
+                    @label["last_update_#{locale}"] = Time.now
+                end
+            end
+
+            if @label.update(label_params)
+
+                # We store the new attributes and compare the activities
+                new_attributes = @label.attributes
+                #String.log_activity_update(current_user, @string, old_attributes, new_attributes)
+
+                redirect_to label_path(@label.id), notice: "Label was successfully updated."
+            else
+                redirect_to label_path(@label.id), notice: "Error"
+            end
+
+            # if @label.update(label_params)
+            #     redirect_to @label, notice: "Label was successfully updated.", status: :see_other
+            # else
+            #     render :edit, status: :unprocessable_entity
+            # end
         end
 
         # DELETE /labels/1

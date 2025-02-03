@@ -35,7 +35,7 @@ LesliBabel::Engine.routes.draw do
     
     resource :dashboard, only: [:show]
 
-    resources :labels, only: [:index, :new, :create, :show]
+    resources :labels, only: [:index, :new, :create, :show, :update]
 
     # working with modules
     resources :modules, only: [:index, :show] do 

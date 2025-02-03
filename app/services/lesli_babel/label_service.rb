@@ -2,7 +2,7 @@ module LesliBabel
     class LabelService < Lesli::ApplicationLesliService
 
         def find id 
-            super(self.builder.find_by_id(id))
+            super(Label.find_by_id(id))
         end
 
         def builder modules_id:nil, buckets_id:nil
@@ -48,7 +48,7 @@ module LesliBabel
         end
 
         def show 
-            self.resource
+            self.builder.find_by_id(self.resource.id)
         end
     end
 end

@@ -1,31 +1,45 @@
 
+<style>
+form fieldset.is-warning {
+    border: 2px solid var(--bulma-warning);
+    background-color: var(--bulma-warning-95);
+}
+form fieldset.is-warning h5 {
+    color: var(--bulma-warning-bold);
+    font-weight: 600;
+}
+
+form fieldset.is-danger {
+    border: 3px solid var(--bulma-danger);
+}
+</style>
+
 <%= form_with(
     model: @label, 
-    :html => { :class => "box pt-6 pr-6" }, 
     :data => { :turbo => false },
     builder: LesliView::Forms::BuilderHorizontal
 ) do |form| %>
 
-    <% if @label.new_record? %>
-        <%= form.field(:text) %>
-        <%= form.field_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>
-        <%= form.field(:context) %>
-    <% end %>
+    <% form.fieldset("This label needs help", category:"warning") do %>
 
-    <% unless @label.new_record? %>
-        <% I18n.available_locales.each do |locale| %>
-            <%= form.field(locale, label:language_name(locale)) %>
+        <% if @label.new_record? %>
+            <%= form.field(:text) %>
+            <%= form.field_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>
+            <%= form.field(:context) %>
         <% end %>
-        <%= form.field(:context) %>
-        <%= form.field_select(:status, LesliBabel::Label.statuses) %>
-        <%= form.field(:path) %>
+
+        <% unless @label.new_record? %>
+            <% I18n.available_locales.each do |locale| %>
+                <%= form.field(locale, label:language_name(locale)) %>
+            <% end %>
+            <%= form.field(:context) %>
+            <%= form.field_select(:status, LesliBabel::Label.statuses) %>
+            <%= form.field(:path) %>
+        <% end %>
+
+        <hr>
+
+        <%= form.submit %>
+
     <% end %>
-
-    <hr>
-
-    <%= render(LesliView::Elements::Button.new("Copy link", icon:"link", small:true)) %>
-                    <%= render(LesliView::Elements::Button.new("Need help", icon:"help_outline", small:true, solid:true)) %>
-                    <%= render(LesliView::Elements::Button.new("Need translation", icon:"translate", small:true, solid:true, warning:true)) %>
-
-    <%= form.submit %>
 <% end %>
