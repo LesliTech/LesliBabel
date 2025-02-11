@@ -1,45 +1,33 @@
 
-<style>
-form fieldset.is-warning {
-    border: 2px solid var(--bulma-warning);
-    background-color: var(--bulma-warning-95);
-}
-form fieldset.is-warning h5 {
-    color: var(--bulma-warning-bold);
-    font-weight: 600;
-}
-
-form fieldset.is-danger {
-    border: 3px solid var(--bulma-danger);
-}
-</style>
+<% prefixes = [] %>
 
 <%= form_with(
     model: @label, 
-    :data => { :turbo => false },
+    #data: { :turbo => false },
     builder: LesliView::Forms::BuilderHorizontal
 ) do |form| %>
 
-    <% form.fieldset("This label needs help", category:"warning") do %>
+    <% form.fieldset("This label needs help", category:@label.category) do %>
 
         <% if @label.new_record? %>
-            <%= form.field(:text) %>
-            <%= form.field_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>
-            <%= form.field(:context) %>
+            <%= form.field_control_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>
+            <%= form.field_control_select(:prefix, LesliBabel::Label.prefixes) %>
+            <%= form.field_control(:text) %>
+            <%= form.field_control(:context) %>
         <% end %>
 
         <% unless @label.new_record? %>
             <% I18n.available_locales.each do |locale| %>
-                <%= form.field(locale, label:language_name(locale)) %>
+                <%= form.field_control(locale, label:language_name(locale)) %>
             <% end %>
-            <%= form.field(:context) %>
-            <%= form.field_select(:status, LesliBabel::Label.statuses) %>
-            <%= form.field(:path) %>
+            <%= form.field_control(:context) %>
+            <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
+            <%= form.field_control(:path) %>
         <% end %>
 
         <hr>
 
-        <%= form.submit %>
+        <%= form.field_control_submit %>
 
     <% end %>
 <% end %>

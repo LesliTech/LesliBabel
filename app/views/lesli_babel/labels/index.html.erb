@@ -11,9 +11,6 @@ columns = [{
 }, {
     label: 'Path',
     field: 'path'
-}, {
-    label: nil,
-    field: nil
 }]
 %>
 
@@ -30,7 +27,7 @@ columns = [{
 
     <%= render LesliView::Elements::Table.new(columns: columns) do |table| %>
         <% @labels[:records].each do |record| %>
-            <% table.with_row do |row| %>
+            <% table.with_row(css_class:"is-#{record.category}") do |row| %>
                 <% row.with_cell(css_class:"has-text-centered") do %>
                     <%= turbo_link_to(record["id"], label_path(record["id"])) %>
                 <% end %>
@@ -38,7 +35,7 @@ columns = [{
                     <%= turbo_link_to(record["text"], label_path(record["id"])) %>
                 <% end %>
                 <% row.with_cell do %>
-                    <%= turbo_link_to(record["en"], label_path(record["id"])) %>
+                    <%= turbo_link_to(record["en"] || "", label_path(record["id"])) %>
                 <% end %>
                 <% row.with_cell do %>
                     <button 

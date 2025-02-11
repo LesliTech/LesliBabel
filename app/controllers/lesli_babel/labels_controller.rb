@@ -20,9 +20,14 @@ module LesliBabel
 
         # POST /labels
         def create
+
             @label = Label.new(label_params)
             if @label.save
-                redirect_to label_path(@label.id), notice: "Label was successfully created."
+                success("Label was successfully created.")
+                respond_to do |format|
+                    format.turbo_stream
+                    format.html { redirect_to @label.id }
+                end
             else
                 render :new, status: :unprocessable_entity
             end
@@ -70,7 +75,11 @@ module LesliBabel
                 new_attributes = @label.attributes
                 #String.log_activity_update(current_user, @string, old_attributes, new_attributes)
 
-                redirect_to label_path(@label.id), notice: "Label was successfully updated."
+                success("Translation updated successfully!")
+                respond_to do |format|
+                    format.turbo_stream
+                    format.html { redirect_to @label.id }
+                end
             else
                 redirect_to label_path(@label.id), notice: "Error"
             end
@@ -106,6 +115,7 @@ module LesliBabel
             params.require(:label).permit(
                 :id,
                 :text,
+                :prefix,
                 :status,
                 :context,
                 :bucket_id,
