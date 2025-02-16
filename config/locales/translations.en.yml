@@ -1,10 +1,5 @@
 ---
 :en:
-  lesli_babel:
-    translations:
-        hola: "ldonis translations index"
-    modules:
-        hola: "ldonis modules"
   lesli:
     shared:
       view_discussions: Discussions

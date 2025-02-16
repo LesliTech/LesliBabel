@@ -47,7 +47,7 @@ LesliBabel::Engine.routes.draw do
         collection do 
             get :options
             post :renovate
-            post :deploy 
+            get :deploy 
             post :sync
         end 
     end 

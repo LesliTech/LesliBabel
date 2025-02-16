@@ -34,25 +34,20 @@ module LesliBabel
     class TranslationsController < ApplicationController
         before_action :set_translation, only: []
 
-        # GET /translations
-        def index
-            @translations = respond_as_pagination(StringService.new(current_user, query).index(params))
-        end
-
-        # GET /translations/1
-        def show
-            @string = StringService.new(current_user, query).show(params.dig(:id))
-        end
-
         def clean
             respond_with_successful()
         end
 
         def deploy
             #TranslationsService.clean
-            DeployRailsService.new(current_user, query).build
+            TranslationOperator.new(current_user, query).deploy
             #TranslationsService.restart_server
-            respond_with_successful
+
+            success("Translation updated successfully!")
+            respond_to do |format|
+                format.turbo_stream
+                format.html { redirect_to labels_path }
+            end
         end
 
         def renovate

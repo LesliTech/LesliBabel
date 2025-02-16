@@ -1,7 +1,7 @@
 module LesliBabel
-    class DeployRailsService < Lesli::ApplicationLesliService
+    class TranslationOperator < Lesli::ApplicationLesliService
 
-        def build
+        def deploy
 
             Lesli::System.engines.each do |engine, engine_info|
 
@@ -28,24 +28,10 @@ module LesliBabel
                 .where(:module_id => engine_id_lesli)
                 .pluck(:id)
 
-                # get strings filtered by module (only rails translations)
-                strings = StringService.new(current_user, query).list(engine_id)
-                strings_shared = StringService.new(current_user, query).list(engine_id_lesli, bucket_id_shared)
-                strings_application = StringService.new(current_user, query).list(engine_id_lesli, bucket_id_application)
-
-                strings = strings.select(
-                    :id,
-                    :label,
-                    :status,
-                    :context,
-                    Lesli.config.locales.keys,
-                    "lesli_babel_modules.id as engine_id",
-                    "lesli_babel_buckets.id as bucket_id",
-                    "lesli_babel_buckets.code as bucket_code",
-                    "lesli_babel_modules.code as engine_code",
-                    "lesli_babel_modules.platform as platform",
-                    "'' as path"
-                )
+                # get labels filtered by module (only rails translations)
+                labels = LabelService.new(current_user, query).builder(modules_id:engine_id).order(created_at: :asc)
+                labels_shared = LabelService.new(current_user, query).builder(modules_id:engine_id_lesli, buckets_id:bucket_id_shared).order(created_at: :asc)
+                labels_application = LabelService.new(current_user, query).builder(modules_id:engine_id_lesli, buckets_id:bucket_id_application).order(created_at: :asc)
 
                 translations = {}
 
@@ -68,10 +54,10 @@ module LesliBabel
                         "config", "locales", "translations.#{lang}.yml"
                     ).to_s
 
-                    # Create a collection of strings for the current module
-                    strings.each do |string|
+                    # Create a collection of labels for the current module
+                    labels.each do |label|
                         
-                        bucket_code = string[:bucket_code]
+                        bucket_code = label[:bucket_code]
 
                         unless translations[lang][:labels].has_key? engine_code
                             translations[lang][:labels][engine_code] = { }
@@ -82,14 +68,14 @@ module LesliBabel
                         end
 
                         # # send debug message for missing translations
-                        string[lang] = ":" + string.path + ":" if string[lang].blank?
+                        label[lang] = ":" + label.path + ":" if label[lang].blank?
 
-                        translations[lang][:labels][engine_code][bucket_code][string.label] = string[lang]
+                        translations[lang][:labels][engine_code][bucket_code][label.text] = label[lang]
 
                     end
 
-                    # Create a collection of strings for the shared labels of Lesli
-                    strings_shared.each do |string|
+                    # Create a collection of labels for the shared labels of Lesli
+                    labels_shared.each do |label|
 
                         unless translations[lang][:labels].has_key? "lesli"
                             translations[lang][:labels]["lesli"] = { }
@@ -100,13 +86,13 @@ module LesliBabel
                         end
 
                         # # send debug message for missing translations
-                        string[lang] = ":" + string.path + ":" if string[lang].blank?
+                        label[lang] = ":" + label.path + ":" if label[lang].blank?
 
-                        translations[lang][:labels]["lesli"]["shared"][string.label] = string[lang]
+                        translations[lang][:labels]["lesli"]["shared"][label.text] = label[lang]
                     end
 
-                    # Create a collection of strings for the application labels of Lesli
-                    strings_application.each do |string|
+                    # Create a collection of labels for the application labels of Lesli
+                    labels_application.each do |label|
 
                         unless translations[lang][:labels].has_key? "lesli"
                             translations[lang][:labels]["lesli"] = { }
@@ -117,9 +103,9 @@ module LesliBabel
                         end
 
                         # # send debug message for missing translations
-                        string[lang] = ":" + string.path + ":" if string[lang].blank?
+                        label[lang] = ":" + label.path + ":" if label[lang].blank?
 
-                        translations[lang][:labels]["lesli"]["application"][string.label] = string[lang]
+                        translations[lang][:labels]["lesli"]["application"][label.text] = label[lang]
                     end
 
                 end

@@ -45,9 +45,7 @@ module LesliBabel
 
         def prepare_label
 
-            self.text = (self.prefix || "view")
-                .concat('_')
-                .concat(self.text)
+            self.text = [self.prefix, self.text].compact.join('_')
                 .downcase                           # string to lowercase
                 .gsub(/[^0-9A-Za-z\s\-\_]/, '')     # remove special characters from string
                 .gsub(/-/, '_')                     # replace dashes with underscore

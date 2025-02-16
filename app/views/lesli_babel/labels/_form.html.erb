@@ -1,7 +1,6 @@
 
-<% prefixes = [] %>
-
 <%= form_with(
+    id: "lesli-babel-labels-form",
     model: @label, 
     #data: { :turbo => false },
     builder: LesliView::Forms::BuilderHorizontal
@@ -22,12 +21,12 @@
             <% end %>
             <%= form.field_control(:context) %>
             <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
-            <%= form.field_control(:path) %>
+            <%= form.field_control(:path) if !@label[:path].blank? %>
         <% end %>
 
         <hr>
 
-        <%= form.field_control_submit %>
+        <%= form.field_control_button("Update", icon:"save") %>
 
     <% end %>
 <% end %>
