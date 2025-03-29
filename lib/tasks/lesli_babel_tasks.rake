@@ -2,7 +2,7 @@
 
 Lesli
 
-Copyright (c) 2023, Lesli Technologies, S. A.
+Copyright (c) 2025, Lesli Technologies, S. A.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -172,23 +172,10 @@ namespace :lesli_babel do
                             bucket_id: translation_bucket.id
                         )
 
-                        
-
-                        # create or get the label
-                        string = LesliBabel::String.create_with(
-                            reference_bucket: "#{translation_module.code}-#{translation_bucket.code}"
-                        ).find_or_create_by(
-                            label: label,
-                            bucket_id: translation_bucket.id
-                        )
-
                         # do not save strings with template translation
                         next if translation.match?(/\A:.*:\z/) rescue false
 
                         label.update(locale => translation)
-                        
-                        # add the correct translation to the label 
-                        string.update(locale => translation)
                     end
                 end 
             end
