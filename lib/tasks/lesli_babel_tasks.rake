@@ -87,7 +87,7 @@ namespace :lesli_babel do
     desc "Export translations to json files"
     task :export => :environment do |task, args|
 
-        Lesli::System.engines.each do |engine, engine_info|
+        LesliSystem.engines.each do |engine, engine_info|
             # You can provide the config directly using the following
             config = {
                 "translations"=> [
@@ -126,7 +126,7 @@ namespace :lesli_babel do
     task :import => :environment do |task, args|
 
         # Get all the locally installed engines
-        engines = Lesli::System.engines
+        engines = LesliSystem.engines
 
 
         engines.each do |engine, engine_info|

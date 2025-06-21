@@ -38,17 +38,22 @@ columns = [{
                     <%= turbo_link_to(record["en"] || "", label_path(record["id"])) %>
                 <% end %>
                 <% row.with_cell do %>
-                    <button 
-                        class="button is-primary is-inverted">
-                        <span class="icon has-text-grey">
-                            <span class="material-icons">
-                                content_copy
+                    <div x-data="{ copied: false }">
+                        <button
+                            class="button is-primary is-inverted"
+                            @click="
+                                navigator.clipboard.writeText($refs.path.innerText.trim());
+                                copied = true;
+                                setTimeout(() => copied = false, 2000)
+                            ">
+                            <span class="icon has-text-grey">
+                                <span class="material-icons" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
                             </span>
-                        </span>
-                        <span>
-                            <%= record["path"] %>
-                        </span>
-                    </button>
+                            <span x-ref="path">
+                                <%= record["path"] %>
+                            </span>
+                        </button>
+                    </div>
                 <% end %>
             <% end %>
         <% end %>
