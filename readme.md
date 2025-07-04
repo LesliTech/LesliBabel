@@ -1,40 +1,42 @@
-<p align="center">
-	<img width="75" alt="LesliBabel logo" src="./app/assets/images/lesli_babel/babel-logo.svg" />
+<div align="center" class="documentation-header">
+    <img width="100" alt="LesliBabel logo" src="./app/assets/images/lesli_babel/babel-logo.svg" />
     <h3 align="center">Translation Management System for the Lesli Framework.</h3>
-</p>
+</div>
 
 
+<br />
 <hr/>
 
-<p align="center" class="is-flex is-justify-content-center">
-    <a target="blank" href="https://rubygems.org/gems/lesli_babel">
-        <img height="22" alt="Gem Version" src="https://badge.fury.io/rb/lesli_babel.svg" />
+<div align="center" class="documentation-statics">
+    <a target="blank" href="https://rubygems.org/gems/lesli">
+        <img height="22" alt="Gem Version" src="https://badge.fury.io/rb/lesli.svg"/>
     </a>
     <a class="mx-2" href="https://codecov.io/github/LesliTech/Lesli"> 
         <img height="22" src="https://codecov.io/github/LesliTech/Lesli/graph/badge.svg?token=2O12NENK5Y"/> 
     </a>
-    <a href="https://codecov.io/github/LesliTech/Lesli"> 
-        <img height="22" src="https://sonarcloud.io/api/project_badges/measure?project=LesliTech_Lesli&metric=sqale_rating"/> 
+    <a href="https://codecov.io/github/LesliTech/LesliBabel"> 
+        <img height="22" src="https://sonarcloud.io/api/project_badges/measure?project=LesliTech_LesliBabel&metric=sqale_rating"/> 
     </a>
-</p>
+</div>
 
 <hr/>
+<br />
 
 
 ### Quick start
 
 ```shell
-# Add LesliBabel engine
+# Add LesliBabel engine gem
 bundle add lesli_babel
 ```
 
 ```shell
-# Setup database
+# Setup & initialize the database
 rake lesli:db:setup
 ```
 
 ```ruby
-# Load LesliBabel
+# Load LesliBabel engine
 Rails.application.routes.draw do
     mount LesliBabel::Engine => "/babel"
 end
@@ -42,21 +44,24 @@ end
 
 
 ### Documentation
-* [Website](https://www.lesli.dev/babel/)
-* [Database](./docs/database.md)
-* [Documentation](https://www.lesli.dev/documentation/)
 
 
-### Get in touch
 
-* [Website: https://www.lesli.tech](https://www.lesli.tech)
+### Lesli Documentation
+* [website](https://www.lesli.dev/)
+* [documentation](https://www.lesli.dev/engines/babel/)
+
+
+### Get in touch with Lesli
+
 * [Email: hello@lesli.tech](hello@lesli.tech)
+* [Website: https://www.lesli.tech](https://www.lesli.tech)
 * [Twitter: @LesliTech](https://twitter.com/LesliTech)
 
 
 ### License
 -------
-Copyright (c) 2023, Lesli Technologies, S. A.
+Copyright (c) 2025, Lesli Technologies, S. A.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -74,8 +79,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 <hr />
 <br />
 
-<p align="center">
+<div align="center" class="has-text-centered">
     <img width="200" alt="Lesli logo" src="https://cdn.lesli.tech/lesli/brand/app-logo.svg" />
-    <h4 align="center">Ruby on Rails SaaS Development Framework.</h4>
-</p>
-
+    <h4 align="center" class="mt-0">Ruby on Rails SaaS Development Framework.</h4>
+</div>
