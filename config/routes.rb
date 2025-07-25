@@ -31,9 +31,8 @@ Building a better future, one line of code at a time.
 =end
 
 LesliBabel::Engine.routes.draw do  
-    root to: "dashboards#show"
-    
-    resource :dashboard, only: [:show]
+
+    Lesli::Routing.mount_dashboard_for(LesliBabel)
 
     resources :labels, only: [:index, :new, :create, :show, :update]
 

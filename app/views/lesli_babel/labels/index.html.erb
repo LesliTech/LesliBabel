@@ -18,9 +18,7 @@ columns = [{
 
     <%= render(LesliView::Components::Header.new((@module&.code&.titleize || "Labels"))) do %>
         <%= render(LesliView::Elements::Button.new("Deploy", icon:"rocket_launch", url:deploy_translations_path)) %>
-        <% if @module %>
-        <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) %>
-        <% end %>
+        <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) if @module %>
     <% end %>
 
     <%= render(LesliView::Components::Toolbar.new) %>
@@ -47,7 +45,7 @@ columns = [{
                                 setTimeout(() => copied = false, 2000)
                             ">
                             <span class="icon has-text-grey">
-                                <span class="material-icons" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
+                                <span class="material-symbols" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
                             </span>
                             <span x-ref="path">
                                 <%= record["path"] %>
