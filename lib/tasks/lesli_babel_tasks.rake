@@ -79,7 +79,7 @@ namespace :lesli_babel do
             end
         end
 
-        L2.msg "LesliBabel: Module/Controllers scanned and registered"
+        L2.info('LesliBabel: Module/Controllers scanned and registered')
 
     end
 
