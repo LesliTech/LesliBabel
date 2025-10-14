@@ -26,8 +26,13 @@ module LesliBabel
             if @label.save
                 success("Label was successfully created.")
                 respond_to do |format|
-                    format.turbo_stream
-                    format.html { redirect_to @label.id }
+                    format.html 
+                    format.turbo_stream do 
+                        respond_with_stream(
+                            stream_notification_success('Label created'),
+                            stream_redirection(label_path(@label))
+                        )
+                    end
                 end
             else
                 render :new, status: :unprocessable_entity
@@ -78,8 +83,14 @@ module LesliBabel
 
                 success("Translation updated successfully!")
                 respond_to do |format|
-                    format.turbo_stream
-                    format.html { redirect_to @label.id }
+                    format.html
+                    format.turbo_stream do 
+                        respond_with_stream(
+                            stream_notification_success('Label updated'),
+                            turbo_stream.replace('lesli-babel-labels-form', partial: 'lesli_babel/labels/form')
+                        )
+                    end
+                    
                 end
             else
                 redirect_to label_path(@label.id), notice: "Error"

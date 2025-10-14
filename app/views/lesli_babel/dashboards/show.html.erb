@@ -1,9 +1,4 @@
 
-<%# Loading the flags icons from assets %>
-<% content_for(:application_lesli_body_bottom) do %>
-    <%= render(partial: "lesli_assets/partials/application-lesli-icons-flags") %>
-<% end %>
-
 <%= render(LesliView::Layout::Container.new("babel-dashboard")) do %>
 
     <%= render(LesliView::Components::Header.new("Found #{@stats[:total_strings]} registered labels
@@ -25,3 +20,6 @@
         <% end %>
     </div>
 <% end %>
+
+<%# Loading the flags icons from assets %>
+<%= render(partial: "lesli_assets/partials/application-lesli-icons-flags") %>

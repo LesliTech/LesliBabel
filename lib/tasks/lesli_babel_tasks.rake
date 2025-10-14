@@ -32,6 +32,7 @@ Building a better future, one line of code at a time.
 
 # · 
 require "json"
+require "i18n-js"
   
 
 namespace :lesli_babel do
