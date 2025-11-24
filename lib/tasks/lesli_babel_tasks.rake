@@ -55,14 +55,11 @@ namespace :lesli_babel do
         engines.each do |engine, routes|
 
             platform = "lesli_engine"
-            platform = "lesli_core" if engine == "lesli"
             platform = "rails_app" if engine == "main_app"
-
 
             translation_module = LesliBabel::Module
             .create_with(:platform => platform)
             .find_or_create_by!(:code => engine)
-
 
             routes.each do |controller, route|
 
@@ -112,7 +109,6 @@ namespace :lesli_babel do
                             "*.lesli.dashboards.*",
                             "*.lesli.application.*",
                             "*.#{engine_info[:code]}.*",
-                            
                         ] 
                     }
                 ]
@@ -137,14 +133,11 @@ namespace :lesli_babel do
 
             # platform name 
             platform = "lesli_engine"
-            platform = "lesli_core" if engine_code == "lesli"
-
 
             # create the babel module if it does not exists
             translation_module = LesliBabel::Module
             .create_with(:platform => platform)
             .find_or_create_by!(:code => engine_code)
-
             
             # Iterate over the available locales
             I18n.available_locales.each do |locale|

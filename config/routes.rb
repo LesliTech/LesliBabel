@@ -32,7 +32,7 @@ Building a better future, one line of code at a time.
 
 LesliBabel::Engine.routes.draw do  
 
-    Lesli::Routing.mount_dashboard_for(LesliBabel)
+    Lesli::Router.mount_dashboard_for(LesliBabel)
 
     resources :labels, only: [:index, :new, :create, :show, :update]
 

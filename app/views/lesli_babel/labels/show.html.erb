@@ -2,7 +2,7 @@
 <%= render(LesliView::Layout::Container.new("babel-translations-show")) do %>
     
     <%= render(LesliView::Components::Header.new(
-        [@label.bucket.module.code.titleize, @label.bucket.code.titleize, @label.text.titleize].join(" / "),
+        @label.text.titleize,
         :back => module_path(@label.bucket.module.id)
     )) %>
 
