@@ -1,8 +1,7 @@
 
 <%= render(LesliView::Layout::Container.new("babel-dashboard")) do %>
 
-    <%= render(LesliView::Components::Header.new("Found #{@stats[:total_strings]} registered labels
-")) do %>
+    <%= render(LesliView::Components::Header.new("Found #{@stats[:total_strings]} registered labels")) do %>
         <%= render(LesliView::Elements::Button.new("Deploy", solid:true, icon:"rocket_launch")) %>
     <% end %>
 

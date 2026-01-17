@@ -36,26 +36,19 @@ module LesliBabel
 
         # GET /modules
         def index
-            respond_to do |format|
-                format.html { }
-                format.json { respond_with_successful(Module.index) }
-            end
         end
 
         # GET /modules/1
         def show
-            module_id = params[:id]
-            @module = ModuleService.new(current_user, query).find(module_id).result
-            @labels = respond_as_pagination(LabelService.new(current_user, query).index({ modules_id: module_id }))
-            render "lesli_babel/labels/index"
+            @labels = respond_as_pagination(LabelService.new(current_user, query).index({ modules_id: @module_id }))
+            render("lesli_babel/labels/index")
         end
 
         private
 
         # Use callbacks to share common setup or constraints between actions.
         def set_module
-            #@module = Module.find(params[:id])
-            @module = params[:id]
+            @module_id = params[:id]
         end
 
         # Only allow a trusted parameter "white list" through.

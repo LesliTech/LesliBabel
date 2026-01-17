@@ -33,8 +33,7 @@ Building a better future, one line of code at a time.
 module LesliBabel
     class DashboardsController < ApplicationController
         def show
-            #@stats = respond_as_successful(StringService.new(current_user, query).stats())
-            @stats = respond_as_successful(TranslationService.new(current_user, query).stats())
+            @stats = TranslationService.new(current_user, query).stats
         end
     end
 end

@@ -24,12 +24,11 @@ module LesliBabel
 
             @label = Label.new(label_params)
             if @label.save
-                success("Label was successfully created.")
                 respond_to do |format|
                     format.html 
                     format.turbo_stream do 
                         respond_with_stream(
-                            stream_notification_success('Label created'),
+                            stream_notification_success('Label was successfully created.'),
                             stream_redirection(label_path(@label))
                         )
                     end
