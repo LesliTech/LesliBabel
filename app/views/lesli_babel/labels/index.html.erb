@@ -17,7 +17,7 @@ columns = [{
 <%= render(LesliView::Layout::Container.new("babel-labels")) do %>
 
     <%= render(LesliView::Components::Header.new((@module&.code&.titleize || "Labels"))) do %>
-        <%= render(LesliView::Elements::Button.new("Deploy", icon:"rocket_launch", url:deploy_translations_path)) %>
+        <%= render(LesliView::Elements::Button.new('Deploy', icon:'rocket_launch', url:deploy_translations_path, method: :post)) %>
         <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) if @module %>
     <% end %>
 

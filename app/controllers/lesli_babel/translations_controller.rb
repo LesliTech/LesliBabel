@@ -34,20 +34,12 @@ module LesliBabel
     class TranslationsController < ApplicationController
         before_action :set_translation, only: []
 
-        def clean
-            respond_with_successful()
-        end
-
         def deploy
-            #TranslationsService.clean
-            TranslationOperator.new(current_user, query).deploy
-            #TranslationsService.restart_server
+            TranslationService.new(current_user, query).deploy
 
-            success("Translation updated successfully!")
-            respond_to do |format|
-                format.turbo_stream
-                format.html { redirect_to labels_path }
-            end
+            respond_with_lesli(
+                :turbo => stream_notification_success("Translation deployed successfully!")
+            )
         end
 
         def renovate
@@ -95,6 +87,5 @@ module LesliBabel
         def translation_params
             params.fetch(:translation, {})
         end
-
     end
 end

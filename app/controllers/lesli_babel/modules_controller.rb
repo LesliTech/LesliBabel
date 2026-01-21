@@ -40,7 +40,7 @@ module LesliBabel
 
         # GET /modules/1
         def show
-            @labels = respond_as_pagination(LabelService.new(current_user, query).index({ modules_id: @module_id }))
+            @labels = respond_as_pagination(LabelService.new(current_user, query).index({ modules_id: @module.id }))
             render("lesli_babel/labels/index")
         end
 
@@ -48,7 +48,7 @@ module LesliBabel
 
         # Use callbacks to share common setup or constraints between actions.
         def set_module
-            @module_id = params[:id]
+            @module = ModuleService.new(current_user, query).find(params[:id]).result
         end
 
         # Only allow a trusted parameter "white list" through.

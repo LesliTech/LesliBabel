@@ -44,22 +44,8 @@ LesliBabel::Engine.routes.draw do
     # working with translations
     resources :translations, only: [] do 
         collection do 
-            get :options
-            post :renovate
-            get :deploy 
-            post :sync
-        end 
-    end 
-
-    # relevant strings
-    resources :relevants, only: [:index]
-
-    # working with strings
-    resources :strings, only: [] do 
-        collection do 
-            get :stats
-            get :locales
-            get :relevant
+            post :deploy # Write translations files using translations in the database
+            post :sync   # Update database translations using translations files
         end 
     end 
 

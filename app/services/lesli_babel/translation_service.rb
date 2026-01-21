@@ -37,7 +37,7 @@ module LesliBabel
 
         def deploy
 
-            Lesli::System.engines.each do |engine, engine_info|
+            LesliSystem.engines.each do |engine, engine_info|
 
                 next if engine == "Root"
 

@@ -1,6 +1,6 @@
 module LesliBabel
     class LabelsController < ApplicationController
-        before_action :set_label, only: %i[ show edit update destroy ]
+        before_action :set_label, only: %i[show edit update destroy ]
         before_action :set_module, only: [:new]
 
         # GET /labels
@@ -27,9 +27,11 @@ module LesliBabel
                 respond_to do |format|
                     format.html 
                     format.turbo_stream do 
-                        respond_with_stream(
-                            stream_notification_success('Label was successfully created.'),
-                            stream_redirection(label_path(@label))
+                        respond_with_lesli(
+                            :turbo => [
+                                stream_notification_success('Label was successfully created.'),
+                                stream_redirection(label_path(@label))
+                            ]
                         )
                     end
                 end
@@ -38,15 +40,15 @@ module LesliBabel
             end
         end
 
+        def edit
+        end
+
         # PATCH/PUT /labels/1
         def update
             return respond_with_not_found unless @label.found?
 
             #@label = Label.find_by_id(@label.result.id)
             @label = @label.result
-
-            # We store the original attributes
-            old_attributes = @label.attributes
 
             # if status changed
             if @label["status"] != label_params["status"]
@@ -75,31 +77,15 @@ module LesliBabel
             end
 
             if @label.update(label_params)
-
-                # We store the new attributes and compare the activities
-                new_attributes = @label.attributes
-                #String.log_activity_update(current_user, @string, old_attributes, new_attributes)
-
-                success("Translation updated successfully!")
-                respond_to do |format|
-                    format.html
-                    format.turbo_stream do 
-                        respond_with_stream(
-                            stream_notification_success('Label updated'),
-                            turbo_stream.replace('lesli-babel-labels-form', partial: 'lesli_babel/labels/form')
-                        )
-                    end
-                    
-                end
+                respond_with_lesli(
+                    :turbo => [
+                        stream_notification_success("Translation label updated successfully!"),
+                        turbo_stream.replace('lesli-babel-labels-form', partial: 'lesli_babel/labels/form')
+                    ]
+                )
             else
-                redirect_to label_path(@label.id), notice: "Error"
+                respond_with_lesli(:turbo => stream_notification_success("Error updating translation label"))
             end
-
-            # if @label.update(label_params)
-            #     redirect_to @label, notice: "Label was successfully updated.", status: :see_other
-            # else
-            #     render :edit, status: :unprocessable_entity
-            # end
         end
 
         # DELETE /labels/1

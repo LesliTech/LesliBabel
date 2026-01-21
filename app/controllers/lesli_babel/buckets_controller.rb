@@ -36,14 +36,7 @@ module LesliBabel
 
         # GET /buckets
         def index
-            respond_to do |format|
-                format.html { }
-                format.json { 
-                    respond_with_successful(
-                        Module.find(params[:module_id]).buckets.order(:code)
-                    ) 
-                }
-            end
+            Bucket.all
         end
 
         # GET /buckets/1
@@ -52,7 +45,6 @@ module LesliBabel
 
         # GET /buckets/new
         def new
-        @bucket = Bucket.new
         end
 
         # GET /buckets/1/edit
@@ -74,17 +66,17 @@ module LesliBabel
 
         # PATCH/PUT /buckets/1
         def update
-        if @bucket.update(bucket_params)
-        redirect_to @bucket, notice: 'Bucket was successfully updated.'
-        else
-        render :edit
-        end
+            if @bucket.update(bucket_params)
+                redirect_to @bucket, notice: 'Bucket was successfully updated.'
+            else
+                render :edit
+            end
         end
 
         # DELETE /buckets/1
         def destroy
-        @bucket.destroy
-        redirect_to buckets_url, notice: 'Bucket was successfully destroyed.'
+            @bucket.destroy
+            redirect_to buckets_url, notice: 'Bucket was successfully destroyed.'
         end
 
         private
