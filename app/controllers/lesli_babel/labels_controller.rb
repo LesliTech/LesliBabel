@@ -47,7 +47,6 @@ module LesliBabel
         def update
             return respond_with_not_found unless @label.found?
 
-            #@label = Label.find_by_id(@label.result.id)
             @label = @label.result
 
             # if status changed

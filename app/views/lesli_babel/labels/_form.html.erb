@@ -2,11 +2,11 @@
 <%= form_with(
     id: "lesli-babel-labels-form",
     model: @label, 
-    #data: { :turbo => false },
     builder: LesliView::Forms::BuilderHorizontal
 ) do |form| %>
 
-    <% form.fieldset("This label needs help", category:@label.category) do %>
+    <% label_status = 'Label ' + @label.status.humanize.downcase %>
+    <% form.fieldset(label_status, category:@label.category) do %>
 
         <% if @label.new_record? %>
             <%= form.field_control_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>
@@ -21,7 +21,7 @@
             <% end %>
             <%= form.field_control(:context) %>
             <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
-            <%= form.field_control(:path) if !@label[:path].blank? %>
+            <%= form.field_control(:path) unless @label[:path].blank? %>
         <% end %>
 
         <hr>
