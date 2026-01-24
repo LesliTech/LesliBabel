@@ -5,8 +5,10 @@
     builder: LesliView::Forms::BuilderHorizontal
 ) do |form| %>
 
-    <% label_status = 'Label ' + @label.status.humanize.downcase %>
-    <% form.fieldset(label_status, category:@label.category) do %>
+    <% label_status = 'Label ' + @label.status.humanize.downcase if @label.status %>
+    <% label_category = '' + @label.category if @label.category %>
+
+    <% form.fieldset(label_status, category:label_category) do %>
 
         <% if @label.new_record? %>
             <%= form.field_control_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>

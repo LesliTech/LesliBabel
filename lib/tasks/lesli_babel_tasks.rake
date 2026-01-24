@@ -50,7 +50,7 @@ namespace :lesli_babel do
     desc "Create standard structure for translations according to the objects in the app"
     task scan: [:environment] do 
 
-        engines = Lesli::SystemController.index(matrix: true)
+        engines = Lesli::ResourceService.new.index(matrix: true)
 
         engines.each do |engine, routes|
 
