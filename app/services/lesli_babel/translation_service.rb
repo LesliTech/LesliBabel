@@ -109,38 +109,38 @@ module LesliBabel
                     end
 
                     # Create a collection of labels for the shared labels of Lesli
-                    labels_shared.each do |label|
+                    # labels_shared.each do |label|
 
-                        unless translations[lang][:labels].has_key? "lesli"
-                            translations[lang][:labels]["lesli"] = { }
-                        end
+                    #     unless translations[lang][:labels].has_key? "lesli"
+                    #         translations[lang][:labels]["lesli"] = { }
+                    #     end
 
-                        unless translations[lang][:labels]["lesli"].has_key? "shared"
-                            translations[lang][:labels]["lesli"]["shared"] = { }
-                        end
+                    #     unless translations[lang][:labels]["lesli"].has_key? "shared"
+                    #         translations[lang][:labels]["lesli"]["shared"] = { }
+                    #     end
 
-                        # # send debug message for missing translations
-                        label[lang] = ":" + label.path + ":" if label[lang].blank?
+                    #     # # send debug message for missing translations
+                    #     label[lang] = ":" + label.path + ":" if label[lang].blank?
 
-                        translations[lang][:labels]["lesli"]["shared"][label.text] = label[lang]
-                    end
+                    #     translations[lang][:labels]["lesli"]["shared"][label.text] = label[lang]
+                    # end
 
-                    # Create a collection of labels for the application labels of Lesli
-                    labels_application.each do |label|
+                    # # Create a collection of labels for the application labels of Lesli
+                    # labels_application.each do |label|
 
-                        unless translations[lang][:labels].has_key? "lesli"
-                            translations[lang][:labels]["lesli"] = { }
-                        end
+                    #     unless translations[lang][:labels].has_key? "lesli"
+                    #         translations[lang][:labels]["lesli"] = { }
+                    #     end
 
-                        unless translations[lang][:labels]["lesli"].has_key? "application"
-                            translations[lang][:labels]["lesli"]["application"] = { }
-                        end
+                    #     unless translations[lang][:labels]["lesli"].has_key? "application"
+                    #         translations[lang][:labels]["lesli"]["application"] = { }
+                    #     end
 
-                        # # send debug message for missing translations
-                        label[lang] = ":" + label.path + ":" if label[lang].blank?
+                    #     # # send debug message for missing translations
+                    #     label[lang] = ":" + label.path + ":" if label[lang].blank?
 
-                        translations[lang][:labels]["lesli"]["application"][label.text] = label[lang]
-                    end
+                    #     translations[lang][:labels]["lesli"]["application"][label.text] = label[lang]
+                    # end
 
                 end
 

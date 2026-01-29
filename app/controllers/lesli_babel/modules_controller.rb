@@ -40,7 +40,7 @@ module LesliBabel
 
         # GET /modules/1
         def show
-            @labels = respond_as_pagination(LabelService.new(current_user, query).index({ modules_id: @module.id }))
+            @labels = respond_with_pagination(LabelService.new(current_user, query).index({ modules_id: @module.id }))
             render("lesli_babel/labels/index")
         end
 

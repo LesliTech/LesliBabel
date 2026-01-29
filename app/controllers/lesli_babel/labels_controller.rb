@@ -6,7 +6,7 @@ module LesliBabel
         # GET /labels
         def index
             query[:pagination][:perPage] = 100
-            @labels = respond_as_pagination(LabelService.new(current_user, query).index(params))
+            @labels = respond_with_pagination(LabelService.new(current_user, query).index(params))
         end
 
         # GET /labels/1
