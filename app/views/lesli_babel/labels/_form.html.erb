@@ -21,6 +21,7 @@
             <% I18n.available_locales.each do |locale| %>
                 <%= form.field_control(locale, label:language_name(locale)) %>
             <% end %>
+            <hr>
             <%= form.field_control(:context) %>
             <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
             <%= form.field_control(:path) unless @label[:path].blank? %>
