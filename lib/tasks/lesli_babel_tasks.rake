@@ -32,7 +32,7 @@ Building a better future, one line of code at a time.
 
 # · 
 require "json"
-require "i18n-js"
+#require "i18n-js"
   
 
 namespace :lesli_babel do
@@ -114,7 +114,7 @@ namespace :lesli_babel do
                 ]
             }
 
-            pp I18nJS.call(config: config)
+            #pp I18nJS.call(config: config)
         end
     end 
 
