@@ -77,7 +77,7 @@ namespace :lesli_babel do
             end
         end
 
-        L2.info('LesliBabel: Module/Controllers scanned and registered')
+        Termline.success('LesliBabel: Module/Controllers scanned and registered')
 
     end
 
