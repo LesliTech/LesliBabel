@@ -40,8 +40,8 @@ module LesliBabel
             config.assets.precompile += %w[lesli_babel_manifest.js]
 
             # set locales (from initializer)
-            config.i18n.default_locale = Lesli.config.locales.keys.first || :en
-            config.i18n.available_locales = Lesli.config.locales.keys || [:en]
+            config.i18n.default_locale = Lesli.config.babel.dig(:locales).keys.first || :en
+            config.i18n.available_locales = Lesli.config.babel.dig(:locales).keys || [:en]
 
             config.i18n.load_path += Dir["#{Lesli::Engine.root.to_s}/config/locales/*.yml"]
 

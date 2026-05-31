@@ -28,7 +28,7 @@ module LesliBabel
                 :text,
                 :status,
                 :context,
-                Lesli.config.locales.keys,
+                Lesli.config.babel.dig(:locales).keys,
                 "lesli_babel_modules.id as engine_id",
                 "lesli_babel_buckets.id as bucket_id",
                 "lesli_babel_buckets.code as bucket_code",

@@ -12,7 +12,7 @@ module LesliBabel
                 # total translations by language
                 total_strings_translations = []
 
-                Lesli.config.locales.each do |locale|
+                Lesli.config.babel.dig(:locales).each do |locale|
                     total_strings_translations.push({
                         code: locale[0],
                         name: locale[1],
@@ -69,7 +69,7 @@ module LesliBabel
 
                 translations = {}
 
-                available_locales = Lesli.config.locales.keys
+                available_locales = I18n.available_locales
 
                 # add key for every available language (required by i18n Rails gem)
                 available_locales.each do |lang|

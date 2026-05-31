@@ -5,9 +5,9 @@ columns = [{
 }, {
     label: 'Label to translate',
     field: 'text'
-}, {
-    label: 'English',
-    field: 'en'
+#}, {
+#     label: 'English',
+#     field: 'en'
 }, {
     label: 'Path',
     field: 'path'
@@ -32,9 +32,9 @@ columns = [{
                 <% row.with_cell do %>
                     <%= turbo_link_to(record["text"], label_path(record["id"])) %>
                 <% end %>
-                <% row.with_cell do %>
-                    <%= turbo_link_to(record["en"] || "", label_path(record["id"])) %>
-                <% end %>
+                <%# row.with_cell do %>
+                    <%#= turbo_link_to(record["en"] || "", label_path(record["id"])) %>
+                <%# end %>
                 <% row.with_cell do %>
                     <div x-data="{ copied: false }">
                         <button

@@ -65,7 +65,7 @@ module LesliBabel
 
             end
 
-            Lesli.config.locales.keys.each do |locale|
+            I18n.available_locales.each do |locale|
 
                 # if translation changed
                 if @label[locale] != label_params[locale]
@@ -115,7 +115,7 @@ module LesliBabel
                 :status,
                 :context,
                 :bucket_id,
-                Lesli.config.locales.keys
+                I18n.available_locales
             )
         end
     end
