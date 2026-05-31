@@ -11,7 +11,7 @@
     <% form.fieldset(label_status, category:label_category) do %>
 
         <% if @label.new_record? %>
-            <%= form.field_control_select(:bucket_id, @module.buckets.pluck(:code, :id)) %>
+            <%= form.field_control_select(:bucket_id, @module.buckets.order(:code).pluck(:code, :id)) %>
             <%= form.field_control_select(:prefix, LesliBabel::Label.prefixes) %>
             <%= form.field_control(:text) %>
             <%= form.field_control(:context) %>

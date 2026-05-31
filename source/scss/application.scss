@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /*
 
 Lesli
@@ -30,6 +29,12 @@ Building a better future, one line of code at a time.
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
 */
-body.lesli-babel.dashboards .box {
-  min-width: 240px;
+
+
+// · 
+body.lesli-babel.dashboards { 
+    .box {
+        min-width: 240px;
+    }
 }
+
