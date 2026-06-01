@@ -1,4 +1,4 @@
 module LesliBabel
-  VERSION = "1.1.0"
-  BUILD = "1778638613"
+  VERSION = "1.1.1"
+  BUILD = "1780272810"
 end
