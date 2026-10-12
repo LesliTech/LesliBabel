@@ -128,6 +128,25 @@ bin/rails lesli:db:prepare
 bin/rails server
 ```
 
+### Frontend
+
+LesliBabel uses LesliView for shared interface components and Tailwind CSS for engine-specific presentation. Tailwind source files and generated Rails assets are kept separate:
+
+```text
+source/tailwind/application.tailwind.css
+        ↓ build
+app/assets/stylesheets/lesli_babel/application.tailwind.css
+```
+
+From a complete Lesli development workspace, compile the assets through the shared LesliAssets builder:
+
+```shell
+cd gems/LesliAssets
+make build.tailwind
+```
+
+See the [frontend guide](./docs/about/frontend.md) for source registration, view conventions, responsive testing, and utility-collision guidance.
+
 ### Tests
 
 From a complete Lesli development workspace, run the engine test suite from the LesliBabel directory:
@@ -141,6 +160,11 @@ bin/rails test
 
 ## Documentation
 
+- [Installation guide](./docs/about/installation.md)
+- [Translation workflow](./docs/about/translations.md)
+- [Frontend development](./docs/about/frontend.md)
+- [Database](./docs/about/database.md)
+- [Tasks](./docs/about/tasks.md)
 - [Lesli website](https://www.lesli.dev/)
 - [Documentation](https://www.lesli.dev/engines/babel)
 - [Release notes](https://github.com/LesliTech/LesliBabel/releases)
