@@ -38,16 +38,18 @@ columns = [{
                 <% row.with_cell do %>
                     <div x-data="{ copied: false }">
                         <button
-                            class="button is-primary is-inverted"
+                            type="button"
+                            class="group inline-flex max-w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40"
+                            :aria-label="copied ? 'Path copied' : 'Copy path'"
                             @click="
                                 navigator.clipboard.writeText($refs.path.innerText.trim());
                                 copied = true;
                                 setTimeout(() => copied = false, 2000)
                             ">
-                            <span class="icon has-text-grey">
-                                <span class="material-symbols" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
+                            <span class="inline-flex size-5 shrink-0 items-center justify-center text-slate-400 transition-colors group-hover:text-slate-600" aria-hidden="true">
+                                <span class="material-symbols text-lg leading-none" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
                             </span>
-                            <span x-ref="path">
+                            <span class="break-all font-mono text-xs leading-5" x-ref="path">
                                 <%= record["path"] %>
                             </span>
                         </button>

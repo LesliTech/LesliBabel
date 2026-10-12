@@ -33,11 +33,13 @@ Building a better future, one line of code at a time.
 %>
 
 
-<p class="menu-label">Modules</p>
+<li class="px-4 pb-2 pt-1">
+    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500">Modules</h2>
+</li>
 <% LesliBabel::Module.all.order(:code).each do |engine| %>
     <%= navigation_item(
-        lesli_babel.modules_path + "/" + engine.id.to_s, 
-        engine.code.titleize, 
+        lesli_babel.modules_path + "/" + engine.id.to_s,
+        engine.code.titleize,
         "ri-folder-line"
-    ); %>
+    ) %>
 <% end %>

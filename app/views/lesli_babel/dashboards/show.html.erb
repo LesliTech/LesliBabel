@@ -7,18 +7,20 @@
 
     <%= render(LesliView::Components::Toolbar.new) %>
 
-    <section class="container">
-        <div class="columns is-multiline is-variable dashboard-components">
+    <section class="py-6 sm:py-8" aria-label="Translation status by locale">
+        <div class="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
             <% @stats[:total_strings_translations].each do |locale| %>
-                <div class="column">
-                    <div class="box has-text-centered">
-                        <svg class="flag-icon mb-2" width="64px" height="48px">
-                            <use xlink:href="#locale-<%= locale[:code] %>"></use>
-                        </svg>
-                        <p class="is-size-5"><%= locale[:name] %>: <%= locale[:total] %></p>
-                        <small>missing: <%= @stats[:total_strings].to_i - locale[:total] %> translations</small>
-                    </div>
-                </div>
+                <article class="flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm sm:p-6">
+                    <svg class="mb-3 h-12 w-16" aria-hidden="true">
+                        <use xlink:href="#locale-<%= locale[:code] %>"></use>
+                    </svg>
+                    <h2 class="text-lg font-semibold text-slate-900">
+                        <%= locale[:name] %>: <span class="tabular-nums"><%= locale[:total] %></span>
+                    </h2>
+                    <p class="mt-1 text-sm text-slate-500">
+                        missing: <span class="tabular-nums"><%= @stats[:total_strings].to_i - locale[:total] %></span> translations
+                    </p>
+                </article>
             <% end %>
         </div>
     </section>

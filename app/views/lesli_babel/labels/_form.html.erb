@@ -1,7 +1,7 @@
 
 <%= form_with(
     id: "lesli-babel-labels-form",
-    model: @label, 
+    model: @label,
     builder: LesliView::Forms::BuilderHorizontal
 ) do |form| %>
 
@@ -21,13 +21,13 @@
             <% I18n.available_locales.each do |locale| %>
                 <%= form.field_control(locale, label:language_name(locale)) %>
             <% end %>
-            <hr>
+            <hr class="my-6 border-0 border-t border-slate-200">
             <%= form.field_control(:context) %>
             <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
             <%= form.field_control(:path) unless @label[:path].blank? %>
         <% end %>
 
-        <hr>
+        <hr class="my-6 border-0 border-t border-slate-200">
 
         <%= form.field_control_button("Update", icon:"save") %>
 

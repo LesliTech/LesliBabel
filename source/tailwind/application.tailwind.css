@@ -1,0 +1,10 @@
+/* Tailwind utilities used by LesliBabel views. */
+@layer theme, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+
+@source "../../app/views/lesli_babel/dashboards/show.html.erb";
+@source "../../app/views/lesli_babel/labels/_form.html.erb";
+@source "../../app/views/lesli_babel/labels/index.html.erb";
+@source "../../app/views/lesli_babel/partials/_sidebar.html.erb";
