@@ -153,7 +153,14 @@ From a complete Lesli development workspace, run the engine test suite from the 
 
 ```shell
 cd engines/LesliBabel
-bin/rails test
+RAILS_ENV=test bundle exec rake app:db:prepare
+bundle exec rake app:test
+```
+
+Run the eager-loaded CI equivalent before pushing changes:
+
+```shell
+CI=true bundle exec rake app:test
 ```
 
 <br />

@@ -1,7 +1,7 @@
 module LesliBabel
     class Module < ApplicationRecord
         has_many :buckets
-        has_many :labels
+        has_many :labels, through: :buckets
 
         validates_presence_of :platform
 
