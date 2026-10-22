@@ -50,7 +50,7 @@ The labels index uses Alpine.js for copy-to-clipboard feedback. Keep the action 
 The application loads stylesheets in this order:
 
 1. `lesli_assets/application.tailwind`
-2. `lesli_assets/view.tailwind`
+2. `lesli_view/view.tailwind`
 3. `lesli_babel/application.tailwind`
 
 Tailwind utility selectors have equal specificity. A base utility emitted by the Babel bundle can therefore override a responsive utility from a shared LesliView component because the engine stylesheet loads last.
