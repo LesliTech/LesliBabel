@@ -133,9 +133,9 @@ bin/rails server
 LesliBabel uses LesliView for shared interface components and Tailwind CSS for engine-specific presentation. Tailwind source files and generated Rails assets are kept separate:
 
 ```text
-source/tailwind/application.tailwind.css
+source/tailwind/application.css
         ↓ build
-app/assets/stylesheets/lesli_babel/application.tailwind.css
+app/assets/stylesheets/lesli_babel/application.css
 ```
 
 From a complete Lesli development workspace, compile the assets through the shared LesliAssets builder:

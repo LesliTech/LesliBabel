@@ -7,9 +7,9 @@ LesliBabel renders inside Lesli's authenticated application shell. Its pages use
 The editable entrypoint and generated Rails asset are separate:
 
 ```text
-source/tailwind/application.tailwind.css
+source/tailwind/application.css
         ↓ build
-app/assets/stylesheets/lesli_babel/application.tailwind.css
+app/assets/stylesheets/lesli_babel/application.css
 ```
 
 Edit the file under `source/tailwind`; never edit the compiled asset by hand. Commit the generated asset whenever an entrypoint or scanned template changes.
@@ -49,9 +49,9 @@ The labels index uses Alpine.js for copy-to-clipboard feedback. Keep the action 
 
 The application loads stylesheets in this order:
 
-1. `lesli_assets/application.tailwind`
-2. `lesli_view/view.tailwind`
-3. `lesli_babel/application.tailwind`
+1. `lesli_assets/application`
+2. `lesli_view/view`
+3. `lesli_babel/application`
 
 Tailwind utility selectors have equal specificity. A base utility emitted by the Babel bundle can therefore override a responsive utility from a shared LesliView component because the engine stylesheet loads last.
 
@@ -80,7 +80,7 @@ Use the watcher while editing templates or Tailwind sources:
 make watch.tailwind
 ```
 
-The builder discovers LesliBabel's entrypoint and writes the compiled output to `app/assets/stylesheets/lesli_babel/application.tailwind.css`.
+The builder discovers LesliBabel's entrypoint and writes the compiled output to `app/assets/stylesheets/lesli_babel/application.css`.
 
 Before committing a frontend change:
 
@@ -98,6 +98,6 @@ Before committing a frontend change:
 - Mark decorative icons with `aria-hidden="true"`.
 - Give icon-only controls an accessible label.
 - Preserve `focus-visible` styles for interactive elements.
-- Treat files under `app/assets/stylesheets` with `.tailwind.css` names as generated output.
+- Treat the engine's `app/assets/stylesheets/lesli_babel/application.css` as generated output.
 
 See [Views and Layouts](/engines/lesli/frontend/views), [Styles with Tailwind CSS](/engines/lesli/frontend/styles), and the [LesliView documentation](/gems/view/) for shared conventions and component APIs.

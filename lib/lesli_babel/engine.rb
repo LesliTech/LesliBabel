@@ -35,10 +35,6 @@ module LesliBabel
         isolate_namespace LesliBabel
 
         initializer :lesli_babel do |app|
-
-            # register assets manifest
-            config.assets.precompile += %w[lesli_babel_manifest.js]
-
             # set locales (from initializer)
             config.i18n.default_locale = Lesli.config.babel.dig(:locales).keys.first || :en
             config.i18n.available_locales = Lesli.config.babel.dig(:locales).keys || [:en]
