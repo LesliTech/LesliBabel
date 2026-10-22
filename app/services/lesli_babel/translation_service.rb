@@ -12,11 +12,14 @@ module LesliBabel
                 # total translations by language
                 total_strings_translations = []
 
-                Lesli.config.babel.dig(:locales).each do |locale|
+                Lesli.config.babel.dig(:locales).each do |locale_code, locale_name|
                     total_strings_translations.push({
-                        code: locale[0],
-                        name: locale[1],
-                        total: label_service.builder.reselect(:id).where("#{locale[0]} is not null").where("#{locale[0]} != ''").count
+                        code: locale_code,
+                        name: locale_name,
+                        total: label_service.builder
+                            .reselect(:id)
+                            .where.not(locale_code => [nil, ""])
+                            .count
                     })
                 end
 
