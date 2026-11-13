@@ -59,6 +59,8 @@ result[:errors]    # structural errors found during the import
 
 The result is a plain hash with `created`, `completed`, `skipped`, and `errors`. The `created` entry reports modules, buckets, and labels independently. A fresh summary is returned for every call.
 
+The service reads `file_path` directly with `YAML.safe_load_file`. YAML parsing and filesystem errors are not intercepted and propagate to the caller.
+
 Keep interpolation tokens such as `%{count}` unchanged across locales. Values wrapped as unresolved template markers, for example `:lesli_support.tickets.title:`, are not imported as completed translations.
 
 ## Deploy Changes

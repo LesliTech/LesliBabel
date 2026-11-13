@@ -1,3 +1,5 @@
+require "yaml"
+
 module LesliBabel
     class TranslationImportService
         def self.call(file_path:, platform:)
@@ -10,6 +12,8 @@ module LesliBabel
         end
 
         def call
+            load_yaml
+
             {
                 created: {
                     modules: 0,
@@ -25,5 +29,9 @@ module LesliBabel
         private
 
         attr_reader :file_path, :platform
+
+        def load_yaml
+            YAML.safe_load_file(file_path, aliases: false)
+        end
     end
 end
