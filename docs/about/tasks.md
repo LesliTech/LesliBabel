@@ -66,6 +66,14 @@ The task invokes `LesliBabel::TranslationDeployService` to replace the official 
 
 All documents are generated and staged before deployment. Generation errors make the task fail without writing files, while filesystem errors propagate immediately. Repeated deploys from unchanged database translations produce identical YAML content.
 
+Deploy is also available from the LesliBabel web interface. Web deploy is enabled outside production by default and can be controlled explicitly with:
+
+```ruby
+Lesli.config.babel[:allow_web_deploy] = true
+```
+
+The setting restricts only the web endpoint. The Rake task remains available for controlled deployment and release workflows.
+
 ## Unsupported Task Stubs
 
 The repository currently exposes `lesli_babel:clean`, but it is not a supported operational command because it still references the retired `CloudBabel` namespace. Do not use it in installation, deployment, or release automation until its implementation is replaced and tested.

@@ -32,60 +32,50 @@ Building a better future, one line of code at a time.
 
 module LesliBabel
     class TranslationsController < ApplicationController
-        before_action :set_translation, only: []
+        before_action :authorize_web_deploy!, only: :deploy
 
         def deploy
-            TranslationService.new(current_user, query).deploy
+            result = begin
+                TranslationDeployService.call
+            rescue StandardError => exception
+                return respond_with_deploy_error(exception.message)
+            end
+            errors = result.fetch(:errors)
+
+            return respond_with_deploy_error(errors.join("; "), errors) if errors.any?
 
             respond_with_lesli(
-                :turbo => stream_notification_success("Translation deployed successfully!")
+                turbo: stream_notification_success("Translations deployed successfully."),
+                json: {
+                    message: "Translations deployed successfully.",
+                    files: result.fetch(:files)
+                },
+                redirect: labels_path
             )
         end
 
-        def renovate
-            result = TranslationsSynchronizationService.remote_sync
-            respond_with_successful if result.success?
-            respond_with_error if not result.success?
-        end
-
-        def sync
-            result = TranslationsSynchronizationService.remote_sync true
-            respond_with_successful if result.success?
-            respond_with_error if not result.success?
-        end
-
-        def download
-
-            engine = params[:engine]
-            platform = params[:platform]
-
-            translations_result = TranslationsMiddlemanService.build(engine) if platform == "middleman"
-            translations_result = TranslationsAndroidService.build(engine) if platform == "android"
-            translations_result = TranslationsFlutterService.build(engine) if platform == "flutter"
-            translations_result = TranslationsIosService.build(engine) if platform == "ios"
-            translations_result = TranslationsJsService.build() if platform == "js"
-
-            return respond_with_error if translations_result.blank?
-
-            zip_file = "#{platform}-#{engine}-translations.zip"
-
-            LC::System::IO.zip(zip_file, translations_result.payload)
-
-            redirect_to "/tmp/#{zip_file}"
-
-        end
-
-
         private
 
-        # Use callbacks to share common setup or constraints between actions.
-        def set_translation
-            @translation = Translation.find(params[:id])
+        # Web deploy is enabled outside production by default. Applications may
+        # explicitly authorize it in another environment through Lesli config.
+        def authorize_web_deploy!
+            return if Lesli.config.babel.fetch(:allow_web_deploy, !Rails.env.production?)
+
+            respond_with_lesli(
+                turbo: stream_notification_danger("Web translation deploy is disabled."),
+                json: { message: "Web translation deploy is disabled." },
+                redirect: labels_path,
+                status: :forbidden
+            )
         end
 
-        # Only allow a trusted parameter "white list" through.
-        def translation_params
-            params.fetch(:translation, {})
+        def respond_with_deploy_error(message, errors = [message])
+            respond_with_lesli(
+                turbo: stream_notification_danger(message),
+                json: { message: message, errors: errors },
+                redirect: labels_path,
+                status: :unprocessable_content
+            )
         end
     end
 end

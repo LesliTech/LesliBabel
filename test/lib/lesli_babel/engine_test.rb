@@ -17,7 +17,7 @@ module LesliBabel
             assert_includes route_names, "label"
             assert_includes route_names, "module_buckets"
             assert_includes route_names, "deploy_translations"
-            assert_includes route_names, "sync_translations"
+            assert_not_includes route_names, "sync_translations"
         end
     end
 end
