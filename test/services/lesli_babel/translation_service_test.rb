@@ -16,9 +16,11 @@ module LesliBabel
         end
 
         test "stats counts registered labels and translations per configured locale" do
-            stats = TranslationService.new(@current_user).stats
+            service = TranslationService.new(@current_user)
+            stats = service.stats
             translations = stats[:total_strings_translations].index_by { |locale| locale[:code] }
 
+            assert_not_respond_to service, :deploy
             assert_equal 3, stats[:total_strings]
             assert_equal 2, translations[:en][:total]
             assert_equal 1, translations[:es][:total]

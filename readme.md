@@ -48,8 +48,8 @@ It organizes application text and helps teams maintain, synchronize, and deploy 
 - Translation modules and buckets
 - Centralized label management
 - Language-specific translation values
-- Synchronization of source labels
-- Translation deployment across Lesli applications
+- Import from version-controlled YAML files
+- Safe YAML export and deployment across Lesli applications
 
 <br />
 

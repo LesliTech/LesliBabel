@@ -74,6 +74,14 @@ Lesli.config.babel[:allow_web_deploy] = true
 
 The setting restricts only the web endpoint. The Rake task remains available for controlled deployment and release workflows.
 
+### Operational Safety
+
+- Use `lesli_babel:export` for a read-only preview; it never writes installed locale files.
+- Run `lesli_babel:deploy` only from a trusted shell with a clean, writable source checkout.
+- Keep web deploy disabled in production unless trusted operators explicitly require it.
+- Review version-control changes after deploy and retain the YAML files as the portable source.
+- Each file replacement is atomic, but the complete multi-file operation is not a single filesystem transaction.
+
 ## Unsupported Task Stubs
 
 The repository currently exposes `lesli_babel:clean`, but it is not a supported operational command because it still references the retired `CloudBabel` namespace. Do not use it in installation, deployment, or release automation until its implementation is replaced and tested.

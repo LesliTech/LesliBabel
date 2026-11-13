@@ -62,6 +62,10 @@ The only application-level validation checks the required `locale → module →
 
 Keep interpolation tokens such as `%{count}` unchanged across locales.
 
+## Dashboard Statistics
+
+`LesliBabel::TranslationService` is read-only and exists only to build dashboard statistics. It does not export or deploy translations. YAML generation belongs to `TranslationExportService`, and every filesystem write belongs to `TranslationDeployService`.
+
 ## Export and Deploy Contract
 
 Export and deploy are separate operations with different responsibilities.
@@ -74,9 +78,6 @@ Each exported document contains the information needed by deploy:
 
 ```ruby
 {
-  engine: "LesliBabel",
-  platform: "lesli_engine",
-  locale: "en",
   file_path: "/path/to/config/locales/translations.en.yml",
   content: "---\nen:\n  lesli_babel:\n    labels: {}\n"
 }
@@ -158,15 +159,26 @@ Labels whose status is `disabled` are excluded. All other statuses, including `n
 - They are not copied into every engine file because Rails loads the Lesli core locale files alongside installed engines.
 - An engine may own its own bucket with the same name, such as `lesli_support.shared`; that bucket is exported only with the owning engine.
 
-## Deploy Changes
+## Deploy Operations and Security
 
-The Babel interface can deploy database values back to each installed engine's `config/locales/translations.<locale>.yml` files. Deployment rewrites those files, so use it only in a writable development checkout:
+The Babel interface and the `lesli_babel:deploy` Rake task can write database values back to each installed engine's `config/locales/translations.<locale>.yml` files. The intended target is a writable, version-controlled source checkout. Do not deploy into immutable installed gems or containers.
+
+Web deploy is authenticated and authorized through the standard Lesli controller stack. It is disabled in production by default. Enable it only for trusted operators and a writable checkout:
+
+```ruby
+Lesli.config.babel[:allow_web_deploy] = true
+```
+
+The Rake task is not controlled by `allow_web_deploy`; it is an administrative command for a trusted shell or release workflow. Both entry points expose the real filesystem error when a write fails, so deploy access must not be public.
+
+Every destination is generated and staged before replacement, and each individual rename is atomic. A multi-file deploy is not a single filesystem transaction: if a later rename fails, files renamed earlier remain updated. Keep the checkout recoverable and review the result:
 
 1. Commit or stash unrelated work.
-2. Deploy the selected translations.
-3. Review every generated file.
-4. Run affected interface tests.
-5. Commit the locale changes in their owning engine repositories.
+2. Run `bin/rails lesli_babel:export` first when a read-only preview is needed.
+3. Deploy the translations from the web interface or trusted Rake command.
+4. Review every generated file.
+5. Run affected interface tests.
+6. Commit the locale changes in their owning engine repositories.
 
 Never treat the production database as the only copy of a translation. Released gems load their versioned locale files.
 

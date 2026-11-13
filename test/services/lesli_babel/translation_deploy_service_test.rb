@@ -128,6 +128,10 @@ module LesliBabel
         end
 
         test "propagates rename errors and removes remaining temporary files" do
+            first_path = locale_path(@babel_engine, "en")
+            second_path = locale_path(@babel_engine, "es")
+            File.binwrite(first_path, "original en")
+            File.binwrite(second_path, "original es")
             rename = ->(_source, _destination) { raise Errno::EIO, "rename failed" }
 
             assert_raises(Errno::EIO) do
@@ -136,6 +140,8 @@ module LesliBabel
                 end
             end
 
+            assert_equal "original en", File.binread(first_path)
+            assert_equal "original es", File.binread(second_path)
             temporary_files = Dir[File.join(@babel_engine[:dir], "config/locales/.*.tmp")]
             assert_empty temporary_files
         end

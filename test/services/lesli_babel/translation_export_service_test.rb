@@ -107,6 +107,17 @@ module LesliBabel
             assert_equal "Traducciones", document.dig("es", "lesli_babel", "labels", "title")
         end
 
+        test "exports an engine without translations as an empty module" do
+            result = export
+
+            assert_equal({
+                "en" => {
+                    "lesli_babel" => {}
+                }
+            }, YAML.safe_load(result[:content]))
+            assert_equal "translations.en.yml", File.basename(result[:file_path])
+        end
+
         test "raises when the module does not exist for the platform" do
             error = assert_raises(ActiveRecord::RecordNotFound) do
                 TranslationExportService.call(
