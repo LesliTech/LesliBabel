@@ -2,7 +2,7 @@
 
 Lesli
 
-Copyright (c) 2023, Lesli Technologies, S. A.
+Copyright (c) 2026, Lesli Technologies, S. A.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 Lesli · Ruby on Rails SaaS Development Framework.
 
-Made with ♥ by https://www.lesli.tech
+Made with ♥ by LesliTech
 Building a better future, one line of code at a time.
 
 @contact  hello@lesli.tech
@@ -33,10 +33,13 @@ Building a better future, one line of code at a time.
 class CreateLesliBabelModules < ActiveRecord::Migration[7.0]
     def change
         create_table :lesli_babel_modules do |t|
-            t.string :code      # engine code
-            t.string :platform  # rails, reactnative, etc
+            t.string :code, null: false      # engine code
+            t.string :platform, null: false  # rails, reactnative, etc
             t.datetime :deleted_at
             t.timestamps
         end
+
+        add_index(:lesli_babel_modules, :deleted_at)
+        add_index(:lesli_babel_modules, %i[platform code], unique: true, where: "deleted_at IS NULL", name: "idx_babel_modules_unique_active_platform_code")
     end
 end

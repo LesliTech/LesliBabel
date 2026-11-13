@@ -10,6 +10,13 @@ LesliBabel uses collection code `09` and engine code `01`. It stores translation
 
 Modules, buckets, and labels support soft deletion through `deleted_at`. Labels contain a column for each supported locale and metadata used to track translation state and references.
 
+The portable references are stored alongside the foreign keys:
+
+- `buckets.reference_module` identifies the owning module.
+- `labels.reference_bucket` identifies the module and bucket used to build the translation path.
+
+These references are required and remain stable because translation keys are immutable after creation.
+
 The ownership hierarchy is:
 
 ```text
@@ -19,6 +26,8 @@ lesli_babel_modules
 ```
 
 Changing the configured locale set can require both application configuration and schema support. Verify the label columns before enabling a new managed locale.
+
+Module, bucket, and label identities are protected by partial unique indexes that apply to active records. This preserves soft deletion while preventing duplicate active translation paths. Translation values and context use database `text` columns so they are not limited to varchar-sized content.
 
 Prepare and inspect the schema through the host application:
 

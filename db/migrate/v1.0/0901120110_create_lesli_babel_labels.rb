@@ -2,7 +2,7 @@
 
 Lesli
 
-Copyright (c) 2023, Lesli Technologies, S. A.
+Copyright (c) 2026, Lesli Technologies, S. A.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 Lesli · Ruby on Rails SaaS Development Framework.
 
-Made with ♥ by https://www.lesli.tech
+Made with ♥ by LesliTech
 Building a better future, one line of code at a time.
 
 @contact  hello@lesli.tech
@@ -34,24 +34,24 @@ class CreateLesliBabelLabels < ActiveRecord::Migration[7.2]
     def change
         create_table :lesli_babel_labels do |t|
 
-            t.string    :text
+            t.string    :text, null: false
             t.string    :status
-            t.string    :context
+            t.text      :context
 
-            t.string    :es # spanish
-            t.string    :en # english
-            t.string    :de # deutsch/german
-            t.string    :fr # french
-            t.string    :nl # nederlands/netherlands/holanda
-            t.string    :pl # polski/polish/poland
-            t.string    :pt # portuguese
-            t.string    :it # italian
-            t.string    :tr # turkish
-            t.string    :ro # romanian
-            t.string    :bg # bulgarian
-            t.string    :uk # Ukrainian
-            t.string    :sr # Serbian
-            t.string    :hr # Hrvatski/Croatian
+            t.text      :es # spanish
+            t.text      :en # english
+            t.text      :de # deutsch/german
+            t.text      :fr # french
+            t.text      :nl # nederlands/netherlands/holanda
+            t.text      :pl # polski/polish/poland
+            t.text      :pt # portuguese
+            t.text      :it # italian
+            t.text      :tr # turkish
+            t.text      :ro # romanian
+            t.text      :bg # bulgarian
+            t.text      :uk # Ukrainian
+            t.text      :sr # Serbian
+            t.text      :hr # Hrvatski/Croatian
 
             t.datetime  :last_update_es
             t.datetime  :last_update_en
@@ -71,11 +71,30 @@ class CreateLesliBabelLabels < ActiveRecord::Migration[7.2]
             t.datetime  :last_update_status
             t.datetime  :last_update_context
 
-            t.string :reference_bucket
+            t.string :reference_bucket, null: false
 
             t.datetime  :deleted_at
             t.timestamps
         end
-        add_reference(:lesli_babel_labels, :bucket, foreign_key: { to_table: :lesli_babel_buckets })
+        add_reference(
+            :lesli_babel_labels,
+            :bucket,
+            null: false,
+            foreign_key: { to_table: :lesli_babel_buckets }
+        )
+        add_index(
+            :lesli_babel_labels,
+            %i[bucket_id text],
+            unique: true,
+            where: "deleted_at IS NULL",
+            name: "idx_babel_labels_unique_active_bucket_text"
+        )
+        add_index :lesli_babel_labels, :status, name: "idx_babel_labels_on_status"
+        add_index :lesli_babel_labels, :deleted_at
+        add_check_constraint(
+            :lesli_babel_labels,
+            "status IS NULL OR status IN ('ok', 'disabled', 'need_help', 'need_context', 'need_translation')",
+            name: "chk_babel_labels_status"
+        )
     end
 end

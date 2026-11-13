@@ -2,7 +2,7 @@
 
 Lesli
 
-Copyright (c) 2023, Lesli Technologies, S. A.
+Copyright (c) 2026, Lesli Technologies, S. A.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 Lesli · Ruby on Rails SaaS Development Framework.
 
-Made with ♥ by https://www.lesli.tech
+Made with ♥ by LesliTech
 Building a better future, one line of code at a time.
 
 @contact  hello@lesli.tech
@@ -33,11 +33,14 @@ Building a better future, one line of code at a time.
 class CreateLesliBabelBuckets < ActiveRecord::Migration[7.0]
     def change
         create_table :lesli_babel_buckets do |t|
-            t.string :code
-            t.string :reference_module
+            t.string :code, null: false
+            t.string :reference_module, null: false
             t.datetime :deleted_at
             t.timestamps
         end
-        add_reference(:lesli_babel_buckets, :module, foreign_key: { to_table: :lesli_babel_modules })
+
+        add_index(:lesli_babel_buckets, :deleted_at)
+        add_reference(:lesli_babel_buckets, :module, null: false, foreign_key: { to_table: :lesli_babel_modules })
+        add_index(:lesli_babel_buckets, %i[module_id code], unique: true, where: "deleted_at IS NULL", name: "idx_babel_buckets_unique_active_module_code")
     end
 end

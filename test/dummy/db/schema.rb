@@ -26,33 +26,35 @@ ActiveRecord::Schema[8.1].define(version: 901120110) do
   end
 
   create_table "lesli_babel_buckets", force: :cascade do |t|
-    t.string "code"
-    t.string "reference_module"
+    t.string "code", null: false
+    t.string "reference_module", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "module_id"
+    t.integer "module_id", null: false
+    t.index ["deleted_at"], name: "index_lesli_babel_buckets_on_deleted_at"
+    t.index ["module_id", "code"], name: "idx_babel_buckets_unique_active_module_code", unique: true, where: "deleted_at IS NULL"
     t.index ["module_id"], name: "index_lesli_babel_buckets_on_module_id"
   end
 
   create_table "lesli_babel_labels", force: :cascade do |t|
-    t.string "text"
+    t.string "text", null: false
     t.string "status"
-    t.string "context"
-    t.string "es"
-    t.string "en"
-    t.string "de"
-    t.string "fr"
-    t.string "nl"
-    t.string "pl"
-    t.string "pt"
-    t.string "it"
-    t.string "tr"
-    t.string "ro"
-    t.string "bg"
-    t.string "uk"
-    t.string "sr"
-    t.string "hr"
+    t.text "context"
+    t.text "es"
+    t.text "en"
+    t.text "de"
+    t.text "fr"
+    t.text "nl"
+    t.text "pl"
+    t.text "pt"
+    t.text "it"
+    t.text "tr"
+    t.text "ro"
+    t.text "bg"
+    t.text "uk"
+    t.text "sr"
+    t.text "hr"
     t.datetime "last_update_es"
     t.datetime "last_update_en"
     t.datetime "last_update_de"
@@ -69,20 +71,26 @@ ActiveRecord::Schema[8.1].define(version: 901120110) do
     t.datetime "last_update_hr"
     t.datetime "last_update_status"
     t.datetime "last_update_context"
-    t.string "reference_bucket"
+    t.string "reference_bucket", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "bucket_id"
+    t.integer "bucket_id", null: false
+    t.index ["bucket_id", "text"], name: "idx_babel_labels_unique_active_bucket_text", unique: true, where: "deleted_at IS NULL"
     t.index ["bucket_id"], name: "index_lesli_babel_labels_on_bucket_id"
+    t.index ["deleted_at"], name: "index_lesli_babel_labels_on_deleted_at"
+    t.index ["status"], name: "idx_babel_labels_on_status"
+    t.check_constraint "status IS NULL OR status IN ('ok', 'disabled', 'need_help', 'need_context', 'need_translation')", name: "chk_babel_labels_status"
   end
 
   create_table "lesli_babel_modules", force: :cascade do |t|
-    t.string "code"
-    t.string "platform"
+    t.string "code", null: false
+    t.string "platform", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_lesli_babel_modules_on_deleted_at"
+    t.index ["platform", "code"], name: "idx_babel_modules_unique_active_platform_code", unique: true, where: "deleted_at IS NULL"
   end
 
   create_table "lesli_resources", force: :cascade do |t|
