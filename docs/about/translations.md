@@ -51,13 +51,10 @@ result = LesliBabel::TranslationImportService.call(
   platform: "lesli_engine"
 )
 
-result[:created]   # { modules: 1, buckets: 2, labels: 12 }
-result[:completed] # locale values written into previously blank columns
-result[:skipped]   # existing translations preserved without changes
-result[:errors]    # structural errors found during the import
+result[:errors] # structural errors found during the import
 ```
 
-The result is a plain hash with `created`, `completed`, `skipped`, and `errors`. The `created` entry reports modules, buckets, and labels independently. A fresh summary is returned for every call.
+The result is a plain hash containing structural `errors`. A fresh error collection is returned for every call. Database changes are verified through the persisted modules, buckets, labels, and translations instead of import counters.
 
 The service reads `file_path` directly with `YAML.safe_load_file`. YAML parsing and filesystem errors are not intercepted and propagate to the caller.
 

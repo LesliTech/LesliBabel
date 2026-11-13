@@ -84,7 +84,7 @@ module LesliBabel
             assert_equal 3, calls.pluck(:file_path).uniq.size
         end
 
-        test "accumulates file results in the final summary" do
+        test "accumulates structural errors from every file" do
             engines = {
                 "LesliBabel" => engine(code: "lesli_babel", name: "LesliBabel", dir: "/engines/LesliBabel")
             }
@@ -92,22 +92,8 @@ module LesliBabel
             second_file = "/engines/LesliBabel/config/locales/translations.es.yml"
             files = { translation_pattern("/engines/LesliBabel") => [first_file, second_file] }
             results = {
-                first_file => import_result(
-                    modules: 1,
-                    buckets: 2,
-                    labels: 3,
-                    completed: 4,
-                    skipped: 5,
-                    errors: ["first error"]
-                ),
-                second_file => import_result(
-                    modules: 2,
-                    buckets: 3,
-                    labels: 4,
-                    completed: 5,
-                    skipped: 6,
-                    errors: ["second error", "third error"]
-                )
+                first_file => import_result(errors: ["first error"]),
+                second_file => import_result(errors: ["second error", "third error"])
             }
             danger_calls = []
             list_calls = []
@@ -131,18 +117,8 @@ module LesliBabel
             assert_equal ["lesli_engine"], service_calls.pluck(:platform).uniq
             assert_equal ["first error", "second error", "third error"], list_calls
             assert_equal 1, danger_calls.size
-            assert_equal(
-                {
-                    files_processed: 2,
-                    modules_created: 3,
-                    buckets_created: 5,
-                    labels_created: 7,
-                    translations_completed: 9,
-                    translations_skipped: 11,
-                    structural_errors: 3
-                },
-                danger_calls.first[:data]
-            )
+            assert_equal ["Translation import finished with errors"], danger_calls.first[:messages]
+            assert_empty danger_calls.first[:data]
         end
 
         private
@@ -155,17 +131,8 @@ module LesliBabel
             File.join(directory, "config", "locales", "translations.*.yml")
         end
 
-        def import_result(modules: 0, buckets: 0, labels: 0, completed: 0, skipped: 0, errors: [])
-            {
-                created: {
-                    modules: modules,
-                    buckets: buckets,
-                    labels: labels
-                },
-                completed: completed,
-                skipped: skipped,
-                errors: errors
-            }
+        def import_result(errors: [])
+            { errors: errors }
         end
 
         def run_task(engines:, files:, termline: {}, &service_call)

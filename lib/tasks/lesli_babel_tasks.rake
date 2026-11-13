@@ -142,20 +142,7 @@ namespace :lesli_babel do
             end
         end.sort_by { |translation_file| [translation_file[:engine], translation_file[:file]] }
 
-        Termline.info("Translation files discovered", files: translation_files.size)
-
-        # Accumulate the results returned by every imported file
-        total = {
-            files: 0,
-            created: {
-                modules: 0,
-                buckets: 0,
-                labels: 0
-            },
-            completed: 0,
-            skipped: 0,
-            errors: []
-        }
+        errors = []
 
         translation_files.each do |translation_file|
             result = LesliBabel::TranslationImportService.call(
@@ -163,47 +150,29 @@ namespace :lesli_babel do
                 platform: translation_file[:platform]
             )
 
-            total[:files] += 1
-            total[:created].each_key do |resource|
-                total[:created][resource] += result[:created][resource]
-            end
-            total[:completed] += result[:completed]
-            total[:skipped] += result[:skipped]
-            total[:errors].concat(
+            errors.concat(
                 result[:errors].map do |error|
                     "#{translation_file[:engine]}/#{translation_file[:file]}: #{error}"
                 end
             )
 
-            summary = {
+            file_details = {
                 engine: translation_file[:engine],
                 file: translation_file[:file]
             }
 
             if result[:errors].empty?
-                Termline.success("Translations imported", **summary)
+                Termline.success("Translations imported", **file_details)
             else
-                Termline.warning("Translations imported with rejected entries", **summary)
+                Termline.warning("Translations imported with rejected entries", **file_details)
                 Termline.list(*result[:errors], color: :yellow, icon: :warning)
             end
         end
 
-        summary = {
-            files_processed: total[:files],
-            modules_created: total.dig(:created, :modules),
-            buckets_created: total.dig(:created, :buckets),
-            labels_created: total.dig(:created, :labels),
-            translations_completed: total[:completed],
-            translations_skipped: total[:skipped],
-            structural_errors: total[:errors].size
-        }
-
-        if total[:errors].any?
-            Termline.danger("Translation import finished with errors", **summary)
-            raise LesliBabel::TranslationImportService::InvalidStructureError,
-                "Translation import rejected #{total[:errors].size} invalid entries"
+        if errors.any?
+            Termline.danger("Translation import finished with errors")
+        else 
+            Termline.success("Translation import completed")
         end
-
-        Termline.success("Translation import completed", **summary)
     end
 end

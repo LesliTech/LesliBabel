@@ -34,7 +34,7 @@ Invalid branches are reported with Termline while valid translations continue im
 | Writes | Modules, buckets, labels, and locale values |
 | Repeatability | Preserves existing translations and creates or completes missing values |
 
-Termline reports each processed file and a final accumulated summary with created modules, buckets, labels, completed translations, skipped translations, and structural errors.
+Termline reports each processed engine and translation file. Structural errors are printed below the affected file and cause the task to finish with an error after all importable files have been processed.
 
 The standard `bin/rails lesli:db:prepare` task runs `scan` followed by `import` automatically when LesliBabel is installed.
 

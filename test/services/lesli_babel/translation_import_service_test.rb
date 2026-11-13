@@ -19,25 +19,13 @@ module LesliBabel
             @yaml_file.unlink
         end
 
-        test "returns the import summary contract" do
+        test "returns the import errors contract" do
             result = TranslationImportService.call(
                 file_path: @yaml_file.path,
                 platform: "lesli_engine"
             )
 
-            assert_equal(
-                {
-                    created: {
-                        modules: 1,
-                        buckets: 1,
-                        labels: 1
-                    },
-                    completed: 0,
-                    skipped: 0,
-                    errors: []
-                },
-                result
-            )
+            assert_equal({ errors: [] }, result)
         end
 
         test "requires a file path and platform" do
@@ -61,7 +49,6 @@ module LesliBabel
             )
 
             refute_same first_result, second_result
-            refute_same first_result[:created], second_result[:created]
             refute_same first_result[:errors], second_result[:errors]
         end
 
@@ -82,11 +69,6 @@ module LesliBabel
             assert_equal "lesli_babel-labels", label.reference_bucket
             assert_equal "Save", label.en
             assert_not_nil label.last_update_en
-            assert_equal 1, result[:created][:modules]
-            assert_equal 1, result[:created][:buckets]
-            assert_equal 1, result[:created][:labels]
-            assert_equal 0, result[:completed]
-            assert_equal 0, result[:skipped]
             assert_empty result[:errors]
         end
 
@@ -103,9 +85,6 @@ module LesliBabel
             label.reload
             assert_equal "Save", label.en
             assert_not_nil label.last_update_en
-            assert_equal({ modules: 0, buckets: 0, labels: 0 }, result[:created])
-            assert_equal 1, result[:completed]
-            assert_equal 0, result[:skipped]
             assert_empty result[:errors]
         end
 
@@ -127,14 +106,11 @@ module LesliBabel
             label.reload
             assert_equal "Existing value", label.en
             assert_equal original_update, label.last_update_en
-            assert_equal({ modules: 0, buckets: 0, labels: 0 }, result[:created])
-            assert_equal 0, result[:completed]
-            assert_equal 1, result[:skipped]
             assert_empty result[:errors]
         end
 
         test "is idempotent on a second import" do
-            first_result = TranslationImportService.call(
+            TranslationImportService.call(
                 file_path: @yaml_file.path,
                 platform: "lesli_engine"
             )
@@ -152,10 +128,6 @@ module LesliBabel
             assert_equal 1, LesliBabel::Label.where(text: "button_save").count
             assert_equal "Save", label.en
             assert_equal first_update, label.last_update_en
-            assert_equal({ modules: 1, buckets: 1, labels: 1 }, first_result[:created])
-            assert_equal({ modules: 0, buckets: 0, labels: 0 }, second_result[:created])
-            assert_equal 0, second_result[:completed]
-            assert_equal 1, second_result[:skipped]
             assert_empty second_result[:errors]
         end
 

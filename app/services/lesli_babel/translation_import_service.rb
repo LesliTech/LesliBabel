@@ -19,7 +19,7 @@ module LesliBabel
 
         # @param file_path [String] absolute or relative path to the YAML file
         # @param platform [String] platform assigned to every module in the file
-        # @return [Hash] import summary with created, completed, skipped, and errors
+        # @return [Hash] structural errors found while validating the file
         # @raise [Psych::Exception, SystemCallError] when the file cannot be loaded
         def self.call(file_path:, platform:)
             new(file_path: file_path, platform: platform).call
@@ -32,37 +32,22 @@ module LesliBabel
 
         def call
             translations = load_yaml
-            summary = empty_summary
-            translations = validate_structure(translations, summary)
+            errors = []
+            translations = validate_structure(translations, errors)
 
             # Import the complete file in a single transaction
             ApplicationRecord.transaction do
-                import_translations(translations, summary)
+                import_translations(translations)
             end
 
-            summary
+            { errors: errors }
         end
 
         private
 
         attr_reader :file_path, :platform
 
-        # A new summary is built for each call so results are never shared
-        # between imports.
-        def empty_summary
-            {
-                created: {
-                    modules: 0,
-                    buckets: 0,
-                    labels: 0
-                },
-                completed: 0,
-                skipped: 0,
-                errors: []
-            }
-        end
-
-        def import_translations(translations, summary)
+        def import_translations(translations)
             # Iterate over every locale in the file
             translations.each do |locale, modules|
                 modules.each do |module_code, buckets|
@@ -72,7 +57,6 @@ module LesliBabel
                         code: module_code,
                         platform: platform
                     )
-                    count_creation(summary, :modules, translation_module)
 
                     # Iterate over the module buckets
                     buckets.each do |bucket_code, labels|
@@ -81,7 +65,6 @@ module LesliBabel
                         translation_bucket = translation_module.buckets
                             .create_with(reference_module: translation_module.code)
                             .find_or_create_by!(code: bucket_code)
-                        count_creation(summary, :buckets, translation_bucket)
 
                         # Iterate over the bucket labels
                         labels.each do |label, translation|
@@ -93,35 +76,22 @@ module LesliBabel
                                     "last_update_#{locale}" => Time.current
                                 )
                                 .find_or_create_by!(text: label)
-                            count_creation(summary, :labels, translation_label)
-                            complete_translation(summary, translation_label, locale, translation)
+                            complete_translation(translation_label, locale, translation)
                         end
                     end
                 end
             end
         end
 
-        # Count only records created during the current import
-        def count_creation(summary, resource, record)
-            return unless record.previously_new_record?
-
-            summary[:created][resource] += 1
-        end
-
-        # Complete an empty locale or count the existing translation as skipped
-        def complete_translation(summary, translation_label, locale, translation)
+        # Complete an existing label only when its locale is empty
+        def complete_translation(translation_label, locale, translation)
             return if translation_label.previously_new_record?
-
-            if translation_label[locale].present?
-                summary[:skipped] += 1
-                return
-            end
+            return if translation_label[locale].present?
 
             translation_label.update!(
                 locale => translation,
                 "last_update_#{locale}" => Time.current
             )
-            summary[:completed] += 1
         end
 
         # Parser and filesystem exceptions intentionally propagate to the caller.
@@ -129,7 +99,7 @@ module LesliBabel
             YAML.safe_load_file(file_path, permitted_classes: [Symbol], aliases: false)
         end
 
-        def validate_structure(translations, summary)
+        def validate_structure(translations, errors)
             # Only validate the expected YAML hierarchy. Naming conventions and
             # business rules belong to the importer, models, or database.
             #
@@ -139,7 +109,7 @@ module LesliBabel
             #       label: "translation"
 
             # Without a root hash there are no independent branches that can be imported.
-            return {} unless valid_hash?(translations, [], "locales", summary)
+            return {} unless valid_hash?(translations, [], "locales", errors)
 
             # Build a clean copy instead of modifying the parsed YAML. Invalid branches
             # are excluded from this hash while their valid siblings remain available.
@@ -148,7 +118,7 @@ module LesliBabel
             # A locale must contain a hash of modules. If it does not, reject only
             # that locale and continue validating the remaining locales.
             translations.each do |locale, modules|
-                next unless valid_hash?(modules, [locale], "modules", summary)
+                next unless valid_hash?(modules, [locale], "modules", errors)
 
                 # Register the locale before traversing it so an empty locale remains valid.
                 valid_modules = {}
@@ -156,7 +126,7 @@ module LesliBabel
 
                 # A module must contain a hash of buckets.
                 modules.each do |module_code, buckets|
-                    next unless valid_hash?(buckets, [locale, module_code], "buckets", summary)
+                    next unless valid_hash?(buckets, [locale, module_code], "buckets", errors)
 
                     # Preserve valid modules even when they do not define buckets.
                     valid_buckets = {}
@@ -165,7 +135,7 @@ module LesliBabel
                     # A bucket must contain a hash of labels.
                     buckets.each do |bucket_code, labels|
                         path = [locale, module_code, bucket_code]
-                        next unless valid_hash?(labels, path, "labels", summary)
+                        next unless valid_hash?(labels, path, "labels", errors)
 
                         # Preserve valid buckets even when their label collection is empty.
                         valid_labels = {}
@@ -180,7 +150,7 @@ module LesliBabel
                                 valid_labels[label] = translation
                             else
                                 # Reject the invalid label without discarding its siblings.
-                                record_invalid_structure(summary, label_path, "string")
+                                record_invalid_structure(errors, label_path, "string")
                             end
                         end
                     end
@@ -190,16 +160,16 @@ module LesliBabel
             valid_translations
         end
 
-        def valid_hash?(value, path, expected, summary)
+        def valid_hash?(value, path, expected, errors)
             # Returning a boolean lets each level decide which branch to skip.
             return true if value.is_a?(Hash)
 
             # The accumulated path identifies the exact level that cannot be traversed.
-            record_invalid_structure(summary, path, expected)
+            record_invalid_structure(errors, path, expected)
             false
         end
 
-        def record_invalid_structure(summary, path, expected)
+        def record_invalid_structure(errors, path, expected)
             # Root errors do not have YAML keys that can be joined into a path.
             location = path.any? ? path.map(&:to_s).join(".") : "<root>"
 
@@ -208,7 +178,7 @@ module LesliBabel
             error = InvalidStructureError.new(
                 "Invalid translation structure at #{location}: expected #{expected}"
             )
-            summary[:errors] << error.message
+            errors << error.message
         end
     end
 end
