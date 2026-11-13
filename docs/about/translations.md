@@ -53,7 +53,7 @@ result = LesliBabel::TranslationImportService.call(
 
 result[:created]   # { modules: 1, buckets: 2, labels: 12 }
 result[:completed] # locale values written into previously blank columns
-result[:skipped]   # placeholders, blank source values, or existing translations
+result[:skipped]   # existing translations preserved without changes
 result[:errors]    # structural errors found during the import
 ```
 
@@ -63,7 +63,7 @@ The service reads `file_path` directly with `YAML.safe_load_file`. YAML parsing 
 
 The only application-level validation checks the required `locale → module → bucket → label → string` hierarchy. Invalid branches are excluded from the import and their complete paths are returned in `errors`; valid sibling branches are still imported. An invalid root produces no database writes. No naming, filename, prefix, placeholder, or ownership validations are performed.
 
-Keep interpolation tokens such as `%{count}` unchanged across locales. Values wrapped as unresolved template markers, for example `:lesli_support.tickets.title:`, are not imported as completed translations.
+Keep interpolation tokens such as `%{count}` unchanged across locales.
 
 ## Deploy Changes
 

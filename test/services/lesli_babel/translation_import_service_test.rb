@@ -65,7 +65,7 @@ module LesliBabel
             refute_same first_result[:errors], second_result[:errors]
         end
 
-        test "creates missing modules buckets and labels" do
+        test "creates the complete translation hierarchy" do
             result = TranslationImportService.call(
                 file_path: @yaml_file.path,
                 platform: "lesli_engine"
@@ -85,6 +85,9 @@ module LesliBabel
             assert_equal 1, result[:created][:modules]
             assert_equal 1, result[:created][:buckets]
             assert_equal 1, result[:created][:labels]
+            assert_equal 0, result[:completed]
+            assert_equal 0, result[:skipped]
+            assert_empty result[:errors]
         end
 
         test "completes only an empty locale and records its import time" do
@@ -100,7 +103,10 @@ module LesliBabel
             label.reload
             assert_equal "Save", label.en
             assert_not_nil label.last_update_en
+            assert_equal({ modules: 0, buckets: 0, labels: 0 }, result[:created])
             assert_equal 1, result[:completed]
+            assert_equal 0, result[:skipped]
+            assert_empty result[:errors]
         end
 
         test "does not overwrite an existing translation or its update time" do
@@ -121,24 +127,36 @@ module LesliBabel
             label.reload
             assert_equal "Existing value", label.en
             assert_equal original_update, label.last_update_en
+            assert_equal({ modules: 0, buckets: 0, labels: 0 }, result[:created])
             assert_equal 0, result[:completed]
+            assert_equal 1, result[:skipped]
+            assert_empty result[:errors]
         end
 
-        test "does not duplicate an existing hierarchy" do
-            TranslationImportService.call(
+        test "is idempotent on a second import" do
+            first_result = TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+            label = LesliBabel::Label.find_by!(text: "button_save")
+            first_update = label.last_update_en
+
+            second_result = TranslationImportService.call(
                 file_path: @yaml_file.path,
                 platform: "lesli_engine"
             )
 
-            result = TranslationImportService.call(
-                file_path: @yaml_file.path,
-                platform: "lesli_engine"
-            )
-
+            label.reload
             assert_equal 1, LesliBabel::Module.where(code: "lesli_babel", platform: "lesli_engine").count
             assert_equal 1, LesliBabel::Bucket.where(code: "labels").count
             assert_equal 1, LesliBabel::Label.where(text: "button_save").count
-            assert_equal({ modules: 0, buckets: 0, labels: 0 }, result[:created])
+            assert_equal "Save", label.en
+            assert_equal first_update, label.last_update_en
+            assert_equal({ modules: 1, buckets: 1, labels: 1 }, first_result[:created])
+            assert_equal({ modules: 0, buckets: 0, labels: 0 }, second_result[:created])
+            assert_equal 0, second_result[:completed]
+            assert_equal 1, second_result[:skipped]
+            assert_empty second_result[:errors]
         end
 
         test "rolls back the entire file when a record cannot be created" do
@@ -231,7 +249,7 @@ module LesliBabel
             end
         end
 
-        test "imports valid translations and rejects only invalid siblings" do
+        test "rejects nested structures while importing valid siblings" do
             write_yaml(<<~YAML)
                 ---
                 en:

@@ -30,8 +30,7 @@ Building a better future, one line of code at a time.
 // · 
 =end
 
-# · 
-require "json"
+# ·
 #require "i18n-js"
   
 
@@ -120,37 +119,65 @@ namespace :lesli_babel do
 
 
     desc "Import local translations into LesliBabel"
-    task :import, [:file_path, :platform] => :environment do |task, args|
+    task import: :environment do
 
-        # Import a specific file or every translation file from the installed engines
+        # Discover every translation file and determine its platform
         translation_files = LesliSystem.engines.values.flat_map do |engine_info|
+            platform = case engine_info[:code]
+            when "root"
+                "rails_app"
+            when "lesli"
+                "lesli_core"
+            else
+                "lesli_engine"
+            end
+
             Dir[File.join(engine_info[:dir], "config", "locales", "translations.*.yml")].map do |file_path|
                 {
                     engine: engine_info[:name],
-                    path: file_path
+                    file: File.basename(file_path),
+                    path: file_path,
+                    platform: platform
                 }
             end
-        end.sort_by { |translation_file| translation_file[:path] }
+        end.sort_by { |translation_file| [translation_file[:engine], translation_file[:file]] }
 
-        platform = args[:platform].presence || "lesli_engine"
-        total_errors = 0
+        Termline.info("Translation files discovered", files: translation_files.size)
+
+        # Accumulate the results returned by every imported file
+        total = {
+            files: 0,
+            created: {
+                modules: 0,
+                buckets: 0,
+                labels: 0
+            },
+            completed: 0,
+            skipped: 0,
+            errors: []
+        }
 
         translation_files.each do |translation_file|
-            file_path = translation_file[:path]
             result = LesliBabel::TranslationImportService.call(
-                file_path: file_path,
-                platform: platform
+                file_path: translation_file[:path],
+                platform: translation_file[:platform]
+            )
+
+            total[:files] += 1
+            total[:created].each_key do |resource|
+                total[:created][resource] += result[:created][resource]
+            end
+            total[:completed] += result[:completed]
+            total[:skipped] += result[:skipped]
+            total[:errors].concat(
+                result[:errors].map do |error|
+                    "#{translation_file[:engine]}/#{translation_file[:file]}: #{error}"
+                end
             )
 
             summary = {
                 engine: translation_file[:engine],
-                file: File.basename(file_path),
-                modules: result.dig(:created, :modules),
-                buckets: result.dig(:created, :buckets),
-                labels: result.dig(:created, :labels),
-                completed: result[:completed],
-                skipped: result[:skipped],
-                errors: result[:errors].size
+                file: translation_file[:file]
             }
 
             if result[:errors].empty?
@@ -158,70 +185,25 @@ namespace :lesli_babel do
             else
                 Termline.warning("Translations imported with rejected entries", **summary)
                 Termline.list(*result[:errors], color: :yellow, icon: :warning)
-                total_errors += result[:errors].size
             end
         end
 
-        if total_errors.positive?
-            Termline.danger("Translation import finished with errors", errors: total_errors)
+        summary = {
+            files_processed: total[:files],
+            modules_created: total.dig(:created, :modules),
+            buckets_created: total.dig(:created, :buckets),
+            labels_created: total.dig(:created, :labels),
+            translations_completed: total[:completed],
+            translations_skipped: total[:skipped],
+            structural_errors: total[:errors].size
+        }
+
+        if total[:errors].any?
+            Termline.danger("Translation import finished with errors", **summary)
             raise LesliBabel::TranslationImportService::InvalidStructureError,
-                "Translation import rejected #{total_errors} invalid entries"
+                "Translation import rejected #{total[:errors].size} invalid entries"
         end
 
-        # Keep the previous importer as reference while the service is completed
-        next
-
-        # Get all the locally installed engines
-        engines = LesliSystem.engines
-
-
-        engines.each do |engine, engine_info|
-
-            # cache the engine code
-            engine_code = engine_info[:code]
-
-            # platform name 
-            platform = "lesli_engine"
-
-            # create the babel module if it does not exists
-            translation_module = LesliBabel::Module
-            .create_with(:platform => platform)
-            .find_or_create_by!(:code => engine_code)
-            
-            # Iterate over the available locales
-            I18n.available_locales.each do |locale|
-
-                # get the translations for an specific engine for an specific locale
-                translations = I18n.t(engine_code, locale: locale)
-
-                # check if the translations is an object
-                next unless translations.class == Hash
-                translations.each do |bucket, labels|
-
-                    # create the bucket if it does not exist
-                    translation_bucket = LesliBabel::Bucket.find_or_create_by(
-                        code: bucket, 
-                        module: translation_module, 
-                        reference_module: translation_module.code
-                    )
-
-                    labels.each do |label, translation|
-
-                        # create or get the label
-                        label = LesliBabel::Label.create_with(
-                            reference_bucket: "#{translation_module.code}-#{translation_bucket.code}"
-                        ).find_or_create_by(
-                            text: label,
-                            bucket_id: translation_bucket.id
-                        )
-
-                        # do not save strings with template translation
-                        next if translation.match?(/\A:.*:\z/) rescue false
-
-                        label.update(locale => translation)
-                    end
-                end 
-            end
-        end
+        Termline.success("Translation import completed", **summary)
     end
 end

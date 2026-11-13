@@ -108,10 +108,14 @@ module LesliBabel
             summary[:created][resource] += 1
         end
 
-        # Complete an existing label only when its locale is empty
+        # Complete an empty locale or count the existing translation as skipped
         def complete_translation(summary, translation_label, locale, translation)
             return if translation_label.previously_new_record?
-            return unless translation_label[locale].blank?
+
+            if translation_label[locale].present?
+                summary[:skipped] += 1
+                return
+            end
 
             translation_label.update!(
                 locale => translation,
