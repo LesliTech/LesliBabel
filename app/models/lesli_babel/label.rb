@@ -41,6 +41,12 @@ module LesliBabel
             "ok"
         end
 
+        def translation_path
+            return self[:path] if has_attribute?(:path) && self[:path].present?
+
+            [bucket.module.code, bucket.code, text].join(".")
+        end
+
         private
 
         def prepare_label

@@ -52,12 +52,13 @@ module LesliBabel
             return respond_with_not_found unless @label.found?
 
             @label = @label.result
+            @module = @label.bucket.module
 
             # if status changed
             if @label["status"] != label_params["status"]
 
                 # saved update date
-                @label["last_update_status"] = Time.now
+                @label["last_update_status"] = Time.current
 
             end
 
@@ -65,17 +66,17 @@ module LesliBabel
             if @label["context"] != label_params["context"]
 
                 # saved update date
-                @label["last_update_context"] = Time.now
+                @label["last_update_context"] = Time.current
 
             end
 
-            I18n.available_locales.each do |locale|
+            babel_locales.each_key do |locale|
 
                 # if translation changed
                 if @label[locale] != label_params[locale]
 
                     # saved update date
-                    @label["last_update_#{locale}"] = Time.now
+                    @label["last_update_#{locale}"] = Time.current
                 end
             end
 
@@ -87,7 +88,17 @@ module LesliBabel
                     ]
                 )
             else
-                respond_with_lesli(:turbo => stream_notification_success("Error updating translation label"))
+                message = @label.errors.full_messages.to_sentence.presence || "Translation label could not be updated."
+
+                respond_with_lesli(
+                    turbo: [
+                        stream_notification_danger(message),
+                        turbo_stream.replace('lesli-babel-labels-form', partial: 'lesli_babel/labels/form')
+                    ],
+                    json: { errors: @label.errors.to_hash },
+                    html: :show,
+                    status: :unprocessable_content
+                )
             end
         end
 
@@ -127,7 +138,7 @@ module LesliBabel
                 :status,
                 :context,
                 :bucket_id,
-                I18n.available_locales
+                babel_locales.keys
             )
         end
     end

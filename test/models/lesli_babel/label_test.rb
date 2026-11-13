@@ -39,5 +39,17 @@ module LesliBabel
             assert_equal "button_save_changes", label.text
             assert_equal "lesli_babel-labels", label.reference_bucket
         end
+
+        test "builds its translation path from the owning module and bucket" do
+            translation_module = LesliBabel::Module.create!(code: "lesli_babel", platform: "lesli_engine")
+            bucket = LesliBabel::Bucket.create!(
+                code: "labels",
+                reference_module: "lesli_babel",
+                module: translation_module
+            )
+            label = LesliBabel::Label.create!(bucket: bucket, text: "page_title")
+
+            assert_equal "lesli_babel.labels.page_title", label.translation_path
+        end
     end
 end

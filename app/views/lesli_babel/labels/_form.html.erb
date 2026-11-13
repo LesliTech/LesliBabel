@@ -10,6 +10,17 @@
 
     <% form.fieldset(label_status, category:label_category) do %>
 
+        <% if @label.errors.any? %>
+            <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800" role="alert">
+                <p class="font-semibold">Translation label could not be updated.</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5">
+                    <% @label.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
+                    <% end %>
+                </ul>
+            </div>
+        <% end %>
+
         <% if @label.new_record? %>
             <%= form.field_control_select(:bucket_id, @module.buckets.order(:code).pluck(:code, :id)) %>
             <%= form.field_control_select(:prefix, LesliBabel::Label.prefixes) %>
@@ -18,13 +29,13 @@
         <% end %>
 
         <% unless @label.new_record? %>
-            <% I18n.available_locales.each do |locale| %>
-                <%= form.field_control(locale, label:language_name(locale)) %>
+            <% babel_locales.each do |locale, language| %>
+                <%= form.field_control(locale, label: language) %>
             <% end %>
             <hr class="my-6 border-0 border-t border-slate-200">
             <%= form.field_control(:context) %>
             <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
-            <%= form.field_control(:path) unless @label[:path].blank? %>
+            <%= render "copy_path", path: @label.translation_path %>
         <% end %>
 
         <hr class="my-6 border-0 border-t border-slate-200">

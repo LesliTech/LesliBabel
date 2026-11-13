@@ -19,5 +19,14 @@ module LesliBabel
             Lesli.config.babel[:allow_web_deploy] = false
             refute controller.web_deploy_allowed?
         end
+
+        test "exposes the Babel locales to controllers and views" do
+            original_locales = Lesli.config.babel[:locales]
+            Lesli.config.babel[:locales] = { en: "English", es: "Español" }
+
+            assert_equal({ en: "English", es: "Español" }, LesliBabel::ApplicationController.new.babel_locales)
+        ensure
+            Lesli.config.babel[:locales] = original_locales
+        end
     end
 end

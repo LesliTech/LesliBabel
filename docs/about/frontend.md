@@ -43,7 +43,7 @@ Prefer LesliView components instead of recreating shared interface elements:
 
 The shared form builder already supplies Tailwind styling for fieldsets, labels, inputs, selects, validation states, and submit buttons. Templates should only add utilities for page-specific layout or elements not produced by the builder.
 
-The labels index uses Alpine.js for copy-to-clipboard feedback. Keep the action as `type="button"`, retain a visible focus state, and update its accessible label when the copy succeeds.
+The labels index and editor use Alpine.js for copy-to-clipboard feedback. Keep the action as `type="button"`, retain a visible focus state, and update its accessible label when the copy succeeds.
 
 ## Avoid Utility Collisions
 
