@@ -62,6 +62,89 @@ The only application-level validation checks the required `locale → module →
 
 Keep interpolation tokens such as `%{count}` unchanged across locales.
 
+## Export and Deploy Contract
+
+Export and deploy are separate operations with different responsibilities.
+
+### Export
+
+Export reads the database and builds the YAML document for every installed package and configured locale. It does not create, truncate, or replace files in an engine's `config/locales` directory.
+
+Each exported document contains the information needed by deploy:
+
+```ruby
+{
+  engine: "LesliBabel",
+  platform: "lesli_engine",
+  locale: "en",
+  file_path: "/path/to/config/locales/translations.en.yml",
+  content: "---\nen:\n  lesli_babel:\n    labels: {}\n"
+}
+```
+
+The YAML content must satisfy Schema v1 and use plain string keys. Export has no filesystem side effects, which allows its complete result to be tested and validated before deployment.
+
+`LesliBabel::TranslationExportService` builds one document at a time:
+
+```ruby
+result = LesliBabel::TranslationExportService.call(
+  engine: LesliSystem.engine("LesliBabel"),
+  platform: "lesli_engine",
+  locale: :en
+)
+
+result[:file_path] # expected config/locales destination
+result[:content]   # serialized YAML with string keys
+```
+
+The service looks up exactly one module by the engine `code` and requested `platform`, orders buckets and labels by code, generates placeholders for blank values, and excludes labels whose status is `disabled`.
+
+### Deploy
+
+Deploy consumes the documents produced by export and writes each `content` value to its official `file_path`. It does not query labels or rebuild YAML independently. All documents must be generated successfully before deploy starts replacing source files.
+
+Filesystem and serialization failures propagate to the caller. A failed export must produce no source-file changes.
+
+### Locales
+
+The only locales managed by export and deploy are the keys configured in:
+
+```ruby
+Lesli.config.babel[:locales]
+```
+
+Locale keys are normalized to strings for filenames and YAML roots. `I18n.available_locales` is not used because it can include locales registered by unrelated dependencies.
+
+### Package and Module Ownership
+
+Every generated file contains exactly one owning module:
+
+| Package | Platform | Owning module |
+| --- | --- | --- |
+| Host application | `rails_app` | Application module such as `main_app` |
+| Lesli core | `lesli_core` | `lesli` |
+| Lesli engine | `lesli_engine` | Engine code such as `lesli_babel` |
+
+Labels from another module are never copied into the file. This keeps ownership portable and prevents the same translation from being maintained in multiple packages.
+
+### Missing and Disabled Values
+
+A blank database value is exported using its complete path as a placeholder:
+
+```yaml
+message_not_found: ":lesli_babel.labels.message_not_found:"
+```
+
+Labels whose status is `disabled` are excluded. All other statuses, including `nil`, remain exportable.
+
+### Shared and Application Buckets
+
+`shared` and `application` are bucket names, not global namespaces. Their owner is determined by their parent module.
+
+- `lesli.shared` and `lesli.application` belong exclusively to Lesli core and are exported only to Lesli core files.
+- They are not copied into every engine file because Rails loads the Lesli core locale files alongside installed engines.
+- An engine may own its own bucket with the same name, such as `lesli_support.shared`; that bucket is exported only with the owning engine.
+
 ## Deploy Changes
 
 The Babel interface can deploy database values back to each installed engine's `config/locales/translations.<locale>.yml` files. Deployment rewrites those files, so use it only in a writable development checkout:

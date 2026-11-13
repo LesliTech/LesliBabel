@@ -95,6 +95,8 @@ tickets
 
 Bucket codes use lowercase `snake_case`. A bucket is unique inside its module and forms the second segment of the translation path.
 
+Bucket names do not change module ownership. In particular, `lesli.shared` and `lesli.application` belong to the `lesli` module and its core package. They must not be copied into other engine files. An engine-specific bucket such as `lesli_support.shared` remains owned by `lesli_support`.
+
 ## Label Codes
 
 A label is the immutable final segment of a translation path. It uses lowercase `snake_case` and must not contain spaces, hyphens, or dots.

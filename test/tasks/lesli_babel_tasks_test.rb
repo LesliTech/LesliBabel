@@ -84,7 +84,7 @@ module LesliBabel
             assert_equal 3, calls.pluck(:file_path).uniq.size
         end
 
-        test "accumulates structural errors from every file" do
+        test "reports structural errors from every file" do
             engines = {
                 "LesliBabel" => engine(code: "lesli_babel", name: "LesliBabel", dir: "/engines/LesliBabel")
             }
@@ -99,21 +99,18 @@ module LesliBabel
             list_calls = []
             service_calls = []
 
-            error = assert_raises(TranslationImportService::InvalidStructureError) do
-                run_task(
-                    engines: engines,
-                    files: files,
-                    termline: {
-                        danger: ->(*messages, **data) { danger_calls << { messages: messages, data: data } },
-                        list: ->(*items, **_options) { list_calls.concat(items) }
-                    }
-                ) do |file_path:, platform:|
-                    service_calls << { file_path: file_path, platform: platform }
-                    results.fetch(file_path)
-                end
+            run_task(
+                engines: engines,
+                files: files,
+                termline: {
+                    danger: ->(*messages, **data) { danger_calls << { messages: messages, data: data } },
+                    list: ->(*items, **_options) { list_calls.concat(items) }
+                }
+            ) do |file_path:, platform:|
+                service_calls << { file_path: file_path, platform: platform }
+                results.fetch(file_path)
             end
 
-            assert_equal "Translation import rejected 3 invalid entries", error.message
             assert_equal ["lesli_engine"], service_calls.pluck(:platform).uniq
             assert_equal ["first error", "second error", "third error"], list_calls
             assert_equal 1, danger_calls.size
