@@ -28,9 +28,9 @@ module LesliBabel
             assert_equal(
                 {
                     created: {
-                        modules: 0,
-                        buckets: 0,
-                        labels: 0
+                        modules: 1,
+                        buckets: 1,
+                        labels: 1
                     },
                     completed: 0,
                     skipped: 0,
@@ -63,6 +63,69 @@ module LesliBabel
             refute_same first_result, second_result
             refute_same first_result[:created], second_result[:created]
             refute_same first_result[:errors], second_result[:errors]
+        end
+
+        test "creates missing modules buckets and labels" do
+            result = TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+
+            translation_module = LesliBabel::Module.find_by!(
+                code: "lesli_babel",
+                platform: "lesli_engine"
+            )
+            bucket = translation_module.buckets.find_by!(code: "labels")
+            label = bucket.labels.find_by!(text: "button_save")
+
+            assert_equal "lesli_babel", bucket.reference_module
+            assert_equal "lesli_babel-labels", label.reference_bucket
+            assert_equal "Save", label.en
+            assert_equal 1, result[:created][:modules]
+            assert_equal 1, result[:created][:buckets]
+            assert_equal 1, result[:created][:labels]
+        end
+
+        test "does not duplicate an existing hierarchy" do
+            TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+
+            result = TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+
+            assert_equal 1, LesliBabel::Module.where(code: "lesli_babel", platform: "lesli_engine").count
+            assert_equal 1, LesliBabel::Bucket.where(code: "labels").count
+            assert_equal 1, LesliBabel::Label.where(text: "button_save").count
+            assert_equal({ modules: 0, buckets: 0, labels: 0 }, result[:created])
+        end
+
+        test "rolls back the entire file when a record cannot be created" do
+            write_yaml(<<~YAML)
+                ---
+                en:
+                  transactional_module:
+                    labels:
+                      first_label: "First"
+                unknown_locale:
+                  transactional_module:
+                    labels:
+                      second_label: "Second"
+            YAML
+
+            assert_raises(ActiveModel::UnknownAttributeError) do
+                TranslationImportService.call(
+                    file_path: @yaml_file.path,
+                    platform: "lesli_engine"
+                )
+            end
+
+            assert_not LesliBabel::Module.exists?(code: "transactional_module", platform: "lesli_engine")
+            assert_not LesliBabel::Bucket.exists?(code: "labels", reference_module: "transactional_module")
+            assert_not LesliBabel::Label.exists?(text: "first_label")
         end
 
         test "propagates YAML parsing errors" do
