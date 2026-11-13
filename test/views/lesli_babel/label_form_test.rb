@@ -26,9 +26,8 @@ module LesliBabel
             Lesli.config.babel[:locales] = @original_locales
         end
 
-        test "renders only configured locales and a read-only copyable path" do
-            html = rendered_form
-            document = Nokogiri::HTML.fragment(html)
+        test "renders only configured locales as textareas" do
+            document = Nokogiri::HTML.fragment(rendered_form)
 
             source = document.at_css("textarea[name='label[en]']")
             missing = document.at_css("textarea[name='label[es]']")
@@ -44,14 +43,54 @@ module LesliBabel
             assert context
             assert_equal "3", context["rows"]
             assert_includes context["class"].split, "!min-h-0"
-            assert_includes document.text, "Tokens: %{count}, :records"
+        end
+
+        test "renders a long translation in a textarea" do
+            translation = Array.new(
+                10,
+                "A long translation with enough content for several lines."
+            ).join(" ")
+            @label.update!(en: translation)
+
+            document = Nokogiri::HTML.fragment(rendered_form)
+            textarea = document.at_css("textarea[name='label[en]']")
+
+            assert textarea
+            assert_equal translation, textarea.text.strip
+            assert_equal "3", textarea["rows"]
+        end
+
+        test "identifies an empty translation as pending" do
+            document = Nokogiri::HTML.fragment(rendered_form)
+            missing = document.at_css("textarea[name='label[es]']")
+            missing_languages = document.at_css("[aria-label='Missing translation languages']")
+
             assert_includes document.text, "Missing translation"
             assert_equal "Missing translation", missing["placeholder"]
-            missing_languages = document.at_css("[aria-label='Missing translation languages']")
             assert_includes missing_languages.text, "Español"
             assert_not_includes missing_languages.text, "English"
-            assert_nil document.at_css("select[name='label[status]'] option[value='disabled']")
+        end
+
+        test "shows interpolation tokens without changing their values" do
+            document = Nokogiri::HTML.fragment(rendered_form)
+
+            assert_equal "%{count} :records", document.at_css("textarea[name='label[en]']").text.strip
+            assert_includes document.text, "Tokens: %{count}, :records"
+        end
+
+        test "presents the path as read-only and copyable" do
+            html = rendered_show
+            document = Nokogiri::HTML.fragment(html)
+
+            assert_equal "lesli_babel.labels.page_title", document.at_css("code[x-ref='path']").text.strip
+            assert_includes html, "navigator.clipboard.writeText"
             assert_nil document.at_css("input[name='label[path]']")
+        end
+
+        test "renders only supported editorial statuses" do
+            document = Nokogiri::HTML.fragment(rendered_form)
+
+            assert_nil document.at_css("select[name='label[status]'] option[value='disabled']")
             assert_nil document.at_css("legend")
             assert_not_includes document.text, "Label ok"
         end
@@ -71,15 +110,13 @@ module LesliBabel
             assert_nil document.at_css("[role='alert']")
         end
 
-        test "presents the path in the header and metadata inside the form" do
+        test "presents label metadata inside the form" do
             html = rendered_show
             document = Nokogiri::HTML.fragment(html)
             metadata = document.at_css("[aria-label='Translation label metadata']")
             form = document.at_css("#lesli-babel-labels-form")
 
             assert_equal "Page Title", document.at_css("h1").text.strip
-            assert_equal "lesli_babel.labels.page_title", document.at_css("code[x-ref='path']").text.strip
-            assert_includes html, "navigator.clipboard.writeText"
             assert_equal "OK", metadata.at_css("[data-label-status='ok']").text.strip
             assert_includes metadata["class"].split, "justify-end"
             assert form.at_css("[aria-label='Translation label metadata']")

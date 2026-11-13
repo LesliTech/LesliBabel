@@ -1,3 +1,12 @@
 ---
 en:
-  lesli_babel: {}
+  lesli_babel:
+    buckets: {}
+    dashboards: {}
+    items/attachments: {}
+    items/discussions: {}
+    items/tasks: {}
+    labels: {}
+    modules: {}
+    shared: {}
+    translations: {}

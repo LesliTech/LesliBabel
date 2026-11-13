@@ -38,7 +38,7 @@ module LesliBabel
             assert_not_includes LesliBabel::LabelsController.action_methods, "edit"
         end
 
-        test "updates only locales configured in Babel" do
+        test "updates configured locales and preserves interpolation tokens" do
             patch :update, params: {
                 id: @label.id,
                 label: {
@@ -55,12 +55,34 @@ module LesliBabel
             assert_equal "Translation labels: %{count} :records", @label.en
             assert_equal "Etiquetas de traducción", @label.es
             assert_equal "Traductions", @label.fr
-            assert_not_nil @label.last_update_en
-            assert_not_nil @label.last_update_es
             assert_not_nil @label.last_update_context
             assert_nil @label.last_update_status
             assert_nil @label.last_update_fr
             assert_includes response.body, "Translations saved successfully."
+        end
+
+        test "updates only the timestamp of the locale that changed" do
+            english_updated_at = 2.days.ago.change(usec: 0)
+            spanish_updated_at = 1.day.ago.change(usec: 0)
+            @label.update_columns(
+                last_update_en: english_updated_at,
+                last_update_es: spanish_updated_at
+            )
+
+            travel_to Time.zone.local(2026, 11, 13, 9, 0, 0) do
+                patch :update, params: {
+                    id: @label.id,
+                    label: {
+                        en: "Labels",
+                        es: "Etiquetas"
+                    }
+                }, format: :turbo_stream
+
+                assert_response :success
+                @label.reload
+                assert_equal english_updated_at, @label.last_update_en
+                assert_equal Time.current, @label.last_update_es
+            end
         end
 
         test "does not change the editorial status when translations are saved" do
