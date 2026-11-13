@@ -81,9 +81,47 @@ module LesliBabel
             assert_equal "lesli_babel", bucket.reference_module
             assert_equal "lesli_babel-labels", label.reference_bucket
             assert_equal "Save", label.en
+            assert_not_nil label.last_update_en
             assert_equal 1, result[:created][:modules]
             assert_equal 1, result[:created][:buckets]
             assert_equal 1, result[:created][:labels]
+        end
+
+        test "completes only an empty locale and records its import time" do
+            translation_module = LesliBabel::Module.create!(code: "lesli_babel", platform: "lesli_engine")
+            bucket = translation_module.buckets.create!(code: "labels", reference_module: "lesli_babel")
+            label = bucket.labels.create!(text: "button_save", en: "")
+
+            result = TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+
+            label.reload
+            assert_equal "Save", label.en
+            assert_not_nil label.last_update_en
+            assert_equal 1, result[:completed]
+        end
+
+        test "does not overwrite an existing translation or its update time" do
+            original_update = 2.days.ago
+            translation_module = LesliBabel::Module.create!(code: "lesli_babel", platform: "lesli_engine")
+            bucket = translation_module.buckets.create!(code: "labels", reference_module: "lesli_babel")
+            label = bucket.labels.create!(
+                text: "button_save",
+                en: "Existing value",
+                last_update_en: original_update
+            )
+
+            result = TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+
+            label.reload
+            assert_equal "Existing value", label.en
+            assert_equal original_update, label.last_update_en
+            assert_equal 0, result[:completed]
         end
 
         test "does not duplicate an existing hierarchy" do
@@ -151,7 +189,26 @@ module LesliBabel
             end
         end
 
-        test "rejects invalid levels and includes their paths" do
+        test "imports files with symbol locale keys" do
+            write_yaml(<<~YAML)
+                ---
+                :en:
+                  lesli_babel:
+                    labels:
+                      button_save: "Save"
+            YAML
+
+            TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+
+            label = LesliBabel::Label.find_by!(text: "button_save")
+            assert_equal "Save", label.en
+            assert_not_nil label.last_update_en
+        end
+
+        test "reports invalid levels and includes their paths" do
             invalid_documents = {
                 "---\n- en\n" => ["<root>", "locales"],
                 "---\nen: invalid\n" => ["en", "modules"],
@@ -163,16 +220,41 @@ module LesliBabel
             invalid_documents.each do |yaml, (path, expected)|
                 write_yaml(yaml)
 
-                error = assert_raises(TranslationImportService::InvalidStructureError) do
-                    TranslationImportService.call(
-                        file_path: @yaml_file.path,
-                        platform: "lesli_engine"
-                    )
-                end
+                result = TranslationImportService.call(
+                    file_path: @yaml_file.path,
+                    platform: "lesli_engine"
+                )
 
-                assert_includes error.message, path
-                assert_includes error.message, "expected #{expected}"
+                assert_equal 1, result[:errors].size
+                assert_includes result[:errors].first, path
+                assert_includes result[:errors].first, "expected #{expected}"
             end
+        end
+
+        test "imports valid translations and rejects only invalid siblings" do
+            write_yaml(<<~YAML)
+                ---
+                en:
+                  lesli_babel:
+                    labels:
+                      button_save: "Save"
+                      invalid_label:
+                        nested: "Invalid"
+                    invalid_bucket: invalid
+            YAML
+
+            result = TranslationImportService.call(
+                file_path: @yaml_file.path,
+                platform: "lesli_engine"
+            )
+
+            label = LesliBabel::Label.find_by!(text: "button_save")
+            assert_equal "Save", label.en
+            assert_not LesliBabel::Label.exists?(text: "invalid_label")
+            assert_not LesliBabel::Bucket.exists?(code: "invalid_bucket")
+            assert_equal 2, result[:errors].size
+            assert result[:errors].any? { |error| error.include?("en.lesli_babel.labels.invalid_label") }
+            assert result[:errors].any? { |error| error.include?("en.lesli_babel.invalid_bucket") }
         end
 
         private

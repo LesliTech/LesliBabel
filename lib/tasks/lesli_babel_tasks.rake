@@ -120,7 +120,56 @@ namespace :lesli_babel do
 
 
     desc "Import local translations into LesliBabel"
-    task :import => :environment do |task, args|
+    task :import, [:file_path, :platform] => :environment do |task, args|
+
+        # Import a specific file or every translation file from the installed engines
+        translation_files = LesliSystem.engines.values.flat_map do |engine_info|
+            Dir[File.join(engine_info[:dir], "config", "locales", "translations.*.yml")].map do |file_path|
+                {
+                    engine: engine_info[:name],
+                    path: file_path
+                }
+            end
+        end.sort_by { |translation_file| translation_file[:path] }
+
+        platform = args[:platform].presence || "lesli_engine"
+        total_errors = 0
+
+        translation_files.each do |translation_file|
+            file_path = translation_file[:path]
+            result = LesliBabel::TranslationImportService.call(
+                file_path: file_path,
+                platform: platform
+            )
+
+            summary = {
+                engine: translation_file[:engine],
+                file: File.basename(file_path),
+                modules: result.dig(:created, :modules),
+                buckets: result.dig(:created, :buckets),
+                labels: result.dig(:created, :labels),
+                completed: result[:completed],
+                skipped: result[:skipped],
+                errors: result[:errors].size
+            }
+
+            if result[:errors].empty?
+                Termline.success("Translations imported", **summary)
+            else
+                Termline.warning("Translations imported with rejected entries", **summary)
+                Termline.list(*result[:errors], color: :yellow, icon: :warning)
+                total_errors += result[:errors].size
+            end
+        end
+
+        if total_errors.positive?
+            Termline.danger("Translation import finished with errors", errors: total_errors)
+            raise LesliBabel::TranslationImportService::InvalidStructureError,
+                "Translation import rejected #{total_errors} invalid entries"
+        end
+
+        # Keep the previous importer as reference while the service is completed
+        next
 
         # Get all the locally installed engines
         engines = LesliSystem.engines

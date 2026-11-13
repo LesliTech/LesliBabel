@@ -20,7 +20,6 @@ module LesliBabel
         # @param file_path [String] absolute or relative path to the YAML file
         # @param platform [String] platform assigned to every module in the file
         # @return [Hash] import summary with created, completed, skipped, and errors
-        # @raise [InvalidStructureError] when the YAML hierarchy is invalid
         # @raise [Psych::Exception, SystemCallError] when the file cannot be loaded
         def self.call(file_path:, platform:)
             new(file_path: file_path, platform: platform).call
@@ -33,8 +32,8 @@ module LesliBabel
 
         def call
             translations = load_yaml
-            validate_structure!(translations)
             summary = empty_summary
+            translations = validate_structure(translations, summary)
 
             # Import the complete file in a single transaction
             ApplicationRecord.transaction do
@@ -89,9 +88,13 @@ module LesliBabel
 
                             # Create the label if it does not exist
                             translation_label = translation_bucket.labels
-                                .create_with(locale => translation)
+                                .create_with(
+                                    locale => translation,
+                                    "last_update_#{locale}" => Time.current
+                                )
                                 .find_or_create_by!(text: label)
                             count_creation(summary, :labels, translation_label)
+                            complete_translation(summary, translation_label, locale, translation)
                         end
                     end
                 end
@@ -105,12 +108,24 @@ module LesliBabel
             summary[:created][resource] += 1
         end
 
-        # Parser and filesystem exceptions intentionally propagate to the caller.
-        def load_yaml
-            YAML.safe_load_file(file_path, aliases: false)
+        # Complete an existing label only when its locale is empty
+        def complete_translation(summary, translation_label, locale, translation)
+            return if translation_label.previously_new_record?
+            return unless translation_label[locale].blank?
+
+            translation_label.update!(
+                locale => translation,
+                "last_update_#{locale}" => Time.current
+            )
+            summary[:completed] += 1
         end
 
-        def validate_structure!(translations)
+        # Parser and filesystem exceptions intentionally propagate to the caller.
+        def load_yaml
+            YAML.safe_load_file(file_path, permitted_classes: [Symbol], aliases: false)
+        end
+
+        def validate_structure(translations, summary)
             # Only validate the expected YAML hierarchy. Naming conventions and
             # business rules belong to the importer, models, or database.
             #
@@ -118,39 +133,78 @@ module LesliBabel
             #   module:
             #     bucket:
             #       label: "translation"
-            expect_hash!(translations, [], "locales")
 
+            # Without a root hash there are no independent branches that can be imported.
+            return {} unless valid_hash?(translations, [], "locales", summary)
+
+            # Build a clean copy instead of modifying the parsed YAML. Invalid branches
+            # are excluded from this hash while their valid siblings remain available.
+            valid_translations = {}
+
+            # A locale must contain a hash of modules. If it does not, reject only
+            # that locale and continue validating the remaining locales.
             translations.each do |locale, modules|
-                expect_hash!(modules, [locale], "modules")
+                next unless valid_hash?(modules, [locale], "modules", summary)
 
+                # Register the locale before traversing it so an empty locale remains valid.
+                valid_modules = {}
+                valid_translations[locale] = valid_modules
+
+                # A module must contain a hash of buckets.
                 modules.each do |module_code, buckets|
-                    expect_hash!(buckets, [locale, module_code], "buckets")
+                    next unless valid_hash?(buckets, [locale, module_code], "buckets", summary)
 
+                    # Preserve valid modules even when they do not define buckets.
+                    valid_buckets = {}
+                    valid_modules[module_code] = valid_buckets
+
+                    # A bucket must contain a hash of labels.
                     buckets.each do |bucket_code, labels|
-                        expect_hash!(labels, [locale, module_code, bucket_code], "labels")
+                        path = [locale, module_code, bucket_code]
+                        next unless valid_hash?(labels, path, "labels", summary)
 
+                        # Preserve valid buckets even when their label collection is empty.
+                        valid_labels = {}
+                        valid_buckets[bucket_code] = valid_labels
+
+                        # Label values are the leaves of the supported hierarchy.
                         labels.each do |label, translation|
-                            next if translation.is_a?(String)
+                            label_path = [locale, module_code, bucket_code, label]
 
-                            invalid_structure!([locale, module_code, bucket_code, label], "string")
+                            if translation.is_a?(String)
+                                # Only valid leaves are copied into the importable document.
+                                valid_labels[label] = translation
+                            else
+                                # Reject the invalid label without discarding its siblings.
+                                record_invalid_structure(summary, label_path, "string")
+                            end
                         end
                     end
                 end
             end
+
+            valid_translations
         end
 
-        def expect_hash!(value, path, expected)
-            return if value.is_a?(Hash)
+        def valid_hash?(value, path, expected, summary)
+            # Returning a boolean lets each level decide which branch to skip.
+            return true if value.is_a?(Hash)
 
             # The accumulated path identifies the exact level that cannot be traversed.
-            invalid_structure!(path, expected)
+            record_invalid_structure(summary, path, expected)
+            false
         end
 
-        def invalid_structure!(path, expected)
+        def record_invalid_structure(summary, path, expected)
             # Root errors do not have YAML keys that can be joined into a path.
             location = path.any? ? path.map(&:to_s).join(".") : "<root>"
-            raise InvalidStructureError,
+
+            # Record the error instead of raising it immediately so validation can
+            # discover other invalid branches and preserve every valid translation.
+            error = InvalidStructureError.new(
                 "Invalid translation structure at #{location}: expected #{expected}"
+            )
+            summary[:errors] << error.message
         end
     end
 end

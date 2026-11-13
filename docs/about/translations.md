@@ -61,7 +61,7 @@ The result is a plain hash with `created`, `completed`, `skipped`, and `errors`.
 
 The service reads `file_path` directly with `YAML.safe_load_file`. YAML parsing and filesystem errors are not intercepted and propagate to the caller.
 
-The only application-level validation checks the required `locale → module → bucket → label → string` hierarchy. An invalid level raises `LesliBabel::TranslationImportService::InvalidStructureError` and includes the complete invalid path in its message. No naming, filename, prefix, placeholder, or ownership validations are performed.
+The only application-level validation checks the required `locale → module → bucket → label → string` hierarchy. Invalid branches are excluded from the import and their complete paths are returned in `errors`; valid sibling branches are still imported. An invalid root produces no database writes. No naming, filename, prefix, placeholder, or ownership validations are performed.
 
 Keep interpolation tokens such as `%{count}` unchanged across locales. Values wrapped as unresolved template markers, for example `:lesli_support.tickets.title:`, are not imported as completed translations.
 
