@@ -40,15 +40,15 @@ module LesliBabel
 
         def index params
             labels = self.builder(modules_id:params[:modules_id])
-            locale = missing_locale(params)
+            condition = missing_condition(params)
 
-            if locale
+            if condition
                 labels = labels
                     .where(
                         "lesli_babel_labels.status IS NULL OR lesli_babel_labels.status != ?",
                         Label.statuses.fetch("disabled")
                     )
-                    .where(locale => [nil, ""])
+                    .where(condition)
             end
 
             labels
@@ -64,13 +64,26 @@ module LesliBabel
 
         private
 
-        def missing_locale(params)
+        def missing_condition(params)
             return unless params[:missing].to_s == "true"
 
-            locale = params[:locale].to_s
-            Lesli.config.babel.fetch(:locales).keys
-                .map(&:to_s)
-                .find { |configured_locale| configured_locale == locale }
+            locales = Lesli.config.babel.fetch(:locales).keys.map(&:to_s)
+            requested_locale = params[:locale].to_s
+
+            if requested_locale.present?
+                return unless locales.include?(requested_locale)
+
+                locales = [requested_locale]
+            end
+
+            locales
+                .map { |locale| missing_value_for(locale) }
+                .reduce { |condition, locale| condition.or(locale) }
+        end
+
+        def missing_value_for(locale)
+            column = Label.arel_table[locale]
+            column.eq(nil).or(column.eq(""))
         end
     end
 end

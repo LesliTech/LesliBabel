@@ -42,5 +42,20 @@ module LesliBabel
 
             assert_equal [blank.id, missing.id].sort, records.pluck(:id).sort
         end
+
+        test "index filters labels missing any configured locale without duplicates" do
+            complete = Label.create!(bucket: @bucket, text: "Complete", status: :ok, en: "Complete", es: "Completo")
+            missing_both = Label.create!(bucket: @bucket, text: "Missing both", status: :need_translation, en: nil, es: nil)
+            Label.create!(bucket: @bucket, text: "Disabled", status: :disabled, en: nil, es: nil)
+            query = { pagination: { page: 1, perPage: 100 } }
+
+            records = LabelService.new(nil, query).index(missing: "true")
+            ids = records.pluck(:id)
+
+            assert_includes ids, @label.id
+            assert_includes ids, missing_both.id
+            assert_not_includes ids, complete.id
+            assert_equal ids.uniq, ids
+        end
     end
 end

@@ -3,8 +3,14 @@
 
     <%= render(LesliView::Components::Header.new(
         "Translations dashboard",
-        "Tracking #{@stats[:total_labels]} labels across #{@stats.dig(:summary, :configured_locales)} locales."
+        "Tracking #{@stats[:total_labels]} labels across #{@stats.dig(:summary, :configured_locales)} locales with #{@stats.dig(:summary, :coverage)}% global coverage."
     )) do %>
+        <%= render(LesliView::Elements::Button.new(
+            "#{@stats.dig(:summary, :pending_translations)} pending translations",
+            solid: false,
+            icon: "translate",
+            url: labels_path(missing: true)
+        )) %>
         <% if web_deploy_allowed? %>
             <%= render(LesliView::Elements::Button.new(
                 "Deploy",
@@ -18,12 +24,7 @@
 
     <%= render(LesliView::Components::Toolbar.new) %>
 
-    <section class="grid gap-3 py-6 sm:grid-cols-2" aria-label="Translation catalog summary">
-        <%= render "summary_card", label: "Pending translations", value: @stats.dig(:summary, :pending_translations), path: nil %>
-        <%= render "summary_card", label: "Global coverage", value: "#{@stats.dig(:summary, :coverage)}%", path: nil %>
-    </section>
-
-    <section class="grid gap-4 pb-6 sm:grid-cols-3" aria-label="Labels requiring attention">
+    <section class="grid gap-4 py-6 sm:grid-cols-3" aria-label="Labels requiring attention">
         <% {
             "Need translation" => @stats.dig(:attention, :need_translation),
             "Need help" => @stats.dig(:attention, :need_help),

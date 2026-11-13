@@ -16,7 +16,15 @@ columns = [{
 
 <%= render(LesliView::Layout::Container.new("babel-labels")) do %>
 
-    <% title = @missing_locale ? "Pending #{@missing_locale} translations" : (@module&.code&.titleize || "Labels") %>
+    <%
+    title = if @missing_locale
+        "Pending #{@missing_locale} translations"
+    elsif @missing_translations
+        "Pending translations"
+    else
+        @module&.code&.titleize || "Labels"
+    end
+    %>
     <%= render(LesliView::Components::Header.new(title)) do %>
         <%= render(LesliView::Elements::Button.new('Deploy', icon:'rocket_launch', url:deploy_translations_path, method: :post)) %>
         <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) if @module %>

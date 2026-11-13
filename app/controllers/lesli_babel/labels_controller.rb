@@ -7,7 +7,10 @@ module LesliBabel
         def index
             query[:pagination][:perPage] = 100
             @labels = respond_with_pagination(LabelService.new(current_user, query).index(params))
-            @missing_locale = configured_locale_name(params[:locale]) if params[:missing].to_s == "true"
+            if params[:missing].to_s == "true"
+                @missing_translations = true
+                @missing_locale = configured_locale_name(params[:locale])
+            end
         end
 
         # GET /labels/1
