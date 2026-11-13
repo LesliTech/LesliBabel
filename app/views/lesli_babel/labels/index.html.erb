@@ -37,7 +37,7 @@ columns = [{
     <div class="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start">
         <%= render "lesli_babel/labels/module_navigation" %>
 
-        <div class="min-w-0 flex-1">
+        <div class="min-w-0 flex-1 overflow-hidden">
             <%= render(LesliView::Components::Toolbar.new) %>
 
             <%= render LesliView::Elements::Table.new(columns: columns) do |table| %>
@@ -50,17 +50,17 @@ columns = [{
                             <%= link_to(
                                 record["text"],
                                 label_path(record["id"]),
-                                class: "link",
+                                class: "link inline-block max-w-full break-all py-2",
                                 data: { turbo_frame: "babel-label-editor" },
                                 "x-data": "",
                                 "@click": "$dispatch('babel-label-panel')"
                             ) %>
                         <% end %>
                         <% row.with_cell do %>
-                            <div x-data="{ copied: false }">
+                            <div class="min-w-0 max-w-xl" x-data="{ copied: false }">
                                 <button
                                     type="button"
-                                    class="group inline-flex max-w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40"
+                                    class="group inline-flex w-full min-w-0 items-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40"
                                     :aria-label="copied ? 'Path copied' : 'Copy path'"
                                     @click="
                                         navigator.clipboard.writeText($refs.path.innerText.trim());

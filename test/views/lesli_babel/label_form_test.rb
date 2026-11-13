@@ -92,6 +92,31 @@ module LesliBabel
             assert_nil URI.parse(panel.at_css("form")["action"]).query
         end
 
+        test "renders responsive module navigation and contains long table content" do
+            document = Nokogiri::HTML.fragment(rendered_index)
+            mobile_navigation = document.at_css("details.lg\\:hidden")
+            desktop_navigation = document.at_css("nav[aria-label='Module navigation']")
+            summary = mobile_navigation.at_css("summary")
+            label_link = document.css("a").find { |link| link["href"] == "/babel/labels/#{@label.id}" }
+            path_button = document.css("button").find do |button|
+                button.text.include?(@label.translation_path)
+            end
+
+            assert mobile_navigation
+            assert desktop_navigation
+            assert_includes desktop_navigation["class"].split, "hidden"
+            assert_includes desktop_navigation["class"].split, "lg:block"
+            assert_includes summary["class"].split, "min-h-11"
+            assert_includes summary["aria-label"], "Lesli Babel"
+            assert document.css("nav[aria-label*='Module navigation'] a").all? do |link|
+                link["class"].split.include?("min-h-11")
+            end
+            assert_includes label_link["class"].split, "break-all"
+            assert_includes path_button["class"].split, "w-full"
+            assert_includes path_button["class"].split, "min-w-0"
+            assert document.at_css("div.flex-1.overflow-hidden")
+        end
+
         private
 
         def rendered_form
