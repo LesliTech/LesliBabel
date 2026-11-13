@@ -17,6 +17,8 @@ en:
 
 This becomes the `lesli_support` module, the `tickets` bucket, and the `title` label for English.
 
+The authoritative format is [LesliBabel YAML Schema v1](./yaml-structure.md). It defines file naming, the exact hierarchy, naming rules, optional purpose prefixes, scalar values, missing-value markers, and interpolation requirements. Import and deploy behavior must preserve that contract.
+
 ## Source and Managed Data
 
 Engine files are the version-controlled source distributed with each gem. LesliBabel imports those files into its database so authorized users can inspect and edit values centrally.
@@ -36,6 +38,8 @@ locale:
     bucket:
       label: "Value"
 ```
+
+Additional nesting below a bucket is not valid in Schema v1. Existing locale files that use deeper legacy trees must be migrated before they can be managed by the strict importer.
 
 Keep interpolation tokens such as `%{count}` unchanged across locales. Values wrapped as unresolved template markers, for example `:lesli_support.tickets.title:`, are not imported as completed translations.
 

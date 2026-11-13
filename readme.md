@@ -169,6 +169,7 @@ CI=true bundle exec rake app:test
 
 - [Installation guide](./docs/about/installation.md)
 - [Translation workflow](./docs/about/translations.md)
+- [Official YAML structure](./docs/about/yaml-structure.md)
 - [Frontend development](./docs/about/frontend.md)
 - [Database](./docs/about/database.md)
 - [Tasks](./docs/about/tasks.md)
