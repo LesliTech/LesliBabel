@@ -41,6 +41,24 @@ locale:
 
 Additional nesting below a bucket is not valid in Schema v1. Existing locale files that use deeper legacy trees must be migrated before they can be managed by the strict importer.
 
+## Import Service
+
+`LesliBabel::TranslationImportService` exposes one public entry point for importing a translation file:
+
+```ruby
+result = LesliBabel::TranslationImportService.call(
+  file_path: "/path/to/config/locales/translations.en.yml",
+  platform: "lesli_engine"
+)
+
+result[:created]   # { modules: 1, buckets: 2, labels: 12 }
+result[:completed] # locale values written into previously blank columns
+result[:skipped]   # placeholders, blank source values, or existing translations
+result[:errors]    # structural errors found during the import
+```
+
+The result is a plain hash with `created`, `completed`, `skipped`, and `errors`. The `created` entry reports modules, buckets, and labels independently. A fresh summary is returned for every call.
+
 Keep interpolation tokens such as `%{count}` unchanged across locales. Values wrapped as unresolved template markers, for example `:lesli_support.tickets.title:`, are not imported as completed translations.
 
 ## Deploy Changes
