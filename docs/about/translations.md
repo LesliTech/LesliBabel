@@ -73,6 +73,8 @@ The dashboard contract contains only actionable information:
 - `summary`: configured locales, pending translations, and global coverage across every translatable locale value.
 - `attention`: global counts for `need_translation`, `need_help`, and `need_context`.
 
+See the [dashboard guide](./dashboard.md) for the exact formulas, empty-catalog behavior, locale ordering, the meaning of every workflow state, and the distinction between pending values and attention states.
+
 ## Export and Deploy Contract
 
 Export and deploy are separate operations with different responsibilities.
@@ -175,6 +177,8 @@ Web deploy is authenticated and authorized through the standard Lesli controller
 ```ruby
 Lesli.config.babel[:allow_web_deploy] = true
 ```
+
+When the key is omitted, web deploy is enabled outside production and disabled in production. Explicit `true` or `false` values override that default in every environment. The [dashboard guide](./dashboard.md#allow_web_deploy-configuration) documents the complete configuration matrix and web request flow.
 
 The Rake task is not controlled by `allow_web_deploy`; it is an administrative command for a trusted shell or release workflow. Both entry points expose the real filesystem error when a write fails, so deploy access must not be public.
 

@@ -72,7 +72,7 @@ Deploy is also available from the LesliBabel web interface. Web deploy is enable
 Lesli.config.babel[:allow_web_deploy] = true
 ```
 
-The setting restricts only the web endpoint. The Rake task remains available for controlled deployment and release workflows.
+Explicit `true` or `false` values override the environment default. The setting restricts only the web endpoint; the Rake task remains available for controlled deployment and release workflows. See the [dashboard guide](./dashboard.md#web-deploy-flow) for confirmation, duplicate-submission protection, success and error behavior, and the full configuration matrix.
 
 ### Operational Safety
 
