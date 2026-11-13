@@ -59,7 +59,7 @@ module LesliBabel
         # Web deploy is enabled outside production by default. Applications may
         # explicitly authorize it in another environment through Lesli config.
         def authorize_web_deploy!
-            return if Lesli.config.babel.fetch(:allow_web_deploy, !Rails.env.production?)
+            return if web_deploy_allowed?
 
             respond_with_lesli(
                 turbo: stream_notification_danger("Web translation deploy is disabled."),

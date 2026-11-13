@@ -1,0 +1,21 @@
+<%
+classes = class_names(
+    "block rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm",
+    "transition hover:border-sky-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-500/20" => path.present?
+)
+
+content = capture do
+%>
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= label %></p>
+    <p class="mt-1 text-2xl font-semibold tabular-nums text-slate-900"><%= value %></p>
+<% end %>
+
+<% if path.present? %>
+    <%= link_to path, class: classes, data: { turbo_frame: "_top" } do %>
+        <%= content %>
+    <% end %>
+<% else %>
+    <article class="<%= classes %>">
+        <%= content %>
+    </article>
+<% end %>

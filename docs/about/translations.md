@@ -66,6 +66,13 @@ Keep interpolation tokens such as `%{count}` unchanged across locales.
 
 `LesliBabel::TranslationService` is read-only and exists only to build dashboard statistics. It does not export or deploy translations. YAML generation belongs to `TranslationExportService`, and every filesystem write belongs to `TranslationDeployService`.
 
+The dashboard contract contains only actionable information:
+
+- `total_labels`: every registered label, including disabled labels.
+- `locales`: completed, missing, and coverage percentage for each configured locale. Disabled labels are excluded from these calculations because they are not exported.
+- `summary`: configured locales, pending translations, and global coverage across every translatable locale value.
+- `attention`: global counts for `need_translation`, `need_help`, and `need_context`.
+
 ## Export and Deploy Contract
 
 Export and deploy are separate operations with different responsibilities.

@@ -21,41 +21,44 @@ columns = [{
         <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) if @module %>
     <% end %>
 
-    <%= render(LesliView::Components::Toolbar.new) %>
+    <div class="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start">
+        <%= render "lesli_babel/labels/module_navigation" %>
 
-    <%= render LesliView::Elements::Table.new(columns: columns) do |table| %>
-        <% @labels[:records].each do |record| %>
-            <% table.with_row(status: record.category) do |row| %>
-                <% row.with_cell(align: :center) do %>
-                    <%= turbo_link_to(record["id"], label_path(record["id"])) %>
-                <% end %>
-                <% row.with_cell do %>
-                    <%= turbo_link_to(record["text"], label_path(record["id"])) %>
-                <% end %>
-                <%# row.with_cell do %>
-                    <%#= turbo_link_to(record["en"] || "", label_path(record["id"])) %>
-                <%# end %>
-                <% row.with_cell do %>
-                    <div x-data="{ copied: false }">
-                        <button
-                            type="button"
-                            class="group inline-flex max-w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40"
-                            :aria-label="copied ? 'Path copied' : 'Copy path'"
-                            @click="
-                                navigator.clipboard.writeText($refs.path.innerText.trim());
-                                copied = true;
-                                setTimeout(() => copied = false, 2000)
-                            ">
-                            <span class="inline-flex size-5 shrink-0 items-center justify-center text-slate-400 transition-colors group-hover:text-slate-600" aria-hidden="true">
-                                <span class="material-symbols text-lg leading-none" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
-                            </span>
-                            <span class="break-all font-mono text-xs leading-5" x-ref="path">
-                                <%= record["path"] %>
-                            </span>
-                        </button>
-                    </div>
+        <div class="min-w-0 flex-1">
+            <%= render(LesliView::Components::Toolbar.new) %>
+
+            <%= render LesliView::Elements::Table.new(columns: columns) do |table| %>
+                <% @labels[:records].each do |record| %>
+                    <% table.with_row(status: record.category) do |row| %>
+                        <% row.with_cell(align: :center) do %>
+                            <%= turbo_link_to(record["id"], label_path(record["id"])) %>
+                        <% end %>
+                        <% row.with_cell do %>
+                            <%= turbo_link_to(record["text"], label_path(record["id"])) %>
+                        <% end %>
+                        <% row.with_cell do %>
+                            <div x-data="{ copied: false }">
+                                <button
+                                    type="button"
+                                    class="group inline-flex max-w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40"
+                                    :aria-label="copied ? 'Path copied' : 'Copy path'"
+                                    @click="
+                                        navigator.clipboard.writeText($refs.path.innerText.trim());
+                                        copied = true;
+                                        setTimeout(() => copied = false, 2000)
+                                    ">
+                                    <span class="inline-flex size-5 shrink-0 items-center justify-center text-slate-400 transition-colors group-hover:text-slate-600" aria-hidden="true">
+                                        <span class="material-symbols text-lg leading-none" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
+                                    </span>
+                                    <span class="break-all font-mono text-xs leading-5" x-ref="path">
+                                        <%= record["path"] %>
+                                    </span>
+                                </button>
+                            </div>
+                        <% end %>
+                    <% end %>
                 <% end %>
             <% end %>
-        <% end %>
-    <% end %>
+        </div>
+    </div>
 <% end %>

@@ -33,5 +33,11 @@ Building a better future, one line of code at a time.
 module LesliBabel
     class ApplicationController < Lesli::ApplicationLesliController
         protect_from_forgery with: :exception
+
+        helper_method :web_deploy_allowed?
+
+        def web_deploy_allowed?
+            Lesli.config.babel.fetch(:allow_web_deploy, !Rails.env.production?)
+        end
     end
 end
