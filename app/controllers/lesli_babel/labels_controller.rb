@@ -1,6 +1,6 @@
 module LesliBabel
     class LabelsController < ApplicationController
-        before_action :set_label, only: %i[show edit update destroy]
+        before_action :set_label, only: %i[show update destroy]
         before_action :set_module, only: [:new]
 
         # GET /labels
@@ -45,43 +45,17 @@ module LesliBabel
             end
         end
 
-        def edit
-        end
-
         # PATCH/PUT /labels/1
         def update
             return respond_with_not_found unless @label.found?
 
             @label = @label.result
             @module = @label.bucket.module
+            attributes = label_params
 
-            # if status changed
-            if @label["status"] != label_params["status"]
+            update_change_timestamps(@label, attributes)
 
-                # saved update date
-                @label["last_update_status"] = Time.current
-
-            end
-
-            # if context changed
-            if @label["context"] != label_params["context"]
-
-                # saved update date
-                @label["last_update_context"] = Time.current
-
-            end
-
-            babel_locales.each_key do |locale|
-
-                # if translation changed
-                if @label[locale] != label_params[locale]
-
-                    # saved update date
-                    @label["last_update_#{locale}"] = Time.current
-                end
-            end
-
-            if @label.update(label_params)
+            if @label.update(attributes)
                 respond_with_lesli(
                     :turbo => [
                         stream_notification_success("Translations saved successfully."),
@@ -132,11 +106,22 @@ module LesliBabel
         end
 
         def configured_locale_name(locale)
-            Lesli.config.babel.fetch(:locales).each do |code, name|
-                return name if code.to_s == locale.to_s
-            end
+            babel_locales.find { |code, _name| code.to_s == locale.to_s }&.last
+        end
 
-            nil
+        def update_change_timestamps(label, attributes)
+            changed_at = Time.current
+
+            tracked_attributes.each do |attribute|
+                next unless attributes.key?(attribute)
+                next if label[attribute] == attributes[attribute]
+
+                label["last_update_#{attribute}"] = changed_at
+            end
+        end
+
+        def tracked_attributes
+            %w[status context] + babel_locale_codes.map(&:to_s)
         end
 
         # Only allow a list of trusted parameters through.
@@ -148,7 +133,7 @@ module LesliBabel
                 :status,
                 :context,
                 :bucket_id,
-                babel_locales.keys
+                babel_locale_codes
             )
         end
     end

@@ -24,7 +24,10 @@ module LesliBabel
             original_locales = Lesli.config.babel[:locales]
             Lesli.config.babel[:locales] = { en: "English", es: "Español" }
 
-            assert_equal({ en: "English", es: "Español" }, LesliBabel::ApplicationController.new.babel_locales)
+            controller = LesliBabel::ApplicationController.new
+
+            assert_equal({ en: "English", es: "Español" }, controller.babel_locales)
+            assert_equal [:en, :es], controller.babel_locale_codes
         ensure
             Lesli.config.babel[:locales] = original_locales
         end

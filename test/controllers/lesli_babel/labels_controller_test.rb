@@ -34,6 +34,10 @@ module LesliBabel
             Lesli.config.babel[:locales] = @original_locales
         end
 
+        test "does not expose an edit action without a route" do
+            assert_not_includes LesliBabel::LabelsController.action_methods, "edit"
+        end
+
         test "updates only locales configured in Babel" do
             patch :update, params: {
                 id: @label.id,
@@ -51,6 +55,11 @@ module LesliBabel
             assert_equal "Translation labels: %{count} :records", @label.en
             assert_equal "Etiquetas de traducción", @label.es
             assert_equal "Traductions", @label.fr
+            assert_not_nil @label.last_update_en
+            assert_not_nil @label.last_update_es
+            assert_not_nil @label.last_update_context
+            assert_nil @label.last_update_status
+            assert_nil @label.last_update_fr
             assert_includes response.body, "Translations saved successfully."
         end
 
@@ -70,6 +79,7 @@ module LesliBabel
             @label.reload
             assert_equal "need_help", @label.status
             assert_equal "Traducciones", @label.es
+            assert_nil @label.last_update_status
         end
 
         test "renders the editor inside the requested panel frame" do

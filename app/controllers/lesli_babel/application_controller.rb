@@ -40,6 +40,10 @@ module LesliBabel
             Lesli.config.babel.fetch(:locales)
         end
 
+        def babel_locale_codes
+            babel_locales.keys
+        end
+
         def web_deploy_allowed?
             Lesli.config.babel.fetch(:allow_web_deploy, !Rails.env.production?)
         end
