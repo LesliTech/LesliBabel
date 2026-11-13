@@ -64,6 +64,8 @@ A file must use:
 - The module owned by the package.
 - Scalar string translation values.
 
+Third-party namespaces such as Devise do not belong in a managed translation file. Keep them in a separate package file such as `devise.en.yml`; LesliBabel discovers only `translations.<locale>.yml` files.
+
 ## Module Codes
 
 The module identifies the application or engine that owns the translation. It must match the registered `LesliBabel::Module#code` exactly.
@@ -240,7 +242,14 @@ en:
 
 Schema v1 stores one scalar value per label and locale. Rails pluralization hashes such as `one` and `other` introduce an additional nesting level and are therefore not part of Schema v1.
 
-Do not add new pluralization hashes to managed translation files until LesliBabel defines a controlled pluralization extension. Existing legacy pluralization structures require migration or an explicit future schema version.
+When an interface requires two forms under Schema v1, store each form as an explicit label and select the label in application code:
+
+```yaml
+message_results_one: "%{count} result"
+message_results_other: "%{count} results"
+```
+
+Do not add pluralization hashes to managed translation files until LesliBabel defines a controlled pluralization extension. Existing legacy pluralization structures require migration or an explicit future schema version.
 
 ## Deterministic Output
 

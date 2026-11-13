@@ -38,6 +38,14 @@ Invalid branches are reported with Termline while valid translations continue im
 
 Termline reports each processed engine and translation file. Structural errors are printed below the affected file and cause the task to finish with an error after all importable files have been processed.
 
+Pass `true` to the `silent` argument when the task is used by automation and its Termline output is not needed:
+
+```shell
+bin/rails "lesli_babel:import[true]"
+```
+
+Silent mode suppresses only task messages. YAML, filesystem, database, and other runtime exceptions continue propagating normally.
+
 The standard `bin/rails lesli:db:prepare` task runs `scan` followed by `import` automatically when LesliBabel is installed.
 
 ## Export Locale Files

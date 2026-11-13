@@ -118,6 +118,35 @@ module LesliBabel
             assert_empty danger_calls.first[:data]
         end
 
+        test "does not print logs when silent mode is enabled" do
+            engines = {
+                "LesliBabel" => engine(code: "lesli_babel", name: "LesliBabel", dir: "/engines/LesliBabel")
+            }
+            file_path = "/engines/LesliBabel/config/locales/translations.en.yml"
+            files = { translation_pattern("/engines/LesliBabel") => [file_path] }
+            messages = []
+            service_calls = []
+            result = import_result(errors: ["invalid structure"])
+
+            run_task(
+                engines: engines,
+                files: files,
+                silent: true,
+                termline: {
+                    success: ->(*messages_and_data, **data) { messages << [messages_and_data, data] },
+                    warning: ->(*messages_and_data, **data) { messages << [messages_and_data, data] },
+                    danger: ->(*messages_and_data, **data) { messages << [messages_and_data, data] },
+                    list: ->(*messages_and_data, **data) { messages << [messages_and_data, data] }
+                }
+            ) do |file_path:, platform:|
+                service_calls << { file_path: file_path, platform: platform }
+                result
+            end
+
+            assert_equal [{ file_path: file_path, platform: "lesli_engine" }], service_calls
+            assert_empty messages
+        end
+
         private
 
         def engine(code:, name:, dir:)
@@ -132,7 +161,7 @@ module LesliBabel
             { errors: errors }
         end
 
-        def run_task(engines:, files:, termline: {}, &service_call)
+        def run_task(engines:, files:, termline: {}, silent: false, &service_call)
             termline_methods = {
                 info: ->(*_messages, **_data) {},
                 success: ->(*_messages, **_data) {},
@@ -146,7 +175,7 @@ module LesliBabel
                     with_singleton_methods(TranslationImportService, call: service_call) do
                         with_singleton_methods(Termline, termline_methods) do
                             @task.reenable
-                            @task.invoke
+                            silent ? @task.invoke(true) : @task.invoke
                         end
                     end
                 end

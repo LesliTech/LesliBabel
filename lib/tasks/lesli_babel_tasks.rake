@@ -166,7 +166,9 @@ namespace :lesli_babel do
 
 
     desc "Import local translations into LesliBabel"
-    task import: :environment do
+    task :import, [:silent] => :environment do |_task, args|
+
+        silent = ActiveModel::Type::Boolean.new.cast(args[:silent])
 
         # Discover every translation file and determine its platform
         translation_files = LesliSystem.engines.values.flat_map do |engine_info|
@@ -203,6 +205,8 @@ namespace :lesli_babel do
                 end
             )
 
+            next if silent
+
             file_details = {
                 engine: translation_file[:engine],
                 file: translation_file[:file]
@@ -217,9 +221,9 @@ namespace :lesli_babel do
         end
 
         if errors.any?
-            Termline.danger("Translation import finished with errors")
-        else 
-            Termline.success("Translation import completed")
+            Termline.danger("LesliBabel: Translations imported with errors")
+        else
+            Termline.success("LesliBabel: Translations imported successfully")
         end
     end
 end

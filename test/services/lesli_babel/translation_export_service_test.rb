@@ -75,6 +75,7 @@ module LesliBabel
             document = YAML.safe_load(export[:content])
 
             assert_equal translation, document.dig("en", "lesli_babel", "labels", "message_results")
+            assert_includes export[:content], 'message_results: "  Found %{count} results  "'
         end
 
         test "does not persist generated placeholders in labels" do
