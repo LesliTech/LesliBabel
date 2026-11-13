@@ -30,7 +30,7 @@ Building a better future, one line of code at a time.
 // · 
 =end
 module LesliBabel
-    class ApplicationRecord < Lesli::ApplicationLesliRecord
+    class ApplicationRecord < Lesli::ApplicationRecord
         self.abstract_class = true
     end
 end

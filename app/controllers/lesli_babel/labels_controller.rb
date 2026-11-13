@@ -1,6 +1,6 @@
 module LesliBabel
     class LabelsController < ApplicationController
-        before_action :set_label, only: %i[show edit update destroy ]
+        before_action :set_label, only: %i[show edit update destroy]
         before_action :set_module, only: [:new]
 
         # GET /labels
@@ -105,8 +105,17 @@ module LesliBabel
 
         # DELETE /labels/1
         def destroy
-            @label.destroy
-            redirect_to labels_url, notice: "Label was successfully destroyed.", status: :see_other
+            return respond_with_not_found unless @label.found?
+
+            label = @label.result
+            module_id = label.bucket.module_id
+            label.destroy!
+
+            redirect_back(
+                fallback_location: labels_path(modules_id: module_id),
+                notice: "Translation was permanently deleted.",
+                status: :see_other
+            )
         end
 
         private

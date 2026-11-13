@@ -1,0 +1,14 @@
+<div class="mt-6 border-t border-slate-200 pt-6">
+    <%= render(LesliView::Elements::Button.new(
+        "Delete translation",
+        url: label_path(@label),
+        method: :delete,
+        icon: "delete",
+        danger: true,
+        solid: false,
+        data: {
+            turbo_confirm: "Permanently delete this translation? This action cannot be undone.",
+            turbo_submits_with: "Deleting..."
+        }
+    )) %>
+</div>

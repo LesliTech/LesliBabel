@@ -34,7 +34,7 @@ LesliBabel::Engine.routes.draw do
 
     Lesli::Router.mount_lesli_engine_routes(self)
 
-    resources :labels, only: [:index, :new, :create, :show, :update]
+    resources :labels, only: [:index, :new, :create, :show, :update, :destroy]
 
     # working with modules
     resources :modules, only: [:index, :show] do 

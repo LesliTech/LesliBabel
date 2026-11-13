@@ -26,22 +26,28 @@ module LesliBabel
             end
         end
 
-        test "defines unique indexes for active translation paths" do
+        test "defines unique indexes for translation paths" do
             connection = ActiveRecord::Base.connection
             module_index = connection.indexes("lesli_babel_modules").find do |index|
-                index.name == "idx_babel_modules_unique_active_platform_code"
+                index.name == "idx_babel_modules_unique_platform_code"
             end
             bucket_index = connection.indexes("lesli_babel_buckets").find do |index|
-                index.name == "idx_babel_buckets_unique_active_module_code"
+                index.name == "idx_babel_buckets_unique_module_code"
             end
             label_index = connection.indexes("lesli_babel_labels").find do |index|
-                index.name == "idx_babel_labels_unique_active_bucket_text"
+                index.name == "idx_babel_labels_unique_bucket_text"
             end
 
             [module_index, bucket_index, label_index].each do |index|
                 assert_predicate index, :unique
-                assert_equal "deleted_at IS NULL", index.where
+                assert_nil index.where
             end
+        end
+
+        test "does not store soft deletion timestamps" do
+            refute LesliBabel::Module.column_names.include?("deleted_at")
+            refute Bucket.column_names.include?("deleted_at")
+            refute Label.column_names.include?("deleted_at")
         end
 
         test "accepts translation values longer than a varchar" do

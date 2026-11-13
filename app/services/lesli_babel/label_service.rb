@@ -9,8 +9,8 @@ module LesliBabel
 
             # get strings with bucket and module information
             strings = Label
-            .joins("inner join lesli_babel_buckets on lesli_babel_buckets.id = lesli_babel_labels.bucket_id and lesli_babel_buckets.deleted_at is NULL")
-            .joins("inner join lesli_babel_modules on lesli_babel_modules.id = lesli_babel_buckets.module_id and lesli_babel_modules.deleted_at is NULL")
+            .joins("inner join lesli_babel_buckets on lesli_babel_buckets.id = lesli_babel_labels.bucket_id")
+            .joins("inner join lesli_babel_modules on lesli_babel_modules.id = lesli_babel_buckets.module_id")
 
             # filter by specific engines
             if modules_id

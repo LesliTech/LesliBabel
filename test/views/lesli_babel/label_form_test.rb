@@ -89,6 +89,7 @@ module LesliBabel
             assert_nil save_button["data-turbo-submits-with"]
             assert_includes metadata.text.squish, "Module Lesli Babel"
             assert_includes metadata.text.squish, "Bucket Labels"
+            assert_includes document.text, "Delete translation"
         end
 
         test "loads the label editor in a side panel without navigating away from the list" do
@@ -109,6 +110,12 @@ module LesliBabel
             assert_nil panel.at_css("code")
             assert_equal "/babel/labels/#{@label.id}", URI.parse(panel.at_css("form")["action"]).path
             assert_nil URI.parse(panel.at_css("form")["action"]).query
+            delete_form = panel.css("form").find { |form| form["method"] == "post" && form.at_css("input[name='_method'][value='delete']") }
+            delete_button = delete_form.at_css("button")
+            assert_equal "/babel/labels/#{@label.id}", URI.parse(delete_form["action"]).path
+            assert_equal "_top", delete_button["data-turbo-frame"]
+            assert_includes delete_button["data-turbo-confirm"], "cannot be undone"
+            assert_includes delete_button.text, "Delete translation"
         end
 
         test "renders responsive module navigation and contains long table content" do

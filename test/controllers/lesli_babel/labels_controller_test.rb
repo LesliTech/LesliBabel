@@ -113,6 +113,22 @@ module LesliBabel
             assert_select "[role='alert']", text: /Translation could not be saved/
         end
 
+        test "permanently deletes a label and returns to the original list" do
+            return_url = @routes.url_helpers.labels_url(
+                host: "test.host",
+                missing: "true",
+                locale: "es"
+            )
+            @request.headers["HTTP_REFERER"] = return_url
+
+            assert_difference("LesliBabel::Label.count", -1) do
+                delete :destroy, params: { id: @label.id }
+            end
+
+            assert_redirected_to return_url
+            assert_equal "Translation was permanently deleted.", flash[:notice]
+        end
+
         private
 
         def with_label_service(label)

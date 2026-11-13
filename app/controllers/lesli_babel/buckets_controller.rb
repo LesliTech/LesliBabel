@@ -32,7 +32,7 @@ Building a better future, one line of code at a time.
 
 module LesliBabel
     class BucketsController < ApplicationController
-        before_action :set_bucket, only: [:show, :edit, :update, :destroy]
+        before_action :set_bucket, only: [:show, :edit, :update]
 
         # GET /buckets
         def index
@@ -71,12 +71,6 @@ module LesliBabel
             else
                 render :edit
             end
-        end
-
-        # DELETE /buckets/1
-        def destroy
-            @bucket.destroy
-            redirect_to buckets_url, notice: 'Bucket was successfully destroyed.'
         end
 
         private

@@ -35,12 +35,10 @@ class CreateLesliBabelBuckets < ActiveRecord::Migration[7.0]
         create_table :lesli_babel_buckets do |t|
             t.string :code, null: false
             t.string :reference_module, null: false
-            t.datetime :deleted_at
             t.timestamps
         end
 
-        add_index(:lesli_babel_buckets, :deleted_at)
         add_reference(:lesli_babel_buckets, :module, null: false, foreign_key: { to_table: :lesli_babel_modules })
-        add_index(:lesli_babel_buckets, %i[module_id code], unique: true, where: "deleted_at IS NULL", name: "idx_babel_buckets_unique_active_module_code")
+        add_index(:lesli_babel_buckets, %i[module_id code], unique: true, name: "idx_babel_buckets_unique_module_code")
     end
 end

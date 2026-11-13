@@ -2,8 +2,9 @@ require "test_helper"
 
 module LesliBabel
     class ApplicationRecordTest < ActiveSupport::TestCase
-        test "inherits from the shared Lesli record" do
-            assert_operator LesliBabel::ApplicationRecord, :<, Lesli::ApplicationLesliRecord
+        test "inherits from the Lesli record without soft deletion" do
+            assert_operator LesliBabel::ApplicationRecord, :<, Lesli::ApplicationRecord
+            assert_not_respond_to LesliBabel::ApplicationRecord, :with_deleted
         end
 
         test "is abstract" do

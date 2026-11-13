@@ -7,6 +7,7 @@
 @source "../../app/views/lesli_babel/dashboards/show.html.erb";
 @source "../../app/views/lesli_babel/labels/_form.html.erb";
 @source "../../app/views/lesli_babel/labels/_copy_path.html.erb";
+@source "../../app/views/lesli_babel/labels/_delete_button.html.erb";
 @source "../../app/views/lesli_babel/labels/_module_navigation.html.erb";
 @source "../../app/views/lesli_babel/labels/index.html.erb";
 @source "../../app/views/lesli_babel/labels/panel.html.erb";

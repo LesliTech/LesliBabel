@@ -28,12 +28,10 @@ ActiveRecord::Schema[8.1].define(version: 901120110) do
   create_table "lesli_babel_buckets", force: :cascade do |t|
     t.string "code", null: false
     t.string "reference_module", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "module_id", null: false
-    t.index ["deleted_at"], name: "index_lesli_babel_buckets_on_deleted_at"
-    t.index ["module_id", "code"], name: "idx_babel_buckets_unique_active_module_code", unique: true, where: "deleted_at IS NULL"
+    t.index ["module_id", "code"], name: "idx_babel_buckets_unique_module_code", unique: true
     t.index ["module_id"], name: "index_lesli_babel_buckets_on_module_id"
   end
 
@@ -72,24 +70,20 @@ ActiveRecord::Schema[8.1].define(version: 901120110) do
     t.datetime "last_update_status"
     t.datetime "last_update_context"
     t.string "reference_bucket", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "bucket_id", null: false
-    t.index ["bucket_id", "text"], name: "idx_babel_labels_unique_active_bucket_text", unique: true, where: "deleted_at IS NULL"
+    t.index ["bucket_id", "text"], name: "idx_babel_labels_unique_bucket_text", unique: true
     t.index ["bucket_id"], name: "index_lesli_babel_labels_on_bucket_id"
-    t.index ["deleted_at"], name: "index_lesli_babel_labels_on_deleted_at"
     t.index ["status"], name: "idx_babel_labels_on_status"
   end
 
   create_table "lesli_babel_modules", force: :cascade do |t|
     t.string "code", null: false
     t.string "platform", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["deleted_at"], name: "index_lesli_babel_modules_on_deleted_at"
-    t.index ["platform", "code"], name: "idx_babel_modules_unique_active_platform_code", unique: true, where: "deleted_at IS NULL"
+    t.index ["platform", "code"], name: "idx_babel_modules_unique_platform_code", unique: true
   end
 
   create_table "lesli_resources", force: :cascade do |t|

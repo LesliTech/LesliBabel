@@ -35,11 +35,9 @@ class CreateLesliBabelModules < ActiveRecord::Migration[7.0]
         create_table :lesli_babel_modules do |t|
             t.string :code, null: false      # engine code
             t.string :platform, null: false  # rails, reactnative, etc
-            t.datetime :deleted_at
             t.timestamps
         end
 
-        add_index(:lesli_babel_modules, :deleted_at)
-        add_index(:lesli_babel_modules, %i[platform code], unique: true, where: "deleted_at IS NULL", name: "idx_babel_modules_unique_active_platform_code")
+        add_index(:lesli_babel_modules, %i[platform code], unique: true, name: "idx_babel_modules_unique_platform_code")
     end
 end
