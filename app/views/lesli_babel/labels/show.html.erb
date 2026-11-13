@@ -3,7 +3,8 @@
     
     <%= render(LesliView::Components::Header.new(
         @label.text.titleize,
-        :back => module_path(@label.bucket.module.id)
+        render("copy_path", path: @label.translation_path),
+        back: module_path(@label.bucket.module.id)
     )) %>
 
     <div class="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start">

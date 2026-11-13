@@ -5,10 +5,23 @@
     builder: LesliView::Forms::BuilderHorizontal
 ) do |form| %>
 
-    <% label_status = 'Label ' + @label.status.humanize.downcase if @label.status %>
-    <% label_category = '' + @label.category if @label.category %>
+    <% form.fieldset("", { class: label_status_border_class(@label.status) }) do %>
 
-    <% form.fieldset(label_status, category:label_category) do %>
+        <% unless @label.new_record? %>
+            <div class="mb-6 flex flex-wrap items-center justify-end gap-x-5 gap-y-2 text-sm text-slate-600" aria-label="Translation label metadata">
+                <span class="<%= label_status_badge_classes(@label.status) %>" data-label-status="<%= @label.status %>">
+                    <%= label_status_name(@label.status) %>
+                </span>
+                <span>
+                    <span class="text-slate-400">Module</span>
+                    <strong class="ml-1 font-medium text-slate-700"><%= @label.translation_module_code.titleize %></strong>
+                </span>
+                <span>
+                    <span class="text-slate-400">Bucket</span>
+                    <strong class="ml-1 font-medium text-slate-700"><%= @label.translation_bucket_code.titleize %></strong>
+                </span>
+            </div>
+        <% end %>
 
         <% if @label.errors.any? %>
             <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800" role="alert">
@@ -44,7 +57,6 @@
             <hr class="my-6 border-0 border-t border-slate-200">
             <%= form.field_control_textarea(:context, rows: 3, class: "!min-h-0") %>
             <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
-            <%= render "copy_path", path: @label.translation_path %>
         <% end %>
 
         <hr class="my-6 border-0 border-t border-slate-200">

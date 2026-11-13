@@ -50,6 +50,8 @@ module LesliBabel
             label = LesliBabel::Label.create!(bucket: bucket, text: "page_title")
 
             assert_equal "lesli_babel.labels.page_title", label.translation_path
+            assert_equal "lesli_babel", label.translation_module_code
+            assert_equal "labels", label.translation_bucket_code
         end
     end
 end

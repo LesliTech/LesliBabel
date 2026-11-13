@@ -44,7 +44,19 @@ module LesliBabel
         def translation_path
             return self[:path] if has_attribute?(:path) && self[:path].present?
 
-            [bucket.module.code, bucket.code, text].join(".")
+            [translation_module_code, translation_bucket_code, text].join(".")
+        end
+
+        def translation_module_code
+            return self[:engine_code] if has_attribute?(:engine_code)
+
+            bucket.module.code
+        end
+
+        def translation_bucket_code
+            return self[:bucket_code] if has_attribute?(:bucket_code)
+
+            bucket.code
         end
 
         private

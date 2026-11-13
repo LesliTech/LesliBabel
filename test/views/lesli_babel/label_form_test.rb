@@ -29,8 +29,6 @@ module LesliBabel
         test "renders only configured locales and a read-only copyable path" do
             html = rendered_form
             document = Nokogiri::HTML.fragment(html)
-            copy_button = document.at_css("button[type='button']")
-            path = document.at_css("code[x-ref='path']")
 
             source = document.at_css("textarea[name='label[en]']")
             missing = document.at_css("textarea[name='label[es]']")
@@ -50,9 +48,25 @@ module LesliBabel
             assert_includes document.text, "Missing translation"
             assert_equal "Missing translation", missing["placeholder"]
             assert_nil document.at_css("input[name='label[path]']")
-            assert_equal "lesli_babel.labels.page_title", path.text.strip
-            assert_includes copy_button["class"].split, "size-9"
+            assert_nil document.at_css("legend")
+            assert_not_includes document.text, "Label ok"
+        end
+
+        test "presents the path in the header and metadata inside the form" do
+            html = rendered_show
+            document = Nokogiri::HTML.fragment(html)
+            metadata = document.at_css("[aria-label='Translation label metadata']")
+            form = document.at_css("#lesli-babel-labels-form")
+
+            assert_equal "Page Title", document.at_css("h1").text.strip
+            assert_equal "lesli_babel.labels.page_title", document.at_css("code[x-ref='path']").text.strip
             assert_includes html, "navigator.clipboard.writeText"
+            assert_equal "OK", metadata.at_css("[data-label-status='ok']").text.strip
+            assert_includes metadata["class"].split, "justify-end"
+            assert form.at_css("[aria-label='Translation label metadata']")
+            assert_includes form.at_css("fieldset")["class"].split, "border-emerald-300"
+            assert_includes metadata.text.squish, "Module Lesli Babel"
+            assert_includes metadata.text.squish, "Bucket Labels"
         end
 
         private
@@ -61,6 +75,14 @@ module LesliBabel
             LesliBabel::LabelsController.render(
                 partial: "lesli_babel/labels/form",
                 assigns: { label: @label },
+                layout: false
+            )
+        end
+
+        def rendered_show
+            LesliBabel::LabelsController.render(
+                template: "lesli_babel/labels/show",
+                assigns: { label: @label, module: @label.bucket.module },
                 layout: false
             )
         end
