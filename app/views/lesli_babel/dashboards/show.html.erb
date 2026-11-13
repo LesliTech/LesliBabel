@@ -11,27 +11,19 @@
             icon: "translate",
             url: labels_path(missing: true)
         )) %>
-        <% if web_deploy_allowed? %>
-            <%= render(LesliView::Elements::Button.new(
-                "Deploy",
-                solid: true,
-                icon: "rocket_launch",
-                url: deploy_translations_path,
-                method: :post
-            )) %>
-        <% end %>
+        <%= render "lesli_babel/partials/deploy_button" %>
     <% end %>
 
     <%= render(LesliView::Components::Toolbar.new) %>
 
-    <section class="grid gap-4 py-6 sm:grid-cols-3" aria-label="Labels requiring attention">
+    <section class="grid gap-4 py-6 sm:grid-cols-2 lg:grid-cols-3" aria-label="Labels requiring attention">
         <% {
             "Need translation" => @stats.dig(:attention, :need_translation),
             "Need help" => @stats.dig(:attention, :need_help),
             "Need context" => @stats.dig(:attention, :need_context)
         }.each do |label, total| %>
             <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p class="text-sm font-medium text-slate-500"><%= label %></p>
+                <p class="text-sm font-medium text-slate-600"><%= label %></p>
                 <p class="mt-2 text-3xl font-semibold tabular-nums text-slate-900"><%= total %></p>
             </article>
         <% end %>
@@ -41,27 +33,27 @@
         <div class="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             <% @stats[:locales].each do |locale| %>
                 <%= link_to labels_path(locale: locale[:code], missing: true),
-                    class: "group flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm transition hover:border-sky-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-500/20 sm:p-6",
-                    aria: { label: "View pending #{locale[:name]} translations" },
+                    class: "group flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm transition hover:border-sky-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 focus-visible:ring-offset-2 sm:p-6",
+                    aria: { label: "#{locale[:name]}: #{locale[:coverage]}% coverage, #{locale[:missing]} pending translations. View pending translations." },
                     data: { turbo_frame: "_top" } do %>
                     <svg class="mb-3 h-12 w-16" aria-hidden="true">
                         <use xlink:href="#locale-<%= locale[:code] %>"></use>
                     </svg>
-                    <h2 class="text-base font-medium text-slate-700">
+                    <h2 class="text-base font-medium text-slate-800">
                         <%= locale[:name] %>
                     </h2>
                     <dl class="mt-3 grid w-full grid-cols-2 gap-3 text-sm">
                         <div>
-                            <dt class="text-slate-500">Translated</dt>
+                            <dt class="text-slate-600">Translated</dt>
                             <dd class="font-semibold tabular-nums text-slate-900"><%= locale[:completed] %></dd>
                         </div>
                         <div>
-                            <dt class="text-slate-500">Pending</dt>
+                            <dt class="text-slate-600">Pending</dt>
                             <dd class="font-semibold tabular-nums text-slate-900"><%= locale[:missing] %></dd>
                         </div>
                     </dl>
                     <div class="mt-4 w-full">
-                        <div class="mb-2 flex items-center justify-between text-xs font-medium text-slate-500">
+                        <div class="mb-2 flex items-center justify-between text-xs font-medium text-slate-600">
                             <span>Coverage</span>
                             <span class="tabular-nums"><%= locale[:coverage] %>%</span>
                         </div>
@@ -71,9 +63,10 @@
                             aria-label="<%= locale[:name] %> coverage"
                             aria-valuemin="0"
                             aria-valuemax="100"
-                            aria-valuenow="<%= locale[:coverage] %>">
+                            aria-valuenow="<%= locale[:coverage] %>"
+                            aria-valuetext="<%= locale[:coverage] %>% coverage">
                             <div
-                                class="h-full rounded-full bg-sky-500 transition-all"
+                                class="h-full rounded-full bg-sky-600 transition-all"
                                 style="width: <%= locale[:coverage] %>%">
                             </div>
                         </div>

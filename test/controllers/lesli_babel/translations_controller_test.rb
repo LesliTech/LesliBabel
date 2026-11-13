@@ -49,6 +49,23 @@ module LesliBabel
             assert_includes response.body, "Translations deployed successfully."
         end
 
+        test "shows the deploy error notification in the web interface" do
+            deploy = lambda do
+                {
+                    files: [],
+                    errors: ["LesliSupport/en: module not found"]
+                }
+            end
+
+            with_deploy_service(deploy) do
+                post :deploy, format: :turbo_stream
+            end
+
+            assert_response :unprocessable_content
+            assert_includes response.body, "LesliSupport/en: module not found"
+            assert_not_includes response.body, "Translations deployed successfully."
+        end
+
         test "returns every generation error without reporting success" do
             deploy = lambda do
                 {
@@ -94,6 +111,15 @@ module LesliBabel
             assert_response :forbidden
             assert_equal 0, calls
             assert_equal "Web translation deploy is disabled.", response.parsed_body["message"]
+        end
+
+        test "shows the disabled deploy notification in the web interface" do
+            Lesli.config.babel[:allow_web_deploy] = false
+
+            post :deploy, format: :turbo_stream
+
+            assert_response :forbidden
+            assert_includes response.body, "Web translation deploy is disabled."
         end
 
         test "does not expose actions backed by retired services" do

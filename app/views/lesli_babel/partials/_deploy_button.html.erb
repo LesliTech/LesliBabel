@@ -1,0 +1,21 @@
+<% if web_deploy_allowed? %>
+    <%= render LesliView::Elements::Button.new(
+        "Deploy",
+        solid: true,
+        icon: "rocket_launch",
+        url: deploy_translations_path,
+        method: :post,
+        data: {
+            turbo_confirm: "Deploy translations? This will replace the official YAML translation files with the translations currently stored in the database.",
+            turbo_submits_with: "Deploying..."
+        }
+    ) %>
+<% else %>
+    <%= render LesliView::Elements::Button.new(
+        "Web deploy disabled",
+        solid: false,
+        icon: "lock",
+        disabled: true,
+        aria_label: "Web translation deploy is disabled"
+    ) %>
+<% end %>

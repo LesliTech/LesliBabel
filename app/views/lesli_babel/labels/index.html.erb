@@ -26,7 +26,7 @@ columns = [{
     end
     %>
     <%= render(LesliView::Components::Header.new(title)) do %>
-        <%= render(LesliView::Elements::Button.new('Deploy', icon:'rocket_launch', url:deploy_translations_path, method: :post)) %>
+        <%= render "lesli_babel/partials/deploy_button" %>
         <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) if @module %>
     <% end %>
 

@@ -42,6 +42,40 @@ module LesliBabel
             assert_equal [:es, :en], stats[:locales].pluck(:code)
         end
 
+        test "stats reports a configured locale without translations" do
+            Lesli.config.babel[:locales] = {
+                en: "English",
+                es: "Español",
+                fr: "Français"
+            }
+
+            french = TranslationService
+                .new(@current_user)
+                .stats
+                .fetch(:locales)
+                .find { |locale| locale[:code] == :fr }
+
+            assert_equal({
+                completed: 0,
+                missing: 5,
+                coverage: 0
+            }, french.slice(:completed, :missing, :coverage))
+        end
+
+        test "stats reports a fully translated catalog" do
+            Label.where.not(status: :disabled).update_all(en: "Translated", es: "Traducido")
+
+            translated_stats = TranslationService.new(@current_user).stats
+
+            translated_stats[:locales].each do |locale|
+                assert_equal 5, locale[:completed]
+                assert_equal 0, locale[:missing]
+                assert_equal 100, locale[:coverage]
+            end
+            assert_equal 0, translated_stats.dig(:summary, :pending_translations)
+            assert_equal 100, translated_stats.dig(:summary, :coverage)
+        end
+
         test "stats reports the catalog summary" do
             assert_equal({
                 configured_locales: 2,
