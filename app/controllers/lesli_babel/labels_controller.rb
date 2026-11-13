@@ -7,6 +7,7 @@ module LesliBabel
         def index
             query[:pagination][:perPage] = 100
             @labels = respond_with_pagination(LabelService.new(current_user, query).index(params))
+            @missing_locale = configured_locale_name(params[:locale]) if params[:missing].to_s == "true"
         end
 
         # GET /labels/1
@@ -104,6 +105,14 @@ module LesliBabel
             modules_id = params.dig(:modules_id)
             modules_id = @label.result.bucket.module if @label
             @module = ModuleService.new(current_user, query).find(modules_id).result
+        end
+
+        def configured_locale_name(locale)
+            Lesli.config.babel.fetch(:locales).each do |code, name|
+                return name if code.to_s == locale.to_s
+            end
+
+            nil
         end
 
         # Only allow a list of trusted parameters through.

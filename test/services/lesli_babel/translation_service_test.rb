@@ -23,25 +23,43 @@ module LesliBabel
             Lesli.config.babel[:locales] = @original_locales
         end
 
-        test "stats returns actionable translation progress" do
+        test "stats counts every registered label" do
             service = TranslationService.new(@current_user)
             stats = service.stats
-            locales = stats[:locales].index_by { |locale| locale[:code] }
 
             assert_not_respond_to service, :deploy
             assert_equal 6, stats[:total_labels]
+        end
+
+        test "stats reports completed missing and coverage for every locale" do
+            locales = stats[:locales].index_by { |locale| locale[:code] }
+
             assert_equal({ completed: 3, missing: 2, coverage: 60 }, locales[:en].slice(:completed, :missing, :coverage))
             assert_equal({ completed: 1, missing: 4, coverage: 20 }, locales[:es].slice(:completed, :missing, :coverage))
+        end
+
+        test "stats orders locales from lowest to highest coverage" do
+            assert_equal [:es, :en], stats[:locales].pluck(:code)
+        end
+
+        test "stats reports the catalog summary" do
             assert_equal({
                 configured_locales: 2,
                 pending_translations: 6,
                 coverage: 40
             }, stats[:summary])
-            assert_equal({
-                need_translation: 2,
-                need_help: 1,
-                need_context: 1
-            }, stats[:attention])
+        end
+
+        test "stats counts labels that need translation" do
+            assert_equal 2, stats.dig(:attention, :need_translation)
+        end
+
+        test "stats counts labels that need help" do
+            assert_equal 1, stats.dig(:attention, :need_help)
+        end
+
+        test "stats counts labels that need context" do
+            assert_equal 1, stats.dig(:attention, :need_context)
         end
 
         test "coverage is zero when no labels are translatable" do
@@ -56,6 +74,12 @@ module LesliBabel
             end
             assert_equal 0, stats.dig(:summary, :pending_translations)
             assert_equal 0, stats.dig(:summary, :coverage)
+        end
+
+        private
+
+        def stats
+            @stats ||= TranslationService.new(@current_user).stats
         end
     end
 end

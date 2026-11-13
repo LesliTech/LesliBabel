@@ -39,7 +39,19 @@ module LesliBabel
         end
 
         def index params
-            self.builder(modules_id:params[:modules_id])
+            labels = self.builder(modules_id:params[:modules_id])
+            locale = missing_locale(params)
+
+            if locale
+                labels = labels
+                    .where(
+                        "lesli_babel_labels.status IS NULL OR lesli_babel_labels.status != ?",
+                        Label.statuses.fetch("disabled")
+                    )
+                    .where(locale => [nil, ""])
+            end
+
+            labels
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
             .order(status: :desc )
@@ -48,6 +60,17 @@ module LesliBabel
 
         def show 
             self.builder.find_by_id(self.resource.id)
+        end
+
+        private
+
+        def missing_locale(params)
+            return unless params[:missing].to_s == "true"
+
+            locale = params[:locale].to_s
+            Lesli.config.babel.fetch(:locales).keys
+                .map(&:to_s)
+                .find { |configured_locale| configured_locale == locale }
         end
     end
 end

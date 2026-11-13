@@ -27,10 +27,11 @@ module LesliBabel
 
             completed_translations = locales.sum { |locale| locale[:completed] }
             pending_translations = locales.sum { |locale| locale[:missing] }
+            status_counts = labels.reselect(:status).group(:status).count
 
             {
                 total_labels: labels.reselect(:id).count,
-                locales: locales,
+                locales: locales.sort_by { |locale| [locale[:coverage], locale[:name].to_s] },
                 summary: {
                     configured_locales: locales.size,
                     pending_translations: pending_translations,
@@ -40,9 +41,9 @@ module LesliBabel
                     )
                 },
                 attention: {
-                    need_translation: labels.where(status: :need_translation).reselect(:id).count,
-                    need_help: labels.where(status: :need_help).reselect(:id).count,
-                    need_context: labels.where(status: :need_context).reselect(:id).count
+                    need_translation: status_counts.fetch("need_translation", 0),
+                    need_help: status_counts.fetch("need_help", 0),
+                    need_context: status_counts.fetch("need_context", 0)
                 }
             }
         end
