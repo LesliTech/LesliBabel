@@ -67,6 +67,30 @@ module LesliBabel
             assert_not labels.key?("message_disabled")
         end
 
+        test "preserves existing values and interpolation tokens without transformation" do
+            bucket = create_bucket("labels")
+            translation = "  Found %{count} results  "
+            bucket.labels.create!(text: "message_results", en: translation)
+
+            document = YAML.safe_load(export[:content])
+
+            assert_equal translation, document.dig("en", "lesli_babel", "labels", "message_results")
+        end
+
+        test "does not persist generated placeholders in labels" do
+            bucket = create_bucket("labels")
+            label = bucket.labels.create!(text: "message_missing", en: "")
+            original_updated_at = label.updated_at
+
+            document = YAML.safe_load(export[:content])
+
+            label.reload
+            assert_equal ":lesli_babel.labels.message_missing:", document.dig("en", "lesli_babel", "labels", "message_missing")
+            assert_equal "", label.en
+            assert_nil label.last_update_en
+            assert_equal original_updated_at, label.updated_at
+        end
+
         test "normalizes symbol locales to string keys and filenames" do
             bucket = create_bucket("labels")
             bucket.labels.create!(text: "title", es: "Traducciones")
@@ -84,13 +108,15 @@ module LesliBabel
         end
 
         test "raises when the module does not exist for the platform" do
-            assert_raises(ActiveRecord::RecordNotFound) do
+            error = assert_raises(ActiveRecord::RecordNotFound) do
                 TranslationExportService.call(
                     engine: @engine,
                     platform: "rails_app",
                     locale: :en
                 )
             end
+
+            assert_equal "Translation module not found: code=lesli_babel, platform=rails_app", error.message
         end
 
         private

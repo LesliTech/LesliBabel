@@ -31,10 +31,14 @@ module LesliBabel
 
         def call
             # Export only the module owned by the requested engine and platform
-            translation_module = Module.find_by!(
+            translation_module = Module.find_by(
                 code: engine.fetch(:code),
                 platform: platform
             )
+            unless translation_module
+                raise ActiveRecord::RecordNotFound,
+                    "Translation module not found: code=#{engine.fetch(:code)}, platform=#{platform}"
+            end
 
             # Return the expected destination and content without writing the file
             {

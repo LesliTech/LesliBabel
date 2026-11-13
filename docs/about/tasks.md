@@ -10,6 +10,8 @@ bin/rails lesli_babel:scan
 
 The task reads the Lesli route matrix and creates missing translation modules and buckets. It is safe to rerun: existing records are found instead of duplicated.
 
+The `rails_app` resource namespace is registered as the `main_app` module on the `rails_app` platform. Lesli core is registered as `lesli` on `lesli_core`; every other engine uses `lesli_engine`.
+
 | Property | Value |
 | --- | --- |
 | Environment | Development, test, or controlled application setup |
@@ -38,6 +40,32 @@ Termline reports each processed engine and translation file. Structural errors a
 
 The standard `bin/rails lesli:db:prepare` task runs `scan` followed by `import` automatically when LesliBabel is installed.
 
+## Export Locale Files
+
+Export translations to a temporary directory:
+
+```shell
+bin/rails lesli_babel:export
+```
+
+Or provide an explicit output directory:
+
+```shell
+bin/rails "lesli_babel:export[/path/to/output]"
+```
+
+The task generates every document through `LesliBabel::TranslationExportService` before writing. Exported files are grouped by engine code inside the output directory, and Termline reports the engine and filename. Official files inside installed engines are never modified.
+
+## Deploy Locale Files
+
+```shell
+bin/rails lesli_babel:deploy
+```
+
+The task invokes `LesliBabel::TranslationDeployService` to replace the official locale files safely. Termline reports the engine and filename for every updated file without printing counters or aggregate statistics.
+
+All documents are generated and staged before deployment. Generation errors make the task fail without writing files, while filesystem errors propagate immediately. Repeated deploys from unchanged database translations produce identical YAML content.
+
 ## Unsupported Task Stubs
 
-The repository currently exposes `lesli_babel:clean` and `lesli_babel:export`, but they are not supported operational commands: `clean` still references the retired `CloudBabel` namespace and `export` does not write output. Do not use them in installation, deployment, or release automation until their implementations are completed and tested.
+The repository currently exposes `lesli_babel:clean`, but it is not a supported operational command because it still references the retired `CloudBabel` namespace. Do not use it in installation, deployment, or release automation until its implementation is replaced and tested.

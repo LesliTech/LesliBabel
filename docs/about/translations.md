@@ -105,6 +105,17 @@ Deploy consumes the documents produced by export and writes each `content` value
 
 Filesystem and serialization failures propagate to the caller. A failed export must produce no source-file changes.
 
+`LesliBabel::TranslationDeployService` discovers installed packages and configured locales, generates every export before touching the filesystem, verifies all destinations, stages temporary files beside their targets, and replaces each destination with an atomic rename:
+
+```ruby
+result = LesliBabel::TranslationDeployService.call
+
+result[:files]  # official locale files replaced successfully
+result[:errors] # module or locale errors that prevented every write
+```
+
+The host application is mapped to `main_app` on `rails_app`, Lesli core to `lesli` on `lesli_core`, and other engines to their catalog code on `lesli_engine`. Filesystem errors are not converted into result errors; they propagate to the caller.
+
 ### Locales
 
 The only locales managed by export and deploy are the keys configured in:
@@ -134,6 +145,8 @@ A blank database value is exported using its complete path as a placeholder:
 ```yaml
 message_not_found: ":lesli_babel.labels.message_not_found:"
 ```
+
+The placeholder exists only in the exported document and is never assigned back to the Active Record label. Existing values are serialized without trimming or transformation, including interpolation tokens such as `%{count}`.
 
 Labels whose status is `disabled` are excluded. All other statuses, including `nil`, remain exportable.
 
