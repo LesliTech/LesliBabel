@@ -5,7 +5,13 @@ module LesliBabel
     class TranslationImportServiceTest < ActiveSupport::TestCase
         setup do
             @yaml_file = Tempfile.new(["translations.en", ".yml"])
-            @yaml_file.write("---\nen: {}\n")
+            @yaml_file.write(<<~YAML)
+                ---
+                en:
+                  lesli_babel:
+                    labels:
+                      button_save: "Save"
+            YAML
             @yaml_file.close
         end
 
@@ -80,6 +86,39 @@ module LesliBabel
                     platform: "lesli_engine"
                 )
             end
+        end
+
+        test "rejects invalid levels and includes their paths" do
+            invalid_documents = {
+                "---\n- en\n" => ["<root>", "locales"],
+                "---\nen: invalid\n" => ["en", "modules"],
+                "---\nen:\n  lesli_babel: invalid\n" => ["en.lesli_babel", "buckets"],
+                "---\nen:\n  lesli_babel:\n    labels: invalid\n" => ["en.lesli_babel.labels", "labels"],
+                "---\nen:\n  lesli_babel:\n    labels:\n      button_save:\n        nested: invalid\n" => ["en.lesli_babel.labels.button_save", "string"]
+            }
+
+            invalid_documents.each do |yaml, (path, expected)|
+                write_yaml(yaml)
+
+                error = assert_raises(TranslationImportService::InvalidStructureError) do
+                    TranslationImportService.call(
+                        file_path: @yaml_file.path,
+                        platform: "lesli_engine"
+                    )
+                end
+
+                assert_includes error.message, path
+                assert_includes error.message, "expected #{expected}"
+            end
+        end
+
+        private
+
+        def write_yaml(yaml)
+            @yaml_file.open
+            @yaml_file.truncate(0)
+            @yaml_file.write(yaml)
+            @yaml_file.close
         end
     end
 end
