@@ -16,7 +16,6 @@ module LesliBabel
             Label.create!(bucket: bucket, text: "Blank", status: :need_translation, en: "", es: "")
             Label.create!(bucket: bucket, text: "Help", status: :need_help, en: "Help")
             Label.create!(bucket: bucket, text: "Context", status: :need_context)
-            Label.create!(bucket: bucket, text: "Disabled", status: :disabled, en: "", es: "")
         end
 
         teardown do
@@ -28,7 +27,7 @@ module LesliBabel
             stats = service.stats
 
             assert_not_respond_to service, :deploy
-            assert_equal 6, stats[:total_labels]
+            assert_equal 5, stats[:total_labels]
         end
 
         test "stats reports completed missing and coverage for every locale" do
@@ -63,7 +62,7 @@ module LesliBabel
         end
 
         test "stats reports a fully translated catalog" do
-            Label.where.not(status: :disabled).update_all(en: "Translated", es: "Traducido")
+            Label.update_all(en: "Translated", es: "Traducido")
 
             translated_stats = TranslationService.new(@current_user).stats
 
@@ -96,8 +95,8 @@ module LesliBabel
             assert_equal 1, stats.dig(:attention, :need_context)
         end
 
-        test "coverage is zero when no labels are translatable" do
-            Label.update_all(status: :disabled)
+        test "coverage is zero when the catalog is empty" do
+            Label.delete_all
 
             stats = TranslationService.new(@current_user).stats
 

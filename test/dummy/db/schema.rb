@@ -80,7 +80,6 @@ ActiveRecord::Schema[8.1].define(version: 901120110) do
     t.index ["bucket_id"], name: "index_lesli_babel_labels_on_bucket_id"
     t.index ["deleted_at"], name: "index_lesli_babel_labels_on_deleted_at"
     t.index ["status"], name: "idx_babel_labels_on_status"
-    t.check_constraint "status IS NULL OR status IN ('ok', 'disabled', 'need_help', 'need_context', 'need_translation')", name: "chk_babel_labels_status"
   end
 
   create_table "lesli_babel_modules", force: :cascade do |t|

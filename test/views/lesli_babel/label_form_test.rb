@@ -47,9 +47,28 @@ module LesliBabel
             assert_includes document.text, "Tokens: %{count}, :records"
             assert_includes document.text, "Missing translation"
             assert_equal "Missing translation", missing["placeholder"]
+            missing_languages = document.at_css("[aria-label='Missing translation languages']")
+            assert_includes missing_languages.text, "Español"
+            assert_not_includes missing_languages.text, "English"
+            assert_nil document.at_css("select[name='label[status]'] option[value='disabled']")
             assert_nil document.at_css("input[name='label[path]']")
             assert_nil document.at_css("legend")
             assert_not_includes document.text, "Label ok"
+        end
+
+        test "warns when a label needs context but has no context" do
+            @label.update!(status: :need_context, context: "")
+
+            document = Nokogiri::HTML.fragment(rendered_form)
+            warning = document.at_css("[role='alert']")
+
+            assert_includes warning.text, "Context required"
+            assert_includes warning.text, "no context has been provided"
+
+            @label.update!(context: "Shown in the main navigation")
+
+            document = Nokogiri::HTML.fragment(rendered_form)
+            assert_nil document.at_css("[role='alert']")
         end
 
         test "presents the path in the header and metadata inside the form" do

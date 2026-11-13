@@ -35,7 +35,6 @@ module LesliBabel
         test "index filters pending translations for a configured locale" do
             missing = Label.create!(bucket: @bucket, text: "Missing", status: :ok, en: nil)
             blank = Label.create!(bucket: @bucket, text: "Blank", status: :need_translation, en: "")
-            Label.create!(bucket: @bucket, text: "Disabled", status: :disabled, en: nil)
 
             query = { pagination: { page: 1, perPage: 100 } }
             records = LabelService.new(nil, query).index(locale: "en", missing: "true")
@@ -46,7 +45,6 @@ module LesliBabel
         test "index filters labels missing any configured locale without duplicates" do
             complete = Label.create!(bucket: @bucket, text: "Complete", status: :ok, en: "Complete", es: "Completo")
             missing_both = Label.create!(bucket: @bucket, text: "Missing both", status: :need_translation, en: nil, es: nil)
-            Label.create!(bucket: @bucket, text: "Disabled", status: :disabled, en: nil, es: nil)
             query = { pagination: { page: 1, perPage: 100 } }
 
             records = LabelService.new(nil, query).index(missing: "true")

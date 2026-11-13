@@ -11,7 +11,14 @@ module LesliBabel
         end
 
         test "defines translation workflow statuses" do
-            assert_equal %w[ok disabled need_help need_context need_translation], LesliBabel::Label.statuses.keys
+            assert_equal %w[ok need_help need_context need_translation], LesliBabel::Label.statuses.keys
+        end
+
+        test "validates editorial statuses in the model" do
+            label = LesliBabel::Label.new(status: "unsupported")
+
+            assert_predicate label, :invalid?
+            assert_includes label.errors[:status], "is not included in the list"
         end
 
         test "maps workflow statuses to display categories" do
@@ -19,7 +26,6 @@ module LesliBabel
             assert_equal "info", LesliBabel::Label.new(status: :need_context).category
             assert_equal "danger", LesliBabel::Label.new(status: :need_translation).category
             assert_equal "ok", LesliBabel::Label.new(status: :ok).category
-            assert_equal "ok", LesliBabel::Label.new(status: :disabled).category
         end
 
         test "normalizes text and records its bucket reference before creation" do

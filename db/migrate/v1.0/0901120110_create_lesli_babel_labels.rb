@@ -76,25 +76,9 @@ class CreateLesliBabelLabels < ActiveRecord::Migration[7.2]
             t.datetime  :deleted_at
             t.timestamps
         end
-        add_reference(
-            :lesli_babel_labels,
-            :bucket,
-            null: false,
-            foreign_key: { to_table: :lesli_babel_buckets }
-        )
-        add_index(
-            :lesli_babel_labels,
-            %i[bucket_id text],
-            unique: true,
-            where: "deleted_at IS NULL",
-            name: "idx_babel_labels_unique_active_bucket_text"
-        )
-        add_index :lesli_babel_labels, :status, name: "idx_babel_labels_on_status"
-        add_index :lesli_babel_labels, :deleted_at
-        add_check_constraint(
-            :lesli_babel_labels,
-            "status IS NULL OR status IN ('ok', 'disabled', 'need_help', 'need_context', 'need_translation')",
-            name: "chk_babel_labels_status"
-        )
+        add_reference(:lesli_babel_labels, :bucket, null: false, foreign_key: { to_table: :lesli_babel_buckets })
+        add_index(:lesli_babel_labels, %i[bucket_id text], unique: true, where: "deleted_at IS NULL", name: "idx_babel_labels_unique_active_bucket_text")
+        add_index(:lesli_babel_labels, :status, name: "idx_babel_labels_on_status")
+        add_index(:lesli_babel_labels, :deleted_at)
     end
 end

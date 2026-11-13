@@ -68,10 +68,7 @@ module LesliBabel
             translation_module.buckets.order(:code).each do |bucket|
                 labels = {}
 
-                # Disabled labels do not belong in generated translation files
-                bucket.labels
-                    .where("status IS NULL OR status != ?", Label.statuses.fetch("disabled"))
-                    .order(:text).each do |label|
+                bucket.labels.order(:text).each do |label|
 
                     # Build labels in text order and keep every key as a string
                     labels[label.text.to_s] = translation_value(translation_module, bucket, label)

@@ -54,6 +54,24 @@ module LesliBabel
             assert_includes response.body, "Translations saved successfully."
         end
 
+        test "does not change the editorial status when translations are saved" do
+            @label.update!(status: :need_help, es: "")
+
+            patch :update, params: {
+                id: @label.id,
+                label: {
+                    context: "Navigation title",
+                    en: "Labels",
+                    es: "Traducciones"
+                }
+            }, format: :turbo_stream
+
+            assert_response :success
+            @label.reload
+            assert_equal "need_help", @label.status
+            assert_equal "Traducciones", @label.es
+        end
+
         test "renders the editor inside the requested panel frame" do
             @request.headers["Turbo-Frame"] = "babel-label-editor"
 

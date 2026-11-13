@@ -27,7 +27,7 @@ module LesliBabel
             ).labels
             labels.create!(text: "message_count", en: "Found %{count} results")
             labels.create!(text: "message_missing", en: "")
-            labels.create!(text: "message_disabled", status: :disabled, en: "Disabled")
+            labels.create!(text: "message_help", status: :need_help, en: "Help")
 
             original_export = TranslationExportService.call(
                 engine: @engine,
@@ -63,6 +63,13 @@ module LesliBabel
                     "round_trip",
                     "labels",
                     "message_count"
+                )
+            assert_equal "Help",
+                YAML.safe_load(imported_export[:content]).dig(
+                    "en",
+                    "round_trip",
+                    "labels",
+                    "message_help"
                 )
         end
     end

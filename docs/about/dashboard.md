@@ -6,17 +6,17 @@ The LesliBabel dashboard summarizes the state of the database catalog and provid
 
 | Metric | Meaning |
 | --- | --- |
-| Total labels | Every label registered in the catalog, including disabled labels. |
+| Total labels | Every label registered in the catalog. |
 | Configured locales | Number of locale keys in `Lesli.config.babel[:locales]`. |
-| Pending translations | Sum of blank values across all configured locales and non-disabled labels. Both `NULL` and an empty string are pending. |
+| Pending translations | Sum of blank values across all configured locales and labels. Both `NULL` and an empty string are pending. |
 | Global coverage | Completed values divided by all completed and pending values across configured locales, rounded to the nearest whole percentage. |
 
-When there are no configured locales or no translatable labels, pending translations and coverage are both `0`.
+When there are no configured locales or no labels, pending translations and coverage are both `0`.
 
-Each locale card uses the same non-disabled label set and shows:
+Each locale card uses the same label set and shows:
 
 - `Translated`: labels whose value for that locale is neither `NULL` nor an empty string.
-- `Pending`: non-disabled labels without a value for that locale.
+- `Pending`: labels without a value for that locale.
 - `Coverage`: `translated / (translated + pending)`, rounded to the nearest whole percentage.
 
 Locale cards are ordered from the lowest coverage to the highest coverage so the languages requiring attention appear first. Selecting a card opens the labels list filtered to missing translations for that locale. The pending-translations action in the header opens labels missing a value in any configured locale.
@@ -32,9 +32,10 @@ Workflow states describe why a label requires attention. They are independent fr
 | `need_translation` | One or more values still require translation or review. | Included; blank values become full-path placeholders. |
 | `need_help` | The translator needs linguistic or technical assistance. | Included. |
 | `need_context` | The label needs product or interface context before it can be translated confidently. | Included. |
-| `disabled` | The label is intentionally inactive and must not be released. | Excluded from export and coverage calculations. |
 
 The dashboard attention cards count labels marked `need_translation`, `need_help`, and `need_context`. These are label counts, not missing-value counts, so they can differ from pending translations.
+
+Saving translations never changes the editorial status automatically. The editor lists every configured language whose value is blank regardless of the selected status, and warns when a label marked `need_context` has no context.
 
 ## Web Deploy Flow
 

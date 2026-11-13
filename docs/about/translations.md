@@ -68,8 +68,8 @@ Keep interpolation tokens such as `%{count}` unchanged across locales.
 
 The dashboard contract contains only actionable information:
 
-- `total_labels`: every registered label, including disabled labels.
-- `locales`: completed, missing, and coverage percentage for each configured locale. Disabled labels are excluded from these calculations because they are not exported.
+- `total_labels`: every registered label.
+- `locales`: completed, missing, and coverage percentage for each configured locale.
 - `summary`: configured locales, pending translations, and global coverage across every translatable locale value.
 - `attention`: global counts for `need_translation`, `need_help`, and `need_context`.
 
@@ -107,7 +107,7 @@ result[:file_path] # expected config/locales destination
 result[:content]   # serialized YAML with string keys
 ```
 
-The service looks up exactly one module by the engine `code` and requested `platform`, orders buckets and labels by code, generates placeholders for blank values, and excludes labels whose status is `disabled`.
+The service looks up exactly one module by the engine `code` and requested `platform`, orders buckets and labels by code, and generates placeholders for blank values. Editorial status does not affect export.
 
 ### Deploy
 
@@ -148,7 +148,7 @@ Every generated file contains exactly one owning module:
 
 Labels from another module are never copied into the file. This keeps ownership portable and prevents the same translation from being maintained in multiple packages.
 
-### Missing and Disabled Values
+### Missing Values
 
 A blank database value is exported using its complete path as a placeholder:
 
@@ -158,7 +158,7 @@ message_not_found: ":lesli_babel.labels.message_not_found:"
 
 The placeholder exists only in the exported document and is never assigned back to the Active Record label. Existing values are serialized without trimming or transformation, including interpolation tokens such as `%{count}`.
 
-Labels whose status is `disabled` are excluded. All other statuses, including `nil`, remain exportable.
+Every label remains exportable regardless of its editorial status. Coverage is calculated separately from status by inspecting the configured locale values directly.
 
 ### Shared and Application Buckets
 

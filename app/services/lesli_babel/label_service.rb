@@ -43,12 +43,7 @@ module LesliBabel
             condition = missing_condition(params)
 
             if condition
-                labels = labels
-                    .where(
-                        "lesli_babel_labels.status IS NULL OR lesli_babel_labels.status != ?",
-                        Label.statuses.fetch("disabled")
-                    )
-                    .where(condition)
+                labels = labels.where(condition)
             end
 
             labels

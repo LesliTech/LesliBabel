@@ -8,11 +8,10 @@ module LesliBabel
 
         enum :status, {
             :ok => "ok",
-            :disabled => "disabled",
             :need_help => "need_help",
             :need_context => "need_context",
             :need_translation => "need_translation"
-        }
+        }, validate: { allow_nil: true }
 
         enum :prefix, {
 

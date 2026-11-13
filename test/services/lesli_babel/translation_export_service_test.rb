@@ -53,18 +53,18 @@ module LesliBabel
             assert_equal "Engine", document.dig("en", "lesli_babel", "engine", "title")
         end
 
-        test "uses placeholders for blank values and excludes disabled labels" do
+        test "uses placeholders and exports labels independently of editorial status" do
             bucket = create_bucket("labels")
             bucket.labels.create!(text: "message_missing", en: "")
-            bucket.labels.create!(text: "message_disabled", status: :disabled, en: "Disabled")
-            bucket.labels.create!(text: "message_enabled", status: :ok, en: "Enabled")
+            bucket.labels.create!(text: "message_help", status: :need_help, en: "Help")
+            bucket.labels.create!(text: "message_context", status: :need_context, en: "Context")
 
             document = YAML.safe_load(export[:content])
             labels = document.dig("en", "lesli_babel", "labels")
 
             assert_equal ":lesli_babel.labels.message_missing:", labels.fetch("message_missing")
-            assert_equal "Enabled", labels.fetch("message_enabled")
-            assert_not labels.key?("message_disabled")
+            assert_equal "Help", labels.fetch("message_help")
+            assert_equal "Context", labels.fetch("message_context")
         end
 
         test "preserves existing values and interpolation tokens without transformation" do

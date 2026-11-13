@@ -21,6 +21,21 @@
                     <strong class="ml-1 font-medium text-slate-700"><%= @label.translation_bucket_code.titleize %></strong>
                 </span>
             </div>
+
+            <% missing_languages = missing_translation_languages(@label) %>
+            <% if missing_languages.any? %>
+                <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status" aria-label="Missing translation languages">
+                    <p class="font-semibold">Missing translations</p>
+                    <p class="mt-1"><%= missing_languages.to_sentence %></p>
+                </div>
+            <% end %>
+
+            <% if @label.need_context? && @label.context.blank? %>
+                <div class="mb-6 rounded-xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900" role="alert">
+                    <p class="font-semibold">Context required</p>
+                    <p class="mt-1">This label is marked Need context, but no context has been provided.</p>
+                </div>
+            <% end %>
         <% end %>
 
         <% if @label.errors.any? %>

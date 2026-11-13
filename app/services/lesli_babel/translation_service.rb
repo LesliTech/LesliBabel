@@ -4,14 +4,10 @@ module LesliBabel
 
         def stats
             labels = LabelService.new(current_user, query).builder
-            translatable_labels = labels.where(
-                "lesli_babel_labels.status IS NULL OR lesli_babel_labels.status != ?",
-                Label.statuses.fetch("disabled")
-            )
-            translatable_count = translatable_labels.reselect(:id).count
+            label_count = labels.reselect(:id).count
 
             locales = Lesli.config.babel.fetch(:locales).map do |locale_code, locale_name|
-                completed = translatable_labels
+                completed = labels
                     .reselect(:id)
                     .where.not(locale_code => [nil, ""])
                     .count
@@ -20,8 +16,8 @@ module LesliBabel
                     code: locale_code,
                     name: locale_name,
                     completed: completed,
-                    missing: translatable_count - completed,
-                    coverage: coverage(completed, translatable_count)
+                    missing: label_count - completed,
+                    coverage: coverage(completed, label_count)
                 }
             end
 
@@ -30,7 +26,7 @@ module LesliBabel
             status_counts = labels.reselect(:status).group(:status).count
 
             {
-                total_labels: labels.reselect(:id).count,
+                total_labels: label_count,
                 locales: locales.sort_by { |locale| [locale[:coverage], locale[:name].to_s] },
                 summary: {
                     configured_locales: locales.size,
