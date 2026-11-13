@@ -43,7 +43,7 @@ module LesliBabel
             # Return the expected destination and content without writing the file
             {
                 file_path: translation_file_path,
-                content: build_document(translation_module).to_yaml
+                content: serialize(build_document(translation_module))
             }
         end
 
@@ -94,6 +94,29 @@ module LesliBabel
 
             # Represent missing values with their complete translation path
             ":#{translation_module.code}.#{bucket.code}.#{label.text}:"
+        end
+
+        # Quote every translation value while keeping locale, module, bucket,
+        # and label keys as plain strings. This preserves interpolation tokens
+        # and prevents YAML punctuation from changing a value's scalar type.
+        def serialize(document)
+            stream = Psych.parse_stream(document.to_yaml)
+            quote_values(stream.children.first.root)
+            stream.to_yaml(nil, line_width: -1)
+        end
+
+        def quote_values(node, depth = 0)
+            return unless node.is_a?(Psych::Nodes::Mapping)
+
+            node.children.each_slice(2) do |_key, value|
+                if depth == 3 && value.is_a?(Psych::Nodes::Scalar)
+                    value.style = Psych::Nodes::Scalar::DOUBLE_QUOTED
+                    value.plain = false
+                    value.quoted = true
+                else
+                    quote_values(value, depth + 1)
+                end
+            end
         end
     end
 end
