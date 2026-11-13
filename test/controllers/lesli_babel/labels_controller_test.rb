@@ -40,7 +40,7 @@ module LesliBabel
                 label: {
                     status: "ok",
                     context: "Navigation title",
-                    en: "Translation labels",
+                    en: "Translation labels: %{count} :records",
                     es: "Etiquetas de traducción",
                     fr: "Texte remplacé"
                 }
@@ -48,7 +48,7 @@ module LesliBabel
 
             assert_response :success
             @label.reload
-            assert_equal "Translation labels", @label.en
+            assert_equal "Translation labels: %{count} :records", @label.en
             assert_equal "Etiquetas de traducción", @label.es
             assert_equal "Traductions", @label.fr
         end

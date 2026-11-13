@@ -220,6 +220,7 @@ namespace :lesli_babel do
             end
         end
 
+        # Show this single message to know the status of the import task
         if errors.any?
             Termline.danger("LesliBabel: Translations imported with errors")
         else

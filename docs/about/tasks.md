@@ -44,7 +44,7 @@ Pass `true` to the `silent` argument when the task is used by automation and its
 bin/rails "lesli_babel:import[true]"
 ```
 
-Silent mode suppresses only task messages. YAML, filesystem, database, and other runtime exceptions continue propagating normally.
+Silent mode suppresses the message for each processed file and retains only the final import status. YAML, filesystem, database, and other runtime exceptions continue propagating normally.
 
 The standard `bin/rails lesli:db:prepare` task runs `scan` followed by `import` automatically when LesliBabel is installed.
 

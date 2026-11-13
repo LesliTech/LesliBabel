@@ -16,8 +16,8 @@ module LesliBabel
                 bucket: bucket,
                 text: "page_title",
                 status: :ok,
-                en: "Labels",
-                es: "Traducciones",
+                en: "%{count} :records",
+                es: "",
                 fr: "Traductions"
             )
         end
@@ -30,12 +30,28 @@ module LesliBabel
             html = rendered_form
             document = Nokogiri::HTML.fragment(html)
             copy_button = document.at_css("button[type='button']")
+            path = document.at_css("code[x-ref='path']")
 
-            assert document.at_css("input[name='label[en]']")
-            assert document.at_css("input[name='label[es]']")
-            assert_nil document.at_css("input[name='label[fr]']")
+            source = document.at_css("textarea[name='label[en]']")
+            missing = document.at_css("textarea[name='label[es]']")
+
+            assert source
+            assert missing
+            assert_equal "3", source["rows"]
+            assert_includes source["class"].split, "!min-h-0"
+            assert_nil source["readonly"]
+            assert_nil source["disabled"]
+            assert_nil document.at_css("textarea[name='label[fr]']")
+            context = document.at_css("textarea[name='label[context]']")
+            assert context
+            assert_equal "3", context["rows"]
+            assert_includes context["class"].split, "!min-h-0"
+            assert_includes document.text, "Tokens: %{count}, :records"
+            assert_includes document.text, "Missing translation"
+            assert_equal "Missing translation", missing["placeholder"]
             assert_nil document.at_css("input[name='label[path]']")
-            assert_equal "lesli_babel.labels.page_title", copy_button.at_css("code").text.strip
+            assert_equal "lesli_babel.labels.page_title", path.text.strip
+            assert_includes copy_button["class"].split, "size-9"
             assert_includes html, "navigator.clipboard.writeText"
         end
 

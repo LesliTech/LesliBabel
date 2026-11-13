@@ -114,11 +114,11 @@ module LesliBabel
             assert_equal ["lesli_engine"], service_calls.pluck(:platform).uniq
             assert_equal ["first error", "second error", "third error"], list_calls
             assert_equal 1, danger_calls.size
-            assert_equal ["Translation import finished with errors"], danger_calls.first[:messages]
+            assert_equal ["LesliBabel: Translations imported with errors"], danger_calls.first[:messages]
             assert_empty danger_calls.first[:data]
         end
 
-        test "does not print logs when silent mode is enabled" do
+        test "prints only the final status when silent mode is enabled" do
             engines = {
                 "LesliBabel" => engine(code: "lesli_babel", name: "LesliBabel", dir: "/engines/LesliBabel")
             }
@@ -144,7 +144,9 @@ module LesliBabel
             end
 
             assert_equal [{ file_path: file_path, platform: "lesli_engine" }], service_calls
-            assert_empty messages
+            assert_equal [[[
+                "LesliBabel: Translations imported with errors"
+            ], {}]], messages
         end
 
         private

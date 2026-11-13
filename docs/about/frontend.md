@@ -45,6 +45,8 @@ The shared form builder already supplies Tailwind styling for fieldsets, labels,
 
 The labels index and editor use Alpine.js for copy-to-clipboard feedback. Keep the action as `type="button"`, retain a visible focus state, and update its accessible label when the copy succeeds.
 
+The translation editor renders the locales from `Lesli.config.babel[:locales]` in configuration order. Translation and context values use the shared horizontal textarea control; missing values and interpolation tokens are described beneath their corresponding fields.
+
 ## Avoid Utility Collisions
 
 The application loads stylesheets in this order:

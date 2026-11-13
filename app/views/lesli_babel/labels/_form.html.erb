@@ -25,15 +25,24 @@
             <%= form.field_control_select(:bucket_id, @module.buckets.order(:code).pluck(:code, :id)) %>
             <%= form.field_control_select(:prefix, LesliBabel::Label.prefixes) %>
             <%= form.field_control(:text) %>
-            <%= form.field_control(:context) %>
+            <%= form.field_control_textarea(:context, rows: 3, class: "!min-h-0") %>
         <% end %>
 
         <% unless @label.new_record? %>
             <% babel_locales.each do |locale, language| %>
-                <%= form.field_control(locale, label: language) %>
+                <% missing_translation = @label.public_send(locale).blank? %>
+                <%= form.field_control_textarea(
+                    locale,
+                    label: language,
+                    message: translation_field_message(@label, locale),
+                    category: ("warning" if missing_translation),
+                    rows: 3,
+                    class: "!min-h-0",
+                    placeholder: ("Missing translation" if missing_translation)
+                ) %>
             <% end %>
             <hr class="my-6 border-0 border-t border-slate-200">
-            <%= form.field_control(:context) %>
+            <%= form.field_control_textarea(:context, rows: 3, class: "!min-h-0") %>
             <%= form.field_control_select(:status, LesliBabel::Label.statuses) %>
             <%= render "copy_path", path: @label.translation_path %>
         <% end %>
