@@ -16,6 +16,7 @@ module LesliBabel
         # GET /labels/1
         def show
             @label = @label.show
+            render(:panel, layout: false) if turbo_frame_request?
         end
 
         # GET /labels/new

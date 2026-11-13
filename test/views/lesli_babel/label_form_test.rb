@@ -6,11 +6,11 @@ module LesliBabel
             @original_locales = Lesli.config.babel[:locales]
             Lesli.config.babel[:locales] = { en: "English", es: "Español" }
 
-            translation_module = LesliBabel::Module.create!(code: "lesli_babel", platform: "lesli_engine")
+            @translation_module = LesliBabel::Module.create!(code: "lesli_babel", platform: "lesli_engine")
             bucket = LesliBabel::Bucket.create!(
                 code: "labels",
                 reference_module: "lesli_babel",
-                module: translation_module
+                module: @translation_module
             )
             @label = LesliBabel::Label.create!(
                 bucket: bucket,
@@ -72,6 +72,26 @@ module LesliBabel
             assert_includes metadata.text.squish, "Bucket Labels"
         end
 
+        test "loads the label editor in a side panel without navigating away from the list" do
+            index_html = rendered_index
+            index = Nokogiri::HTML.fragment(index_html)
+            panel = Nokogiri::HTML.fragment(rendered_panel)
+            label_links = index.css("a").select do |link|
+                URI.parse(link["href"]).path == "/babel/labels/#{@label.id}"
+            end
+
+            assert_not_empty label_links
+            assert label_links.all? { |link| link["data-turbo-frame"] == "babel-label-editor" }
+            assert label_links.all? { |link| link["class"].split.include?("link") }
+            assert_includes index_html, "@click=\"$dispatch(&#39;babel-label-panel&#39;)\""
+            assert index.at_css("#babel-label-panel-panel [role='dialog']")
+            assert_equal "Select a translation to edit.", index.at_css("turbo-frame#babel-label-editor").text.strip
+            assert_equal "Page Title", panel.at_css("h3").text.strip
+            assert_nil panel.at_css("code")
+            assert_equal "/babel/labels/#{@label.id}", URI.parse(panel.at_css("form")["action"]).path
+            assert_nil URI.parse(panel.at_css("form")["action"]).query
+        end
+
         private
 
         def rendered_form
@@ -85,7 +105,30 @@ module LesliBabel
         def rendered_show
             LesliBabel::LabelsController.render(
                 template: "lesli_babel/labels/show",
-                assigns: { label: @label, module: @label.bucket.module },
+                assigns: { label: @label, module: @translation_module },
+                layout: false
+            )
+        end
+
+        def rendered_index
+            record = LabelService.new(nil).builder.find(@label.id)
+
+            LesliBabel::LabelsController.render(
+                template: "lesli_babel/labels/index",
+                assigns: {
+                    labels: { records: [record] },
+                    module: @translation_module,
+                    missing_translations: true,
+                    missing_locale: "Español"
+                },
+                layout: false
+            )
+        end
+
+        def rendered_panel
+            LesliBabel::LabelsController.render(
+                template: "lesli_babel/labels/panel",
+                assigns: { label: @label },
                 layout: false
             )
         end

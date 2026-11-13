@@ -54,8 +54,7 @@ module LesliBabel
             labels
             .page(query[:pagination][:page])
             .per(query[:pagination][:perPage])
-            .order(status: :desc )
-            .order(updated_at: :desc)
+            .order(status: :desc, updated_at: :desc, id: :desc)
         end
 
         def show 

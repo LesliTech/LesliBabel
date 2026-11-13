@@ -57,5 +57,17 @@ module LesliBabel
             assert_not_includes ids, complete.id
             assert_equal ids.uniq, ids
         end
+
+        test "index uses the label id as a deterministic ordering tie breaker" do
+            first = Label.create!(bucket: @bucket, text: "First", status: :ok)
+            second = Label.create!(bucket: @bucket, text: "Second", status: :ok)
+            timestamp = Time.current.change(usec: 0)
+            Label.where(id: [first.id, second.id]).update_all(updated_at: timestamp)
+            query = { pagination: { page: 1, perPage: 100 } }
+
+            ids = LabelService.new(nil, query).index({}).pluck(:id)
+
+            assert_operator ids.index(second.id), :<, ids.index(first.id)
+        end
     end
 end

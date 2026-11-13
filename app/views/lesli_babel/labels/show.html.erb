@@ -4,7 +4,7 @@
     <%= render(LesliView::Components::Header.new(
         @label.text.titleize,
         render("copy_path", path: @label.translation_path),
-        back: module_path(@label.bucket.module.id)
+        back: labels_path
     )) %>
 
     <div class="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start">

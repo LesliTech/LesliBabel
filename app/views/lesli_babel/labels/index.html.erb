@@ -27,7 +27,11 @@ columns = [{
     %>
     <%= render(LesliView::Components::Header.new(title)) do %>
         <%= render "lesli_babel/partials/deploy_button" %>
-        <%= render(LesliView::Elements::Button.new("Add new label", icon:"add", url:new_label_path({ modules_id: @module.id }))) if @module %>
+        <%= render(LesliView::Elements::Button.new(
+            "Add new label",
+            icon: "add",
+            url: new_label_path(modules_id: @module.id)
+        )) if @module %>
     <% end %>
 
     <div class="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start">
@@ -40,10 +44,17 @@ columns = [{
                 <% @labels[:records].each do |record| %>
                     <% table.with_row(status: record.category) do |row| %>
                         <% row.with_cell(align: :center) do %>
-                            <%= turbo_link_to(record["id"], label_path(record["id"])) %>
+                            <%= record["id"] %>
                         <% end %>
                         <% row.with_cell do %>
-                            <%= turbo_link_to(record["text"], label_path(record["id"])) %>
+                            <%= link_to(
+                                record["text"],
+                                label_path(record["id"]),
+                                class: "link",
+                                data: { turbo_frame: "babel-label-editor" },
+                                "x-data": "",
+                                "@click": "$dispatch('babel-label-panel')"
+                            ) %>
                         <% end %>
                         <% row.with_cell do %>
                             <div x-data="{ copied: false }">
@@ -70,4 +81,10 @@ columns = [{
             <% end %>
         </div>
     </div>
+<% end %>
+
+<%= render(LesliView::Components::Panel.new("Translation editor", "babel-label-panel")) do %>
+    <%= turbo_frame_tag("babel-label-editor") do %>
+        <p class="text-sm text-slate-500">Select a translation to edit.</p>
+    <% end %>
 <% end %>

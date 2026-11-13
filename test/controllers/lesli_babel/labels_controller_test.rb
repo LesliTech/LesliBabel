@@ -54,6 +54,18 @@ module LesliBabel
             assert_includes response.body, "Translations saved successfully."
         end
 
+        test "renders the editor inside the requested panel frame" do
+            @request.headers["Turbo-Frame"] = "babel-label-editor"
+
+            get :show, params: { id: @label.id }
+
+            assert_response :success
+            assert_select "turbo-frame#babel-label-editor", count: 1
+            assert_select "#lesli-babel-labels-form", count: 1
+            assert_select "h3", text: "Page Title"
+            assert_select "code", count: 0
+        end
+
         test "renders the real validation error in the notification and form" do
             @label.errors.add(:base, "Translation could not be saved")
             @label.define_singleton_method(:update) do |attributes|
