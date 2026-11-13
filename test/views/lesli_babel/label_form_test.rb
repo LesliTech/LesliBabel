@@ -65,6 +65,9 @@ module LesliBabel
             assert_includes metadata["class"].split, "justify-end"
             assert form.at_css("[aria-label='Translation label metadata']")
             assert_includes form.at_css("fieldset")["class"].split, "border-emerald-300"
+            save_button = form.at_css("button[type='submit']")
+            assert_includes save_button.text, "Save translations"
+            assert_nil save_button["data-turbo-submits-with"]
             assert_includes metadata.text.squish, "Module Lesli Babel"
             assert_includes metadata.text.squish, "Bucket Labels"
         end

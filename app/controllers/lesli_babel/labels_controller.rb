@@ -83,7 +83,7 @@ module LesliBabel
             if @label.update(label_params)
                 respond_with_lesli(
                     :turbo => [
-                        stream_notification_success("Translation label updated successfully!"),
+                        stream_notification_success("Translations saved successfully."),
                         turbo_stream.replace('lesli-babel-labels-form', partial: 'lesli_babel/labels/form')
                     ]
                 )

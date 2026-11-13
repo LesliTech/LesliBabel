@@ -51,21 +51,34 @@ module LesliBabel
             assert_equal "Translation labels: %{count} :records", @label.en
             assert_equal "Etiquetas de traducción", @label.es
             assert_equal "Traductions", @label.fr
+            assert_includes response.body, "Translations saved successfully."
         end
 
         test "renders the real validation error in the notification and form" do
             @label.errors.add(:base, "Translation could not be saved")
-            @label.define_singleton_method(:update) { |_attributes| false }
+            @label.define_singleton_method(:update) do |attributes|
+                assign_attributes(attributes)
+                false
+            end
 
             with_label_service(@label) do
                 patch :update, params: {
                     id: @label.id,
-                    label: { status: "ok", context: "", en: "Labels", es: "Traducciones" }
+                    label: {
+                        status: "ok",
+                        context: "Unsaved context",
+                        en: "Unsaved English",
+                        es: "Traducción sin guardar"
+                    }
                 }, format: :turbo_stream
             end
 
             assert_response :unprocessable_content
             assert_includes response.body, "Translation could not be saved"
+            assert_not_includes response.body, "Translations saved successfully."
+            assert_includes response.body, "Unsaved English"
+            assert_includes response.body, "Traducción sin guardar"
+            assert_includes response.body, "Unsaved context"
             assert_select "turbo-stream[action='replace'][target='lesli-babel-labels-form']"
             assert_select "[role='alert']", text: /Translation could not be saved/
         end
