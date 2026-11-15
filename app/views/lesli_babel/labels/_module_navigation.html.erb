@@ -1,53 +1,15 @@
 <%
-modules = LesliBabel::Module.order(:code)
 selected_module_id = @module&.id || @label&.engine_id || params[:modules_id].presence&.to_i
-selected_module = modules.find { |engine| engine.id == selected_module_id }
-
-navigation_items = capture do
-    modules.each do |engine|
-        selected = selected_module_id == engine.id
-%>
-        <li>
-            <%= link_to module_path(engine),
-                class: class_names(
-                    "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-500/20",
-                    "bg-sky-50 text-sky-700" => selected,
-                    "text-slate-700 hover:bg-slate-100" => !selected
-                ),
-                aria: { current: ("page" if selected) },
-                data: { turbo_frame: "_top" } do %>
-                <span class="ri-folder-line text-lg" aria-hidden="true"></span>
-                <span class="truncate"><%= engine.code.titleize %></span>
-            <% end %>
-        </li>
-<%
-    end
+items = LesliBabel::Module.order(:code).map do |engine|
+    {
+        label: engine.code.titleize,
+        path: module_path(engine),
+        selected: selected_module_id == engine.id
+    }
 end
 %>
-
-<details class="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm lg:hidden">
-    <summary
-        class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-sky-500/20 [&::-webkit-details-marker]:hidden"
-        aria-label="Choose module. Current module: <%= selected_module&.code&.titleize || 'All modules' %>">
-        <span class="flex min-w-0 items-center gap-3">
-            <span class="ri-folder-line shrink-0 text-lg text-slate-400" aria-hidden="true"></span>
-            <span class="truncate"><%= selected_module&.code&.titleize || "All modules" %></span>
-        </span>
-        <span class="material-symbols shrink-0 text-xl text-slate-400 transition-transform group-open:rotate-180" aria-hidden="true">expand_more</span>
-    </summary>
-
-    <nav class="max-h-72 overflow-y-auto border-t border-slate-200 p-2" aria-label="Module navigation for small screens">
-        <ul class="space-y-1">
-            <%= navigation_items %>
-        </ul>
-    </nav>
-</details>
-
-<nav class="hidden rounded-xl border border-slate-200 bg-white p-3 shadow-sm lg:sticky lg:top-4 lg:block lg:w-60 lg:shrink-0" aria-label="Module navigation">
-    <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-        Modules
-    </p>
-    <ul class="space-y-1">
-        <%= navigation_items %>
-    </ul>
-</nav>
+<%= render LesliView::Layout::NavigationSidebar.new(
+    items: items,
+    label: t("lesli_babel.navigation.modules"),
+    empty_selection_label: t("lesli_babel.navigation.all_modules")
+) %>
