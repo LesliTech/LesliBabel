@@ -157,22 +157,27 @@ module LesliBabel
 
         test "renders responsive module navigation and contains long table content" do
             document = Nokogiri::HTML.fragment(rendered_index)
-            mobile_navigation = document.at_css("details.lg\\:hidden")
-            desktop_navigation = document.at_css("nav[aria-label='Module navigation']")
+            mobile_navigation = document.at_css("details.lesli-navigation-sidebar-mobile")
+            desktop_navigation = document.at_css("nav.lesli-navigation-sidebar-desktop")
+            assert mobile_navigation, "Expected the shared mobile navigation"
+            assert desktop_navigation, "Expected the shared desktop navigation"
             summary = mobile_navigation.at_css("summary")
             label_link = document.css("a").find { |link| link["href"] == "/babel/labels/#{@label.id}" }
             path_button = document.css("button").find do |button|
                 button.text.include?(@label.translation_path)
             end
 
-            assert mobile_navigation
-            assert desktop_navigation
-            assert_includes desktop_navigation["class"].split, "hidden"
-            assert_includes desktop_navigation["class"].split, "lg:block"
+            assert summary, "Expected an accessible mobile disclosure"
+            navigation_label = I18n.t("lesli_babel.navigation.modules")
+            assert_equal navigation_label, mobile_navigation.at_css("nav")["aria-label"]
+            assert_equal navigation_label, desktop_navigation["aria-label"]
             assert_includes summary["class"].split, "min-h-11"
             assert_includes summary["aria-label"], "Lesli Babel"
-            assert document.css("nav[aria-label*='Module navigation'] a").all? do |link|
-                link["class"].split.include?("min-h-11")
+            [mobile_navigation, desktop_navigation].each do |navigation|
+                links = navigation.css("a")
+                assert_not_empty links
+                assert links.all? { |link| link["class"].split.include?("min-h-11") }
+                assert navigation.at_css("a[aria-current='page']")
             end
             assert_includes label_link["class"].split, "break-all"
             assert_includes path_button["class"].split, "w-full"
