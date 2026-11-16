@@ -43,7 +43,7 @@ module LesliBabel
                 resources
             end
 
-            with_singleton_methods(Lesli::ResourceService, new: -> { resource_service }) do
+            with_singleton_methods(Lesli::ResourceService, new: ->(_user) { resource_service }) do
                 with_singleton_methods(Termline, success: ->(*_messages, **_data) {}) do
                     @task.reenable
                     @task.invoke
