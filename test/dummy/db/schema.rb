@@ -120,6 +120,7 @@ ActiveRecord::Schema[8.1].define(version: 901120110) do
   end
 
   create_table "lesli_users", force: :cascade do |t|
+    t.string "time_zone"
     t.string "uid", null: false
     t.boolean "active", default: true, null: false
     t.string "alias"
