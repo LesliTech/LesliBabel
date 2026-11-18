@@ -60,14 +60,14 @@ columns = [{
                             <div class="min-w-0 max-w-xl" x-data="{ copied: false }">
                                 <button
                                     type="button"
-                                    class="group inline-flex w-full min-w-0 items-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40"
+                                    class="group inline-flex w-full min-w-0 items-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                                     :aria-label="copied ? 'Path copied' : 'Copy path'"
                                     @click="
                                         navigator.clipboard.writeText($refs.path.innerText.trim());
                                         copied = true;
                                         setTimeout(() => copied = false, 2000)
                                     ">
-                                    <span class="inline-flex size-5 shrink-0 items-center justify-center text-slate-400 transition-colors group-hover:text-slate-600" aria-hidden="true">
+                                    <span class="inline-flex size-5 shrink-0 items-center justify-center text-neutral-400 transition-colors group-hover:text-neutral-600" aria-hidden="true">
                                         <span class="material-symbols text-lg leading-none" x-text="copied ? 'check' : 'content_copy'" x-transition></span>
                                     </span>
                                     <span class="break-all font-mono text-xs leading-5" x-ref="path">
@@ -85,6 +85,6 @@ columns = [{
 
 <%= render(LesliView::Components::Panel.new("Translation editor", "babel-label-panel")) do %>
     <%= turbo_frame_tag("babel-label-editor") do %>
-        <p class="text-sm text-slate-500">Select a translation to edit.</p>
+        <p class="text-sm text-neutral-500">Select a translation to edit.</p>
     <% end %>
 <% end %>

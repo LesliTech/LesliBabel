@@ -1,9 +1,9 @@
 <span class="inline-flex max-w-full items-center gap-2" x-data="{ copied: false }">
     <span class="sr-only">Translation path:</span>
-    <code class="min-w-0 break-all text-xs leading-5 text-slate-600" x-ref="path"><%= path %></code>
+    <code class="min-w-0 break-all text-xs leading-5 text-neutral-600" x-ref="path"><%= path %></code>
     <button
         type="button"
-        class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-500/20"
+        class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
         :aria-label="copied ? 'Path copied' : 'Copy path'"
         @click="
             navigator.clipboard.writeText($refs.path.innerText.trim());

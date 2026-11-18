@@ -120,7 +120,7 @@ module LesliBabel
             assert_equal "OK", metadata.at_css("[data-label-status='ok']").text.strip
             assert_includes metadata["class"].split, "justify-end"
             assert form.at_css("[aria-label='Translation label metadata']")
-            assert_includes form.at_css("fieldset")["class"].split, "border-emerald-300"
+            assert_includes form.at_css("fieldset")["class"].split, "border-success-300"
             save_button = form.at_css("button[type='submit']")
             assert_includes save_button.text, "Save translations"
             assert_nil save_button["data-turbo-submits-with"]
@@ -171,12 +171,12 @@ module LesliBabel
             navigation_label = I18n.t("lesli_babel.navigation.modules")
             assert_equal navigation_label, mobile_navigation.at_css("nav")["aria-label"]
             assert_equal navigation_label, desktop_navigation["aria-label"]
-            assert_includes summary["class"].split, "min-h-11"
+            assert_includes summary["class"].split, "lesli-navigation-sidebar-summary"
             assert_includes summary["aria-label"], "Lesli Babel"
             [mobile_navigation, desktop_navigation].each do |navigation|
                 links = navigation.css("a")
                 assert_not_empty links
-                assert links.all? { |link| link["class"].split.include?("min-h-11") }
+                assert links.all? { |link| link["class"].split.include?("lesli-navigation-sidebar-link") }
                 assert navigation.at_css("a[aria-current='page']")
             end
             assert_includes label_link["class"].split, "break-all"
