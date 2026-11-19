@@ -66,6 +66,24 @@ A file must use:
 
 Third-party namespaces such as Devise do not belong in a managed translation file. Keep them in a separate package file such as `devise.en.yml`; LesliBabel discovers only `translations.<locale>.yml` files.
 
+Rails-native translations follow the same separation. Keep model attribute names
+in `activerecord.<locale>.yml`, preserving the hierarchy Rails expects:
+
+```yaml
+# activerecord.en.yml — loaded by Rails, not managed by Babel
+en:
+  activerecord:
+    attributes:
+      lesli_bell/announcement:
+        name: "Name"
+```
+
+Do not flatten these Rails keys. For application labels inside managed files,
+flatten extra groups into the label name instead: use
+`lesli_bell.announcements.categories_info`, not
+`lesli_bell.announcements.categories.info`. Update every I18n lookup when
+renaming a label, including dynamically interpolated keys.
+
 ## Module Codes
 
 The module identifies the application or engine that owns the translation. It must match the registered `LesliBabel::Module#code` exactly.
