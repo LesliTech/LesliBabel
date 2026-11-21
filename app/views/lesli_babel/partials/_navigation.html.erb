@@ -32,6 +32,6 @@ Building a better future, one line of code at a time.
 =end
 %>
 
-<%= navigation_item(lesli_babel.dashboard_path, "Dashboard", "ri-dashboard-3-line"); %>
-<%= navigation_item(lesli_babel.labels_path, "Translations", "ri-earth-line") %>
+<%= navigation_item(lesli_babel.dashboard_path, "Dashboard", "ri-dashboard-3-line", access: ["lesli_babel/dashboards", :show]); %>
+<%= navigation_item(lesli_babel.labels_path, "Translations", "ri-earth-line", access: ["lesli_babel/labels", :index]) %>
 <%#= navigation_item(lesli_babel.dashboard_path, "Relevant", "ri-send-plane-line") %>
